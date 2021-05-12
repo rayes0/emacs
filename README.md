@@ -1,8 +1,12 @@
 # Emacs Configuration
 
-| Splash Screen | Code | Org-mode | Dark theme (editing markdown) |
-| ------------- | ---- | -------- | ----------------------------- |
-| ![](previews/splash.png) | ![](previews/rust.png) | ![](previews/orgmode.png) | ![](previews/darkmdown.png) |
+| Splash Screen | Code |
+| ------------- | ---- |
+| <img src="previews/splash.png" width="100%"/> | <img src="previews/rust.png" width="100%"/> |
+
+ | Org-mode | Dark theme (editing markdown) |
+ | -------- | ----------------------------- |
+ | <img src="previews/orgmode.png" width="100%"/> | <img src="previews/darkmdown.png" width="100%"/> |
 
 My fairly minimal, vanilla configuration for emacs. It was written mostly from scratch, though some fairly significant portions are taken/inspired by [elegant-emacs](https://github.com/rougier/elegant-emacs). 
 
