@@ -1,0 +1,9 @@
+*.elc
+*~
+ido.last*
+recentf
+auto-save-list/
+backups/
+elpa/
+transient/
+url/
