@@ -11,7 +11,7 @@
     (setq vertical-scroll-bar nil)
     (setq horizontal-scroll-bar nil)
 
-	(let* ((selected-img (choose-image "~/.emacs.d/data/splash-img")))
+	(let* ((selected-img (choose-image (expand-file-name "./data/splash-img" user-emacs-directory))))
 
 	;; top padding
 	(insert-char ?\n 5)

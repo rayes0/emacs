@@ -59,7 +59,7 @@
 	(set-face-attribute 'face-pre nil :foreground "#407680"
 						:font "Victor Mono Medium Italic"
 						:height 117)
-	(set-face-attribute 'face-light nil :foreground "#938680")
+	(set-face-attribute 'face-light nil :foreground "#6c605a" :weight 'semi-light)
 
     (set-face-attribute 'show-paren-match nil    :background "#dad3d0"
 					                             :weight 'bold)

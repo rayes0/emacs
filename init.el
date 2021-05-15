@@ -1,8 +1,8 @@
 (setq gc-cons-threshold (* 100 1000 100))
 
-(add-to-list 'load-path "~/.emacs.d/lisp")
-(add-to-list 'load-path "~/.emacs.d/theme")
-(add-to-list 'load-path "~/.emacs.d/data")
+(add-to-list 'load-path (expand-file-name "./lisp" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "./theme" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "./data" user-emacs-directory))
 
 (require 'interface)
 (require 'colors)
@@ -12,7 +12,7 @@
 (require 'init-org)
 (require 'init-mdown)
 
-(setq custom-file "~/.emacs.d/lisp/custom-ops.el")
+(setq custom-file (expand-file-name "./lisp/custom-ops.el" user-emacs-directory))
 ;;(load custom-file 'noerror)
 (require 'custom-ops)
 
@@ -32,17 +32,18 @@
 (setq require-final-newline nil
 	  mode-require-final-newline nil)
 
-(ido-mode t)
+(ido-mode 1)
+(ido-everywhere 1)
 
 (require 'package)
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/")
-         '("gnu" . "http://elpa.gnu.org/packages/"))
+         '("gnu" . "https://elpa.gnu.org/packages/"))
 (package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
 
-(load-file "~/.emacs.d/data/Splash.el")
+(load-file (expand-file-name "./data/Splash.el" user-emacs-directory))
 (show-splash)
 (setq initial-buffer-choice (lambda () (get-buffer-create "*splash*")))
 
@@ -51,3 +52,4 @@
 ;;(sayo)
 
 (setq gc-cons-threshold (* 2 1000 100))
+(put 'dired-find-alternate-file 'disabled nil)
