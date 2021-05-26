@@ -13,8 +13,14 @@
 (require 'init-mdown)
 
 (setq custom-file (expand-file-name "./lisp/custom-ops.el" user-emacs-directory))
-;;(load custom-file 'noerror)
 (require 'custom-ops)
+(defadvice en/disable-command (around put-in-custom-file activate)
+  "Put declarations in `custom-file'."
+  (let ((user-init-file custom-file))
+	ad-do-it))
+
+(setq scroll-step 1
+      scroll-conservatively 10000)
 
 ;; Backup to temp dir instead of littering the file tree with files
 (setq
@@ -31,6 +37,8 @@
 
 (setq require-final-newline nil
 	  mode-require-final-newline nil)
+(setq backward-delete-char-untabify-method 'hungry)
+(fset 'yes-or-no-p 'y-or-n-p)
 
 (ido-mode 1)
 (ido-everywhere 1)
@@ -52,4 +60,3 @@
 ;;(sayo)
 
 (setq gc-cons-threshold (* 2 1000 100))
-(put 'dired-find-alternate-file 'disabled nil)

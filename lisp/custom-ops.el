@@ -5,7 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(org-agenda-files '("~/.todo/todo.org"))
  '(package-selected-packages
-   '(perspective evil-collection texfrag writegood-mode company which-key discover-my-major gnuplot eaf pdf-tools writeroom-mode vterm rustic evil eglot))
+   '(easy-hugo ein tree-sitter perspective evil-collection texfrag writegood-mode company which-key discover-my-major gnuplot eaf pdf-tools writeroom-mode vterm rustic evil eglot))
  '(writeroom-major-modes '(text-mode org-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -14,9 +14,15 @@
  ;; If there is more than one, they won't work right.
  )
 
+(put 'dired-find-alternate-file 'disabled nil)
+
 (setq evil-want-keybinding nil)
 (evil-mode 1)
 (evil-collection-init)
+;; make :q not kill emacs entirely, only the current buffer
+(evil-ex-define-cmd "q" 'kill-this-buffer)
+;; must type :quit to close emacs entirely
+(evil-ex-define-cmd "quit" 'evil-quit)
 
 (global-set-key "\C-ca" 'org-agenda)
 (setq confirm-kill-emacs 'y-or-n-p)
@@ -42,5 +48,10 @@
 (global-set-key "\C-cg" 'writegood-mode)
 (global-set-key "\C-c\C-gg" 'writegood-grade-level)
 (global-set-key "\C-c\C-ge" 'writegood-reading-ease)
+
+(setq easy-hugo-basedir "~/sites/personal-site/")
+(setq easy-hugo-url "https://rayes0.github.io/")
+(setq easy-hugo-postdir "content/blog")
+
 
 (provide 'custom-ops)

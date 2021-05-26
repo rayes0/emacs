@@ -37,6 +37,11 @@
     'org-babel-load-languages
     '((gnuplot . t)))
 
+   (defun my/fix-inline-images ()
+	 (when org-inline-image-overlays
+       (org-redisplay-inline-images)))
+   (add-hook 'org-babel-after-execute-hook 'my/fix-inline-images)
+
   (font-lock-add-keywords 'org-mode
   		'(("^ *\\([-]\\) "
   		   (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))

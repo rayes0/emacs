@@ -78,12 +78,27 @@
     
     (with-eval-after-load 'cus-edit (set-button-faces)))
 
-    ;; (set-face 'term-color-red nil  :foreground "#ce9c85")
-    ;; (set-face 'term-color-green nil :foreground "#839773")
-    ;; (set-face 'term-color-yellow nil :foreground "#a09c80")
-    ;; (set-face 'term-color-blue nil :foreground "#8f8678")
-    ;; (set-face 'term-color-magenta nil :foreground "#9c7b9c")
-    ;; (set-face 'term-color-cyan nil :foreground "#75998e")
+	;; Term
+	(with-eval-after-load 'term
+	;; (setq eterm-256color-disable-bold nil)
+	  (set-face 'term-bold                                   'face-strong)
+	  (set-face-attribute 'term-color-black nil
+                                :foreground (face-foreground 'default)
+                               :background (face-foreground 'default))
+	  (set-face-attribute 'term-color-white nil
+						  :foreground "white" :background "white")
+	  (set-face-attribute 'term-color-blue nil
+						  :foreground "#8f8678" :background "#8f8678")
+	  (set-face-attribute 'term-color-cyan nil
+						  :foreground "#75998e" :background "#75998e")
+	  (set-face-attribute 'term-color-green nil
+						  :foreground "#839773" :background "#839773")
+	  (set-face-attribute 'term-color-magenta nil
+						  :foreground "#9c7b9c" :background "#9c7b9c")
+	  (set-face-attribute 'term-color-red nil
+						  :foreground "#ce9c85" :background "#ce9c85")
+	  (set-face-attribute 'term-color-yellow nil
+						   :foreground "#a09c80" :background "#a09c80"))
 
 ;; Dark theme
 (defun sayo ()

@@ -278,26 +278,4 @@ function is a convenience wrapper used by `describe-package-1'."
   (set-face 'diff-refine-removed                          'face-faded)
   (set-face-attribute     'diff-refine-removed nil :strike-through t))
 
-;; Term
-(with-eval-after-load 'term
-  ;; (setq eterm-256color-disable-bold nil)
-  (set-face 'term-bold                                   'face-strong)
-  (set-face-attribute 'term-color-black nil
-                                :foreground (face-foreground 'default)
-                               :background (face-foreground 'default))
-  (set-face-attribute 'term-color-white nil
-                              :foreground "white" :background "white")
-  (set-face-attribute 'term-color-blue nil
-                          :foreground "#42A5F5" :background "#BBDEFB")
-  (set-face-attribute 'term-color-cyan nil
-                          :foreground "#26C6DA" :background "#B2EBF2")
-  (set-face-attribute 'term-color-green nil
-                          :foreground "#66BB6A" :background "#C8E6C9")
-  (set-face-attribute 'term-color-magenta nil
-                          :foreground "#AB47BC" :background "#E1BEE7")
-  (set-face-attribute 'term-color-red nil
-                          :foreground "#EF5350" :background "#FFCDD2")
-  (set-face-attribute 'term-color-yellow nil
-                         :foreground "#FFEE58" :background "#FFF9C4"))
-
 (provide 'general)
