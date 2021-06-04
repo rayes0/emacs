@@ -30,4 +30,10 @@
 (set-face-attribute 'markdown-metadata-key-face nil :inherit '(fixed-pitch face-faded))
 (set-face-attribute 'markdown-metadata-value-face nil :inherit '(fixed-pitch face-faded))
 
+(set-face-attribute 'markdown-html-tag-delimiter-face nil :inherit '(fixed-pitch face-faded))
+(set-face-attribute 'markdown-html-tag-name-face nil :inherit '(fixed-pitch face-faded))
+(set-face-attribute 'markdown-html-tag-name-face nil :inherit '(fixed-pitch face-faded))
+
+;;(set-face-attribute 'markdown-gfm-checkbox-button-button nil :inherit '(fixed-pitch))
+
 (provide 'init-mdown)

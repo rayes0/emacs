@@ -5,7 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(org-agenda-files '("~/.todo/todo.org"))
  '(package-selected-packages
-   '(easy-hugo ein tree-sitter perspective evil-collection texfrag writegood-mode company which-key discover-my-major gnuplot eaf pdf-tools writeroom-mode vterm rustic evil eglot))
+   '(smart-tabs-mode flx-ido easy-hugo ein tree-sitter perspective evil-collection texfrag writegood-mode company which-key discover-my-major gnuplot eaf pdf-tools writeroom-mode vterm rustic evil eglot))
  '(writeroom-major-modes '(text-mode org-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -13,6 +13,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+(require 'init-mdown)
 
 (put 'dired-find-alternate-file 'disabled nil)
 
@@ -52,6 +54,5 @@
 (setq easy-hugo-basedir "~/sites/personal-site/")
 (setq easy-hugo-url "https://rayes0.github.io/")
 (setq easy-hugo-postdir "content/blog")
-
 
 (provide 'custom-ops)

@@ -10,10 +10,9 @@
 
 (require 'init-text)
 (require 'init-org)
-(require 'init-mdown)
 
+(require 'custom-ops))
 (setq custom-file (expand-file-name "./lisp/custom-ops.el" user-emacs-directory))
-(require 'custom-ops)
 (defadvice en/disable-command (around put-in-custom-file activate)
   "Put declarations in `custom-file'."
   (let ((user-init-file custom-file))

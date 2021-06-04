@@ -1,6 +1,21 @@
 ;;; Text editing, spacing, and all interface settings
 ;;; NOTE: Some interface settings are also set in early-init.el, mainly to reduce startup time (percieved and actual)
 
+;; don't auto add newline at end of file
+(setq require-final-newline nil
+	  mode-require-final-newline nil)
+
+;; change all yes-or-no prompts to y-or-n
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;; enable ido-everywhere
+(ido-mode 1)
+(ido-everywhere 1)
+
+;; scroll step settings
+(setq scroll-step 1
+	  scroll-conservatively 10000)
+
 (set-frame-parameter (selected-frame)
                      'internal-border-width 24)
 
@@ -10,8 +25,9 @@
 ;; Line spacing
 (setq-default line-spacing 0.15)
 
-;; Tab stop width
-(setq-default tab-width 4)
+;; Tab settings
+(setq-default tab-width 2)
+(setq backward-delete-char-untabify-method 'hungry)
 
 ;; Underline line at descent position, not baseline position
 (setq x-underline-at-descent-line t)

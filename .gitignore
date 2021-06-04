@@ -8,3 +8,4 @@ elpa/
 transient/
 url/
 eshell/
+.ercrc.el
