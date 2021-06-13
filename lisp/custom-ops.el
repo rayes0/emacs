@@ -27,13 +27,13 @@
 ;; (add-hook 'post-command-hook #'my-god-mode-update-cursor-type)
 
 (require 'evil)
-;;(require 'evil-collection)
-;;(setq evil-want-keybinding nil)
+(require 'evil-collection)
+(setq evil-want-keybinding nil)
 (evil-mode 1)
-;;(evil-collection-init)
-;;;; make :q not kill emacs entirely, only the current buffer
+(evil-collection-init)
+;; make :q not kill emacs entirely, only the current buffer
 (evil-ex-define-cmd "q" 'kill-this-buffer)
-;;;; must type :quit to close emacs entirely
+;; must type :quit to close emacs entirely
 (evil-ex-define-cmd "quit" 'evil-quit)
 
 (global-set-key "\C-ca" 'org-agenda)
