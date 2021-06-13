@@ -3,9 +3,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files '("~/.todo/todo.org"))
+ '(org-agenda-files '("~/Notes/Org/events.org" "~/.todo/todo.org"))
  '(package-selected-packages
-   '(smart-tabs-mode flx-ido easy-hugo ein tree-sitter perspective evil-collection texfrag writegood-mode company which-key discover-my-major gnuplot eaf pdf-tools writeroom-mode vterm rustic evil eglot))
+	 '(vue-mode god-mode smart-tabs-mode flx-ido easy-hugo ein tree-sitter evil-collection texfrag writegood-mode company which-key discover-my-major gnuplot eaf pdf-tools writeroom-mode vterm rustic evil eglot))
  '(writeroom-major-modes '(text-mode org-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -18,6 +18,13 @@
 
 (put 'dired-find-alternate-file 'disabled nil)
 
+;; (god-mode)
+;; (global-set-key (kbd "<escape>") #'god-local-mode)
+;; (setq god-exempt-major-modes nil)
+;; (setq god-exempt-predicates nil)
+;; (defun my-god-mode-update-cursor-type ()
+;;   (setq cursor-type (if (or god-local-mode buffer-read-only) 'box 'bar)))
+;; (add-hook 'post-command-hook #'my-god-mode-update-cursor-type)
 (setq evil-want-keybinding nil)
 (evil-mode 1)
 (evil-collection-init)
@@ -42,10 +49,6 @@
 (add-hook 'rustic-mode-hook 'eglot-ensure)
 
 (which-key-mode)
-
-(require 'perspective)
-(setq persp-sort 'created)
-(persp-mode)
 
 (global-set-key "\C-cg" 'writegood-mode)
 (global-set-key "\C-c\C-gg" 'writegood-grade-level)

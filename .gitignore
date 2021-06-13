@@ -9,3 +9,5 @@ transient/
 url/
 eshell/
 .ercrc.el
+newsticker/
+request/

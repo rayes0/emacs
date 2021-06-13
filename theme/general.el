@@ -168,7 +168,6 @@
   (set-face 'info-title-4                               'face-strong))
 
 ;; Completions
-(set-face 'help-key-binding                             'face-salient)
 (set-face 'completions-common-part                 'face-italic-faded)
 
 ;; Bookmarks
