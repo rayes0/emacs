@@ -26,9 +26,9 @@
 ;;   (setq cursor-type (if (or god-local-mode buffer-read-only) 'box 'bar)))
 ;; (add-hook 'post-command-hook #'my-god-mode-update-cursor-type)
 
+(setq evil-want-keybinding nil)
 (require 'evil)
 (require 'evil-collection)
-(setq evil-want-keybinding nil)
 (evil-mode 1)
 (evil-collection-init)
 ;; make :q not kill emacs entirely, only the current buffer
