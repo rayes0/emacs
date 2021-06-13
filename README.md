@@ -1,6 +1,6 @@
-# Emacs Configuration
+# Emacs Configuration (git version)
 
-A fairly minimal, vanilla configuration for emacs. It was written mostly from scratch, though some code portions are taken/inspired by [elegant-emacs](https://github.com/rougier/elegant-emacs). 
+A fairly minimal, vanilla configuration for emacs, updated with the upstream master branch. It was written mostly from scratch, though some code portions are taken/inspired by [elegant-emacs](https://github.com/rougier/elegant-emacs). 
 
 ## Previews
 
