@@ -5,7 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(org-agenda-files '("~/Notes/Org/events.org" "~/.todo/todo.org"))
  '(package-selected-packages
-	 '(vue-mode god-mode smart-tabs-mode flx-ido easy-hugo ein tree-sitter evil-collection texfrag writegood-mode company which-key discover-my-major gnuplot eaf pdf-tools writeroom-mode vterm rustic evil eglot))
+	 '(which-key eglot evil-collection evil vue-mode god-mode smart-tabs-mode flx-ido easy-hugo ein tree-sitter texfrag writegood-mode company discover-my-major gnuplot eaf pdf-tools writeroom-mode vterm rustic))
  '(writeroom-major-modes '(text-mode org-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -25,12 +25,15 @@
 ;; (defun my-god-mode-update-cursor-type ()
 ;;   (setq cursor-type (if (or god-local-mode buffer-read-only) 'box 'bar)))
 ;; (add-hook 'post-command-hook #'my-god-mode-update-cursor-type)
-(setq evil-want-keybinding nil)
+
+(require 'evil)
+;;(require 'evil-collection)
+;;(setq evil-want-keybinding nil)
 (evil-mode 1)
-(evil-collection-init)
-;; make :q not kill emacs entirely, only the current buffer
+;;(evil-collection-init)
+;;;; make :q not kill emacs entirely, only the current buffer
 (evil-ex-define-cmd "q" 'kill-this-buffer)
-;; must type :quit to close emacs entirely
+;;;; must type :quit to close emacs entirely
 (evil-ex-define-cmd "quit" 'evil-quit)
 
 (global-set-key "\C-ca" 'org-agenda)

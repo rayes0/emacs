@@ -28,7 +28,7 @@ A fairly minimal, vanilla configuration for emacs. It was written mostly from sc
 
 ## Dependencies
 
-There are no hard dependencies (except for emacs of course, version>=28.0).
+There are no hard dependencies (except for a fairly recent version emacs of course).
 
 However, the scaling for different text sizes was written with the following fonts in mind:
 
