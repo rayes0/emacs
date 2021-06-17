@@ -54,7 +54,7 @@
 (show-splash)
 (setq initial-buffer-choice (lambda () (get-buffer-create "*splash*")))
 
-;; set theme
+;; set theme, change blossom to sayo if you want dark theme by default
 (blossom)
 ;;(sayo)
 

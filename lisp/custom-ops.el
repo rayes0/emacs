@@ -5,7 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(org-agenda-files '("~/Notes/Org/events.org" "~/.todo/todo.org"))
  '(package-selected-packages
-	 '(which-key eglot evil-collection evil vue-mode god-mode smart-tabs-mode flx-ido easy-hugo ein tree-sitter texfrag writegood-mode company discover-my-major gnuplot eaf pdf-tools writeroom-mode vterm rustic))
+	 '(lua-mode which-key eglot evil-collection evil vue-mode god-mode smart-tabs-mode flx-ido easy-hugo ein tree-sitter texfrag writegood-mode company discover-my-major gnuplot eaf pdf-tools writeroom-mode vterm rustic))
  '(writeroom-major-modes '(text-mode org-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

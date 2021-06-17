@@ -35,7 +35,8 @@
    ;; Org babel
    (org-babel-do-load-languages
     'org-babel-load-languages
-    '((gnuplot . t)))
+    '((gnuplot . t)
+			(octave . t)))
 
    (defun my/fix-inline-images ()
 	 (when org-inline-image-overlays
@@ -85,7 +86,7 @@
   (set-face 'org-scheduled-today                          'face-faded)
   (set-face 'org-sexp-date                                'face-faded)
   (set-face 'org-special-keyword                          'face-faded)
-  (set-face 'org-table                                    'default)
+	(set-face 'org-table                                       'default)
   (set-face 'org-tag                                      'face-faded)
   (set-face 'org-tag-group                                'face-faded)
   (set-face 'org-target                                   'face-faded)
@@ -104,19 +105,20 @@
   (set-face 'org-level-7                                 'face-strong)
   (set-face 'org-level-8                                 'face-strong)
 
-  (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-block-begin-line nil :inherit '(face-faded fixed-pitch))
-  (set-face-attribute 'org-block-end-line         nil :inherit '(face-faded fixed-pitch))
-  (set-face-attribute 'org-quote nil :slant 'italic)
+	(set-face-attribute 'org-block            nil :inherit 'fixed-pitch)
+	(set-face-attribute 'org-block-begin-line nil :inherit '(face-faded fixed-pitch))
+	(set-face-attribute 'org-block-end-line   nil :inherit '(face-faded fixed-pitch))
+	(set-face-attribute 'org-quote            nil :slant 'italic)
+	(set-face-attribute 'org-table            nil :inherit 'fixed-pitch)
 
-  (set-face-attribute 'org-code                   nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-document-info-keyword  nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-document-info          nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-document-title         nil :slant 'italic :height 170)
-  (set-face-attribute 'org-meta-line              nil :inherit '(face-faded fixed-pitch)
-					                                  :weight 'normal)
+	(set-face-attribute 'org-code                   nil :inherit 'fixed-pitch)
+	(set-face-attribute 'org-document-info-keyword  nil :inherit 'fixed-pitch)
+	(set-face-attribute 'org-document-info          nil :inherit 'fixed-pitch)
+	(set-face-attribute 'org-document-title         nil :slant 'italic :height 170)
+	(set-face-attribute 'org-meta-line              nil :inherit '(face-faded fixed-pitch)
+											:weight 'normal)
 
-  (set-face-attribute 'org-level-1 nil :weight 'bold :height 180)
+	(set-face-attribute 'org-level-1 nil :weight 'bold :height 180)
   (set-face-attribute 'org-level-2 nil :weight 'bold :height 170)
   (set-face-attribute 'org-level-3 nil :weight 'bold :height 165)
   (set-face-attribute 'org-level-4 nil :weight 'bold :height 160)

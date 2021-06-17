@@ -3,7 +3,7 @@
 
 ;; don't auto add newline at end of file
 (setq require-final-newline nil
-	  mode-require-final-newline nil)
+			mode-require-final-newline nil)
 
 ;; change all yes-or-no prompts to y-or-n
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -14,10 +14,10 @@
 
 ;; scroll step settings
 (setq scroll-step 1
-	  scroll-conservatively 10000)
+			scroll-conservatively 10000)
 
 (set-frame-parameter (selected-frame)
-                     'internal-border-width 24)
+										 'internal-border-width 24)
 
 ;; Other
 (add-to-list 'default-frame-alist '(font . "SFMono-11:medium"))
@@ -57,21 +57,21 @@
 
 ;; simplified mode line
 (defun mode-line-render (left right)
-  (let* ((available-width (- (window-width) (length left) )))
-    (format (format "%%s %%%ds" available-width) left right)))
+	(let* ((available-width (- (window-width) (length left) )))
+		(format (format "%%s %%%ds" available-width) left right)))
 (setq-default mode-line-format
-     '((:eval
-       (mode-line-render
-       (format-mode-line (list
-         ;; (propertize "☰" 'face `(:inherit mode-line-buffer-id)
-         ;;                 'help-echo "Mode(s) menu"
-         ;;                 'mouse-face 'mode-line-highlight
-         ;;                 'local-map   mode-line-major-mode-keymap)
-         " %b "
-         (if (and buffer-file-name (buffer-modified-p))
-             (propertize "(modified)" 'face `(:inherit face-faded)))))
-       (format-mode-line
-         (propertize "%4l:%2c | %m " 'face `(:inherit face-faded)))))))
+							'((:eval
+								 (mode-line-render
+									(format-mode-line (list
+																		 ;; (propertize "☰" 'face `(:inherit mode-line-buffer-id)
+																		 ;;                 'help-echo "Mode(s) menu"
+																		 ;;                 'mouse-face 'mode-line-highlight
+																		 ;;                 'local-map   mode-line-major-mode-keymap)
+																		 " %b "
+																		 (if (and buffer-file-name (buffer-modified-p))
+																				 (propertize "(modified)" 'face `(:inherit face-faded)))))
+									(format-mode-line
+									 (propertize "%4l:%2c | %m " 'face `(:inherit face-faded)))))))
 
 ;; move modeline to the top of the buffer
 (setq-default header-line-format mode-line-format)

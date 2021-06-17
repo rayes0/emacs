@@ -41,7 +41,7 @@ If you don't have some of these installed, emacs will fallback to your default s
 ## Usage
 
 1. Copy the files to `~/.emacs.d` or `~/.config/emacs`
-2. *Clear everything in the `lisp/custom-ops.el` file*, **expect the last line** (leaving only `(provide 'custom-ops)`).
+2. *Clear everything in the `lisp/custom-ops.el` file*, **except the last line** (leaving only `(provide 'custom-ops)`).
   - This file contains all custom configuration options set with `M-x customize` and also configuration for everything *not* in vanilla emacs (eg: plugins).
   - Unless you use the exact same plugins I do, you probably want to clear my settings. Otherwise emacs will complain about missing plugins
 
