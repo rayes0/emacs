@@ -26,5 +26,8 @@
              (vertical-scroll-bars . nil)
 			 (internal-border-width . 24)))
 
+;; don't warn about non emergency, useless things
+(setq warning-minimum-level :error)
+
 ;; disable dialog windows
 (setq use-dialog-box nil)

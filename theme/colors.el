@@ -42,23 +42,23 @@
                         :weight 'light)
 	(set-face-attribute 'face-italic-faded nil :foreground "#8f8678"
 							:font "Victor Mono Medium Italic"
-							:height 117)
+							:height 113)
 	(set-face-attribute 'face-italic nil :foreground (face-foreground 'default)
 							:font "Victor Mono Medium Italic"
-							:height 117)
+							:height 113)
     (set-face-attribute 'face-subtle nil :background "#e3d0cb")
 
 	;; Code specific faces
 	(set-face-attribute 'face-identifier nil :foreground "#9e552f"
 						:font "Victor Mono Semibold Italic"
-						:height 117)
+						:height 113)
 	;;(set-face-attribute 'face-keyword nil :foreground "#995c8c"
 	(set-face-attribute 'face-keyword nil :foreground (face-foreground 'default)
 						:font "Victor Mono Semibold Italic"
-						:height 117)
+						:height 113)
 	(set-face-attribute 'face-pre nil :foreground "#407680"
 						:font "Victor Mono Medium Italic"
-						:height 117)
+						:height 113)
 	(set-face-attribute 'face-light nil :foreground "#6c605a" :weight 'semi-light)
 
     (set-face-attribute 'show-paren-match nil    :background "#dad3d0"

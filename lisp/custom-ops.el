@@ -3,10 +3,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files '("~/Notes/Org/events.org" "~/.todo/todo.org"))
  '(package-selected-packages
-	 '(which-key eglot evil-collection evil vue-mode god-mode smart-tabs-mode flx-ido easy-hugo ein tree-sitter texfrag writegood-mode company discover-my-major gnuplot eaf pdf-tools writeroom-mode vterm rustic))
- '(writeroom-major-modes '(text-mode org-mode)))
+   '(which-key rustic evil-collection writeroom-mode eglot easy-hugo evil)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -60,5 +58,7 @@
 (setq easy-hugo-basedir "~/sites/personal-site/")
 (setq easy-hugo-url "https://rayes0.github.io/")
 (setq easy-hugo-postdir "content/blog")
+
+(require 'init-mdown)
 
 (provide 'custom-ops)
