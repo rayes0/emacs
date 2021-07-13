@@ -38,7 +38,9 @@
 	  mode-require-final-newline nil)
 (setq backward-delete-char-untabify-method 'hungry)
 (fset 'yes-or-no-p 'y-or-n-p)
+(setq confirm-kill-emacs 'y-or-n-p)
 
+(setq completion-ignore-case t)
 (ido-mode 1)
 (ido-everywhere 1)
 

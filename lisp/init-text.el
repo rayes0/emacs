@@ -1,7 +1,7 @@
 (add-hook 'text-mode-hook
-		  'flyspell-mode
-		  'variable-pitch-mode
-		  'visual-line-mode)
+  'flyspell-mode
+  'variable-pitch-mode
+  'visual-line-mode)
 
 (require 'general)
 
@@ -11,9 +11,12 @@
 (set-face 'sh-heredoc           'face-faded)
 
 ;; set indentation settings to tab-width, important to do otherwise emacs screws up indents
-(defvaralias 'c-basic-offset 'tab-width)
+(defvaralias 'c-basic-offset     'tab-width)
 (defvaralias 'cperl-basic-offset 'tab-width)
-(defvaralias 'smie-indent-basic 'tab-width)
-(defvaralias 'sh-basic-offset 'tab-width)
+(defvaralias 'smie-indent-basic  'tab-width)
+(defvaralias 'sh-basic-offset    'tab-width)
+(defvaralias 'css-indent-offset  'tab-width)
+(defvaralias 'lisp-indent-offset 'tab-width)
+(defvaralias 'octave-block-offset 'tab-width)
 
 (provide 'init-text)
