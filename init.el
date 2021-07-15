@@ -23,7 +23,7 @@
 
 ;; Backup to temp dir instead of littering the file tree with files
 (setq
-  backup-directory-alist '(("." . "~/.emacs.d/backups"))
+  backup-directory-alist '(("." . (expand-file-name "./backups" user-emacs-directory)))
   backup-by-copying t
   version-control t
   delete-old-versions t
