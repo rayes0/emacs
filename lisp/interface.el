@@ -12,12 +12,15 @@
 (ido-mode 1)
 (ido-everywhere 1)
 
+;; icomplete mode
+(icomplete-mode 1)
+
 ;; scroll step settings
 (setq scroll-step 1
-  scroll-conservatively 10000)
-
-(set-frame-parameter (selected-frame)
-  'internal-border-width 24)
+  scroll-conservatively 10000
+  mouse-wheel-scroll-amount '(1 ((shift) . 1))
+  mouse-wheel-progressive-speed nil
+  mouse-wheel-follow-mouse 't)
 
 ;; Other
 (add-to-list 'default-frame-alist '(font . "SFMono-11:medium"))
@@ -67,7 +70,7 @@
           (propertize "%4l:%2c | %m " 'face `(:inherit face-faded)))))))
 
 
-;; move modeline to the top of the buffer
+;; use only the header line
 (setq-default header-line-format mode-line-format)
 (setq-default mode-line-format'(""))
 
@@ -75,5 +78,6 @@
 (setq window-divider-default-right-width 3)
 (setq window-divider-default-places 'right-only)
 (window-divider-mode)
+
 
 (provide 'interface)

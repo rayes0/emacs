@@ -18,21 +18,17 @@
   (let ((user-init-file custom-file))
 	ad-do-it))
 
-(setq scroll-step 1
-      scroll-conservatively 10000)
-
-;; Backup to temp dir instead of littering the file tree with files
+;; autosave to temp dir instead of littering the file tree with files
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+;; backup files, I ain't living dangerously
 (setq
-  backup-directory-alist '(("." . (expand-file-name "./backups" user-emacs-directory)))
+  backup-directory-alist '(("." . "~/.emacs_backups"))
   backup-by-copying t
   version-control t
   delete-old-versions t
-  kept-new-versions 6
+  kept-new-versions 10
   kept-old-versions 2)
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
 
 (setq require-final-newline nil
 	  mode-require-final-newline nil)

@@ -23,6 +23,25 @@
   (set-face-attribute 'window-divider-last-pixel nil
     :foreground (face-background 'default)))
 
+;;(defun my-update-header ()
+;;  (mapc
+;;    (lambda (window)
+;;      (with-current-buffer (window-buffer window)
+;;        ;; don't mess with buffers that don't have a header line
+;;        (when header-line-format
+;;          (let ((original-format (get 'header-line-format 'original))
+;;                 (inactive-face 'face-faded)) ; change this to your favorite inactive header line face
+;;            ;; if we didn't save original format yet, do it now
+;;            (when (not original-format)
+;;              (put 'header-line-format 'original header-line-format)
+;;              (setq original-format header-line-format))
+;;            ;; check if this window is selected, set faces accordingly
+;;            (if (eq window (selected-window))
+;;              (setq header-line-format original-format)
+;;              (setq header-line-format `(:propertize ,original-format face ,inactive-face)))))))
+;;    (window-list)))
+;;(add-hook 'buffer-list-update-hook #'my-update-header)
+
 (defun blossom ()
   (setq frame-background-mode 'light)
   (set-background-color "#ede6e3")
@@ -67,10 +86,6 @@
   (set-modeline-faces)
 
   ;; fonts
-  ;;(let* ((serif-font (cond ((x-list-fonts "ETBembo") "ETBembo")
-  ;;												 ((x-list-fonts "Cormorant Garamond") "Cormorant Garamond")
-  ;;												 ((x-family-fonts "Serif") "Serif")
-  ;;												 (nil (warn "Can't find a font")))))
   (set-face-attribute 'variable-pitch nil
     :family "ETBembo"
     :height 147)
@@ -146,12 +161,7 @@
   (set-modeline-faces)
 
   ;; fonts
-  ;;(defun serif-font ()
-  ;;	(cond ((x-list-fonts "ETBembo") '"ETBembo")
-  ;;				((x-list-fonts "Cormorant Garamond") '"Cormorant Garamond")
-  ;;				((x-family-fonts "Serif") '"Serif")))
   (set-face-attribute 'variable-pitch nil
-    ;;:family (serif-font)
     :family "ETBembo"
     :height 147)
   (set-face-attribute 'fixed-pitch nil :family "SFMono" :height 113)

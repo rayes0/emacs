@@ -3,6 +3,11 @@
   'variable-pitch-mode
   'visual-line-mode)
 
+;; make some usability changes
+(setq-default sentence-end-double-space nil)
+(delete-selection-mode t)
+(setq compilation-scroll-output t)
+
 (require 'general)
 
 ;; shell script

@@ -24,7 +24,6 @@
     org-odd-levels-only t
 
     org-ellipsis " ⬎"
-
     org-display-inline-images t
     org-redisplay-inline-images t
     org-startup-with-inline-images t
