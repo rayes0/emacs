@@ -1,8 +1,8 @@
 ;; General Theme Settings
 
 (defgroup blossom nil
-	"Faces for the blossom theme"
-	:prefix "face-")
+  "Faces for the blossom theme"
+  :prefix "face-")
 
 ;; Do not show prefix when displaying the blossom group
 (setq custom-unlispify-remove-prefixes t)
@@ -29,7 +29,7 @@
 
 (defface face-italic-faded nil
   "faded italic version"
- :group 'blossom)
+  :group 'blossom)
 
 (defface face-italic nil
   "normal italic face"
@@ -58,74 +58,58 @@
   :group 'blossom)
 
 
-;; Mode line (this might be slow because of the "☰" that requires substitution)
-;; This line below makes things a bit faster
-;; (set-fontset-font "fontset-default"  '(#x2600 . #x26ff) "Victor Mono Italic 12")
-
-(define-key mode-line-major-mode-keymap [header-line]
-  (lookup-key mode-line-major-mode-keymap [mode-line]))
-
-(defun mode-line-render (left right)
-  (let* ((available-width (- (window-width) (length left) )))
-    (format (format "%%s %%%ds" available-width) left right)))
-(setq-default mode-line-format
-     '((:eval
-       (mode-line-render
-       (format-mode-line (list
-         (propertize "☰" 'face `(:inherit mode-line-buffer-id)
-                         'help-echo "Mode(s) menu"
-                         'mouse-face 'mode-line-highlight
-                         'local-map   mode-line-major-mode-keymap)
-         " %b "
-         (if (and buffer-file-name (buffer-modified-p))
-             (propertize "(modified)" 'face `(:inherit face-faded)))))
-       (format-mode-line
-        (propertize "%4l:%2c  " 'face `(:inherit face-faded)))))))
-
-
 ;; Buttons
 (defun set-button-faces ()
   (set-face-attribute 'custom-button nil
-                      :foreground (face-foreground 'face-faded)
-                      :background (face-background 'face-subtle)
-                      :box `(:line-width 1
-                             :color ,(face-foreground 'face-faded)
-                             :style nil))
+    :foreground (face-foreground 'face-faded)
+    :background (face-background 'face-subtle)
+    :box `(:line-width 1
+            :color ,(face-foreground 'face-faded)
+            :style nil))
   (set-face-attribute 'custom-button-mouse nil
-                      :foreground (face-foreground 'default)
-                      ;; :background (face-foreground 'face-faded)
-                      :inherit 'custom-button
-                      :box `(:line-width 1
-                             :color ,(face-foreground 'face-subtle)
-                             :style nil))
+    :foreground (face-foreground 'default)
+    ;; :background (face-foreground 'face-faded)
+    :inherit 'custom-button
+    :box `(:line-width 1
+            :color ,(face-foreground 'face-subtle)
+            :style nil))
   (set-face-attribute 'custom-button-pressed nil
-                      :foreground (face-background 'default)
-                      :background (face-foreground 'face-salient)
-                      :inherit 'face-salient
-                      :box `(:line-width 1
-                             :color ,(face-foreground 'face-salient)
-                             :style nil)
-                      :inverse-video nil))
+    :foreground (face-background 'default)
+    :background (face-foreground 'face-salient)
+    :inherit 'face-salient
+    :box `(:line-width 1
+            :color ,(face-foreground 'face-salient)
+            :style nil)
+    :inverse-video nil))
 
 (defun set-face (face style)
   "Reset a FACE and make it inherit STYLE."
   (set-face-attribute face nil
-   :foreground 'unspecified :background 'unspecified
-   :family     'unspecified :slant      'unspecified
-   :weight     'unspecified :height     'unspecified
-   :underline  'unspecified :overline   'unspecified
-   :box        'unspecified :inherit    style))
+    :foreground 'unspecified :background 'unspecified
+    :family     'unspecified :slant      'unspecified
+    :weight     'unspecified :height     'unspecified
+    :underline  'unspecified :overline   'unspecified
+    :box        'unspecified :inherit    style))
 
 ;; Structural
 ;; (set-face 'bold                                          'face-strong)
 ;; (set-face 'italic                                        'face-italic)
 ;; (set-face 'bold-italic                                   'face-strong)
-(set-face 'region                                        'face-subtle)
 (set-face 'highlight                                     'face-subtle)
 (set-face 'fixed-pitch                                       'default)
 (set-face 'fixed-pitch-serif                                 'default)
 (set-face 'variable-pitch                                    'default)
 (set-face 'cursor                                            'default)
+
+;; Highlights
+(set-face 'region                                        'face-subtle)
+(set-face-attribute 'secondary-selection nil    :background "#fbf1be")
+
+;; table.el
+(require 'table)
+(set-face-attribute 'table-cell nil
+  :foreground (face-foreground 'default)
+  :background "#dad3d0")
 
 ;; Semantic
 (set-face 'shadow                                         'face-faded)
@@ -243,15 +227,15 @@
 PROPERTIES are passed to `insert-text-button', for which this
 function is a convenience wrapper used by `describe-package-1'."
     (let ((button-text (if (display-graphic-p)
-                           text (concat "[" text "]")))
-          (button-face (if (display-graphic-p)
-                           '(:box `(:line-width 1
-                             :color "#999999":style nil)
-                            :foreground "#999999"
-                            :background "#F0F0F0")
-                         'link)))
+                         text (concat "[" text "]")))
+           (button-face (if (display-graphic-p)
+                          '(:box `(:line-width 1
+                                    :color "#999999":style nil)
+                             :foreground "#999999"
+                             :background "#F0F0F0")
+                          'link)))
       (apply #'insert-text-button button-text
-             'face button-face 'follow-link t properties)))
+        'face button-face 'follow-link t properties)))
   )
 
 ;; Flyspell

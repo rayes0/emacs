@@ -5,47 +5,40 @@
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode)) ; make org work with files ending in .org
 
 (add-hook 'org-mode-hook (lambda ()
-						   (visual-line-mode t)
-						   (variable-pitch-mode t)
-						   (flyspell-mode t)))
+                           (visual-line-mode t)
+                           (variable-pitch-mode t)
+                           (flyspell-mode t)))
 
 (with-eval-after-load 'org
   (setq
-   org-src-fontify-natively t
-   org-fontify-done-headline t
-   ;;org-fontify-whole-heading-line t
-   org-fontify-quote-and-verse-blocks t
-   org-src-tab-acts-natively t
-   org-startup-indented t
-   org-startup-truncated nil
-   org-hide-emphasis-markers t
-   org-hide-leading-stars t
-   org-pretty-entities t
-   org-odd-levels-only t
+    org-src-fontify-natively t
+    org-fontify-done-headline t
+    ;;org-fontify-whole-heading-line t
+    org-fontify-quote-and-verse-blocks t
+    org-src-tab-acts-natively t
+    org-startup-indented t
+    org-startup-truncated nil
+    org-hide-emphasis-markers t
+    org-hide-leading-stars t
+    org-pretty-entities t
+    org-odd-levels-only t
 
-   org-ellipsis " ⬎"
+    org-ellipsis " ⬎"
+    org-display-inline-images t
+    org-redisplay-inline-images t
+    org-startup-with-inline-images t
 
-   org-display-inline-images t
-   org-redisplay-inline-images t
-   org-startup-with-inline-images t
+    org-format-latex-options (plist-put org-format-latex-options :scale 1.7)
+    )
 
-   org-format-latex-options (plist-put org-format-latex-options :scale 1.7)
-   )
-
-   ;; Org babel
-   (org-babel-do-load-languages
-    'org-babel-load-languages
-    '((gnuplot . t)
-			(octave . t)))
-
-   (defun my/fix-inline-images ()
-	 (when org-inline-image-overlays
-       (org-redisplay-inline-images)))
-   (add-hook 'org-babel-after-execute-hook 'my/fix-inline-images)
+  (defun my/fix-inline-images ()
+    (when org-inline-image-overlays
+      (org-redisplay-inline-images)))
+  (add-hook 'org-babel-after-execute-hook 'my/fix-inline-images)
 
   (font-lock-add-keywords 'org-mode
-  		'(("^ *\\([-]\\) "
-  		   (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+    '(("^ *\\([-]\\) "
+        (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
   ;; The set-face function is defined in theme/general.el
   (require 'general)
@@ -69,8 +62,8 @@
   (set-face 'org-footnote                                 'face-faded)
   (set-face 'org-formula                                  'face-faded)
   (set-face 'org-headline-done                            'face-faded)
-;;  (set-face 'org-hide                                     'face-faded)
-;;  (set-face 'org-indent                                   'face-faded)
+  ;;  (set-face 'org-hide                                     'face-faded)
+  ;;  (set-face 'org-indent                                   'face-faded)
   (set-face 'org-latex-and-related                        'face-faded)
   (set-face 'org-link                                   'face-salient)
   (set-face 'org-list-dt                                  'face-faded)
@@ -111,12 +104,13 @@
 	(set-face-attribute 'org-quote            nil :slant 'italic)
 	(set-face-attribute 'org-table            nil :inherit 'fixed-pitch)
 
-	(set-face-attribute 'org-code                   nil :inherit 'fixed-pitch)
-	(set-face-attribute 'org-document-info-keyword  nil :inherit 'fixed-pitch)
-	(set-face-attribute 'org-document-info          nil :inherit 'fixed-pitch)
-	(set-face-attribute 'org-document-title         nil :slant 'italic :height 170)
-	(set-face-attribute 'org-meta-line              nil :inherit '(face-faded fixed-pitch)
-											:weight 'normal)
+  (set-face-attribute 'org-code                   nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-table            nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-document-info-keyword  nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-document-info          nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-document-title         nil :slant 'italic :height 170)
+  (set-face-attribute 'org-meta-line              nil :inherit '(face-faded fixed-pitch)
+    :weight 'normal)
 
 	(set-face-attribute 'org-level-1 nil :weight 'bold :height 180)
   (set-face-attribute 'org-level-2 nil :weight 'bold :height 170)

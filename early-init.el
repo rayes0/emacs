@@ -23,8 +23,12 @@
 
 ;; Other
 (setq default-frame-alist '((width . 112) (height . 36)
-             (vertical-scroll-bars . nil)
-			 (internal-border-width . 24)))
+                             (left . 0.5) (top . 0)
+                             (vertical-scroll-bars . nil)
+			                       (internal-border-width . 36)))
+
+;; don't warn about non emergency, useless things
+(setq warning-minimum-level :error)
 
 ;; disable dialog windows
 (setq use-dialog-box nil)

@@ -3,12 +3,11 @@
 (require 'markdown-mode)
 
 (add-hook 'markdown-mode-hook (lambda ()
-								(visual-line-mode t)
-								(variable-pitch-mode t)
-								(flyspell-mode t)))
+                                (visual-line-mode t)
+                                (variable-pitch-mode t)
+                                (flyspell-mode t)))
 
-(setq-default
- markdown-hide-markup t)
+(setq-default markdown-hide-markup t)
 
 ;; The set-face function is designed in theme/general.el
 (require 'general)

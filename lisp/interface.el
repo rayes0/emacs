@@ -3,7 +3,7 @@
 
 ;; don't auto add newline at end of file
 (setq require-final-newline nil
-			mode-require-final-newline nil)
+  mode-require-final-newline nil)
 
 ;; change all yes-or-no prompts to y-or-n
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -12,12 +12,15 @@
 (ido-mode 1)
 (ido-everywhere 1)
 
+;; icomplete mode
+(icomplete-mode 1)
+
 ;; scroll step settings
 (setq scroll-step 1
-			scroll-conservatively 10000)
-
-(set-frame-parameter (selected-frame)
-										 'internal-border-width 24)
+  scroll-conservatively 10000
+  mouse-wheel-scroll-amount '(1 ((shift) . 1))
+  mouse-wheel-progressive-speed nil
+  mouse-wheel-follow-mouse 't)
 
 ;; Other
 (add-to-list 'default-frame-alist '(font . "SFMono-11:medium"))
@@ -25,8 +28,10 @@
 ;; Line spacing
 (setq-default line-spacing 0.15)
 
-;; Tab settings
-(setq-default tab-width 2)
+;; Tab settings, use spaces by default
+(setq-default indent-tabs-mode nil
+  tab-stop-list ()
+  tab-width 2)
 (setq backward-delete-char-untabify-method 'hungry)
 
 ;; Underline line at descent position, not baseline position
@@ -46,34 +51,26 @@
 ;; Paren mode is part of the theme
 (show-paren-mode t)
 
-;; this is a purposefully long line that I hope will show some things in the fringe
-;;(fringe-mode '(0 . 0))
-;;(defface fallback '((t :family "SFMono 11"
-;;                      :inherit 'face-faded)) "Fallback")
-;;(set-display-table-slot standard-display-table 'truncation
-;;                        (make-glyph-code ?… 'fallback))
-;;(set-display-table-slot standard-display-table 'wrap
-;;                        (make-glyph-code ?↩ 'fallback))
+;; mode line
+(define-key mode-line-major-mode-keymap [header-line]
+  (lookup-key mode-line-major-mode-keymap [mode-line]))
 
-;; simplified mode line
 (defun mode-line-render (left right)
-	(let* ((available-width (- (window-width) (length left) )))
-		(format (format "%%s %%%ds" available-width) left right)))
-(setq-default mode-line-format
-							'((:eval
-								 (mode-line-render
-									(format-mode-line (list
-																		 ;; (propertize "☰" 'face `(:inherit mode-line-buffer-id)
-																		 ;;                 'help-echo "Mode(s) menu"
-																		 ;;                 'mouse-face 'mode-line-highlight
-																		 ;;                 'local-map   mode-line-major-mode-keymap)
-																		 " %b "
-																		 (if (and buffer-file-name (buffer-modified-p))
-																				 (propertize "(modified)" 'face `(:inherit face-faded)))))
-									(format-mode-line
-									 (propertize "%4l:%2c | %m " 'face `(:inherit face-faded)))))))
+  (let* ((available-width (- (window-width) (length left) )))
+    (format (format "%%s %%%ds" available-width) left right)))
 
-;; move modeline to the top of the buffer
+(setq-default mode-line-format
+  '((:eval
+      (mode-line-render
+        (format-mode-line (list
+                            " %b "
+                            (if (and buffer-file-name (buffer-modified-p))
+                              (propertize "(modified)" 'face `(:inherit face-faded)))))
+        (format-mode-line
+          (propertize "%4l:%2c | %m " 'face `(:inherit face-faded)))))))
+
+
+;; use only the header line
 (setq-default header-line-format mode-line-format)
 (setq-default mode-line-format'(""))
 
@@ -81,5 +78,6 @@
 (setq window-divider-default-right-width 3)
 (setq window-divider-default-places 'right-only)
 (window-divider-mode)
+
 
 (provide 'interface)
