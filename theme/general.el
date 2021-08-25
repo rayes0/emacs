@@ -240,8 +240,10 @@ function is a convenience wrapper used by `describe-package-1'."
 
 ;; Flyspell
 (with-eval-after-load 'flyspell
-  (set-face 'flyspell-duplicate                         'face-popout)
-  (set-face 'flyspell-incorrect                         'face-popout))
+  ;;(set-face 'flyspell-duplicate                         'face-popout)
+  ;;(set-face 'flyspell-incorrect                         'face-popout))
+  (set-face-attribute 'flyspell-incorrect nil :inherit 'face-strong :underline "red")
+  (set-face-attribute 'flyspell-duplicate nil :inherit 'face-strong :underline "red"))
 
 ;; Ido 
 (with-eval-after-load 'ido

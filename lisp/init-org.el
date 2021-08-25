@@ -21,7 +21,6 @@
     org-hide-emphasis-markers t
     org-hide-leading-stars t
     org-pretty-entities t
-    org-odd-levels-only t
 
     org-ellipsis " ⬎"
     org-display-inline-images t
@@ -43,9 +42,9 @@
   ;; The set-face function is defined in theme/general.el
   (require 'general)
   (set-face 'org-archived                                 'face-faded)
-  (set-face 'org-checkbox                                 'face-faded)
+  ;;(set-face 'org-checkbox                                 'face-faded)
   (set-face 'org-checkbox-statistics-done                 'face-faded)
-  (set-face 'org-checkbox-statistics-todo                 'face-faded)
+  ;;(set-face 'org-checkbox-statistics-todo                 'face-strong)
   (set-face 'org-clock-overlay                            'face-faded)
   (set-face 'org-code                                     'face-faded)
   (set-face 'org-column                                   'face-faded)
@@ -71,7 +70,7 @@
   (set-face 'org-meta-line                                'face-faded)
   (set-face 'org-mode-line-clock                          'face-faded)
   (set-face 'org-mode-line-clock-overrun                  'face-faded)
-  (set-face 'org-priority                                 'face-faded)
+  ;;(set-face 'org-priority                                 'face-faded)
   (set-face 'org-property-value                           'face-faded)
   (set-face 'org-quote                                    'face-faded)
   (set-face 'org-scheduled                                'face-faded)
@@ -103,6 +102,12 @@
 	(set-face-attribute 'org-block-end-line   nil :inherit '(face-faded fixed-pitch))
 	(set-face-attribute 'org-quote            nil :slant 'italic)
 	(set-face-attribute 'org-table            nil :inherit 'fixed-pitch)
+
+  (set-face-attribute 'org-checkbox nil :inherit '(face-salient fixed-pitch)
+    :weight 'bold)
+  (set-face-attribute 'org-checkbox-statistics-todo nil :inherit '(face-faded fixed-pitch)
+    :weight 'bold)
+  (set-face-attribute 'org-priority nil :inherit 'fixed-pitch)
 
   (set-face-attribute 'org-code                   nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-table            nil :inherit 'fixed-pitch)
