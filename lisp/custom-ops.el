@@ -3,14 +3,19 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(org-agenda-files '("~/Notes/org/todo.org"))
   '(package-selected-packages
-     '(centered-window evil-leader org-fragtog org-download anki-editor gnuplot vterm which-key rustic evil-collection writeroom-mode eglot evil)))
+     '(counsel-world-clock counsel-codesearch counsel activity-watch-mode org-autolist undo-tree unicode-math-input math-symbols writegood-mode powerthesaurus ox-hugo centered-window evil-leader org-fragtog org-download anki-editor gnuplot vterm which-key rustic evil-collection writeroom-mode eglot evil))
+ '(safe-local-variable-values '((org-time-stamp-custom-formats "%m/%d/%y" . "%m/%d/%y"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+;; undo tree
+(global-undo-tree-mode)
 
 ;; markdown-mode
 (require 'init-mdown)
@@ -80,5 +85,14 @@
 (evil-leader/set-key "ap" #'anki-editor-push-notes)
 (evil-leader/set-key "ai" #'anki-editor-insert-note)
 (evil-leader/set-key "ac" #'anki-editor-cloze-region)
+
+;; activity watch mode
+(global-activity-watch-mode)
+
+;; swiper, counsel, ivy
+(ivy-mode t)
+(setq ivy-use-virtual-buffers t)
+(setq ivy-count-format "(%d/%d) ")
+(counsel-mode t)
 
 (provide 'custom-ops)

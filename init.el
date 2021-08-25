@@ -52,8 +52,14 @@
 (show-splash)
 (setq initial-buffer-choice (lambda () (get-buffer-create "*splash*")))
 
+(defun on-after-init ()
+  (unless (display-graphic-p (selected-frame))
+    (set-face-background 'default "unspecified-bg" (selected-frame))))
+
+(add-hook 'window-setup-hook 'on-after-init)
+
 ;; set theme
 (blossom)
-;;(sayo)
+;;(sayo))
 
 (setq gc-cons-threshold (* 2 1000 100))

@@ -79,5 +79,8 @@
 (setq window-divider-default-places 'right-only)
 (window-divider-mode)
 
+;; allow recursive minibuffer
+(setq enable-recursive-minibuffers t)
+(minibuffer-depth-indicate-mode t)
 
 (provide 'interface)
