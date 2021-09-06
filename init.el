@@ -10,6 +10,7 @@
 
 (require 'init-text)
 (require 'init-org)
+(require 'init-system)
 
 (require 'custom-ops)
 (setq custom-file (expand-file-name "./lisp/custom-ops.el" user-emacs-directory))
@@ -30,9 +31,6 @@
   kept-new-versions 10
   kept-old-versions 2)
 
-(setq require-final-newline nil
-	  mode-require-final-newline nil)
-(setq backward-delete-char-untabify-method 'hungry)
 (fset 'yes-or-no-p 'y-or-n-p)
 (setq confirm-kill-emacs 'y-or-n-p)
 
@@ -50,7 +48,7 @@
 
 (load-file (expand-file-name "./data/Splash.el" user-emacs-directory))
 (show-splash)
-(setq initial-buffer-choice (lambda () (get-buffer-create "*splash*")))
+(setq initial-major-mode 'org-mode)
 
 (defun on-after-init ()
   (unless (display-graphic-p (selected-frame))
@@ -60,6 +58,6 @@
 
 ;; set theme
 (blossom)
-;;(sayo))
+;;(sayo)
 
 (setq gc-cons-threshold (* 2 1000 100))

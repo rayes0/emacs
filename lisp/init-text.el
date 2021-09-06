@@ -5,8 +5,12 @@
 
 ;; make some usability changes
 (setq-default sentence-end-double-space nil)
-(delete-selection-mode t)
 (setq compilation-scroll-output t)
+(delete-selection-mode t)
+
+(setq backward-delete-char-untabify-method 'hungry
+  require-final-newline nil
+	mode-require-final-newline nil)
 
 (require 'general)
 

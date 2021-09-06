@@ -15,6 +15,9 @@
 ;; icomplete mode
 (icomplete-mode 1)
 
+;; windmove bindings
+(windmove-default-keybindings)
+
 ;; scroll step settings
 (setq scroll-step 1
   scroll-conservatively 10000

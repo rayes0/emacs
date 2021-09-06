@@ -4,8 +4,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(org-agenda-files '("~/Notes/org/todo.org"))
-  '(package-selected-packages
-     '(counsel-world-clock counsel-codesearch counsel activity-watch-mode org-autolist undo-tree unicode-math-input math-symbols writegood-mode powerthesaurus ox-hugo centered-window evil-leader org-fragtog org-download anki-editor gnuplot vterm which-key rustic evil-collection writeroom-mode eglot evil))
+ '(package-selected-packages
+    '(ox-pandoc ytdious ivy-hydra counsel-world-clock counsel-codesearch counsel activity-watch-mode org-autolist undo-tree unicode-math-input math-symbols writegood-mode powerthesaurus ox-hugo centered-window evil-leader org-fragtog org-download anki-editor gnuplot vterm which-key rustic writeroom-mode eglot evil))
  '(safe-local-variable-values '((org-time-stamp-custom-formats "%m/%d/%y" . "%m/%d/%y"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -24,16 +24,17 @@
 
 ;; evil-mode
 ;; need these before
-(setq-default evil-want-keybinding nil)
 (setq evil-disable-insert-state-bindings t)
+(setq evil-default-state 'insert)
+(defvaralias 'evil-shift-width 'tab-width)
+(setq evil-want-fine-undo t)
+(setq evil-undo-system 'undo-redo)
+
 (global-evil-leader-mode)
 (evil-leader/set-leader "<SPC>")
 
-(setq evil-want-keybinding nil)
 (require 'evil)
-(require 'evil-collection)
 (evil-mode 1)
-(evil-collection-init)
 ;; make :q not kill emacs entirely, only the current buffer
 (evil-ex-define-cmd "q" 'kill-this-buffer)
 ;; must type :quit to close emacs entirely
@@ -95,5 +96,9 @@
 (setq ivy-use-virtual-buffers t)
 (setq ivy-count-format "(%d/%d) ")
 (counsel-mode t)
+(global-set-key (kbd "C-s") 'swiper-isearch)
+
+;; ytdious
+(setq ytdious-invidious-api-url "https://invidious.snopyta.org")
 
 (provide 'custom-ops)

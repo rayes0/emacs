@@ -107,6 +107,7 @@
     :weight 'bold)
   (set-face-attribute 'org-checkbox-statistics-todo nil :inherit '(face-faded fixed-pitch)
     :weight 'bold)
+  (set-face-attribute 'org-checkbox-statistics-done nil :inherit '(face-faded fixed-pitch))
   (set-face-attribute 'org-priority nil :inherit 'fixed-pitch)
 
   (set-face-attribute 'org-code                   nil :inherit 'fixed-pitch)
@@ -146,6 +147,8 @@
   (set-face 'org-agenda-filter-tags                       'face-faded)
   ;; fixes issue #18 (set-face 'org-agenda-property-face                     'face-faded)
   (set-face 'org-agenda-restriction-lock                  'face-faded)
-  (set-face 'org-agenda-structure                        'face-faded))
+  (set-face 'org-agenda-structure                        'face-faded)
+
+  (setq org-agenda-start-with-follow-mode t))
 
 (provide 'init-org)
