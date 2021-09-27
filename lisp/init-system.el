@@ -5,6 +5,7 @@
 
 ;; docview
 (setq doc-view-resolution 300)
+(setq doc-view-continuous t)
 
 ;; eshell
 (with-eval-after-load 'eshell
@@ -32,5 +33,15 @@
     (set-face-attribute 'eshell-ls-executable nil :weight 'normal)
     )
   )
+
+;; comint
+(setq ansi-color-names-vector
+  ["#ede6e3" "#ce9c85" "#839773" "#a09c80" "#8f8678" "#9c7b9c" "#75998e" "#685c56"])
+(setq ansi-color-map (ansi-color-make-color-map)) 
+(with-eval-after-load 'comint
+  (setq comint-prompt-read-only t
+    comint-input-ignoredups t
+    comint-completion-autolist t
+    ))
 
 (provide 'init-system)

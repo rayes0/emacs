@@ -1,4 +1,4 @@
-(setq gc-cons-threshold (* 100 1000 100))
+(setq gc-cons-threshold 20000000)
 
 (add-to-list 'load-path (expand-file-name "./lisp" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "./theme" user-emacs-directory))
@@ -35,8 +35,8 @@
 (setq confirm-kill-emacs 'y-or-n-p)
 
 (setq completion-ignore-case t)
-(ido-mode 1)
-(ido-everywhere 1)
+;;(ido-mode 1)
+;;(ido-everywhere 1)
 
 (require 'package)
 (add-to-list 'package-archives
@@ -48,7 +48,6 @@
 
 (load-file (expand-file-name "./data/Splash.el" user-emacs-directory))
 (show-splash)
-(setq initial-major-mode 'org-mode)
 
 (defun on-after-init ()
   (unless (display-graphic-p (selected-frame))
@@ -59,5 +58,3 @@
 ;; set theme
 (blossom)
 ;;(sayo)
-
-(setq gc-cons-threshold (* 2 1000 100))

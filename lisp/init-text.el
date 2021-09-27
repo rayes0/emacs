@@ -3,6 +3,8 @@
   'variable-pitch-mode
   'visual-line-mode)
 
+(setq kill-ring-max 30)
+
 ;; make some usability changes
 (setq-default sentence-end-double-space nil)
 (setq compilation-scroll-output t)

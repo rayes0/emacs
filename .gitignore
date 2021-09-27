@@ -14,3 +14,7 @@ request/
 bookmarks
 tramp
 eln-cache/
+games/
+speed-type
+package-quickstart.el
+.persistent-scratch

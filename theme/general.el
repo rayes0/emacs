@@ -36,7 +36,11 @@
   :group 'blossom)
 
 (defface face-subtle nil
-  "Background face for suggesting physical areas"
+  "background face for suggesting physical areas"
+  :group 'blossom)
+
+(defface face-block nil
+  "face with background tint for block"
   :group 'blossom)
 
 ;; Code faces
@@ -111,15 +115,31 @@
   :foreground (face-foreground 'default)
   :background "#dad3d0")
 
+;; replace.el
+(set-face-attribute 'match nil    :background "#fbf1be")
+
 ;; Semantic
 (set-face 'shadow                                         'face-faded)
 (set-face 'success                                      'face-salient)
 (set-face 'warning                                       'face-popout)
 (set-face 'error                                       'face-critical)
 
+;; linum
+(with-eval-after-load 'linum
+  (set-face-attribute 'linum nil
+    :inherit '(face-faded fixed-pitch))
+    ;;:inherit '(face-block fixed-pitch))
+  (defun linum-format-func (line)
+    (let ((w (length (number-to-string (count-lines (point-min) (point-max))))))
+        (propertize (format (format "%%%dd " w) line) 'face 'linum)))
+  (setq linum-format 'linum-format-func))
+
 ;; General
 (set-face 'buffer-menu-buffer                            'face-strong)
-(set-face 'minibuffer-prompt                             'face-strong)
+(set-face 'minibuffer-prompt                              'face-faded)
+(set-face-attribute 'minibuffer-prompt nil
+  :weight 'bold
+  :inherit 'face-faded)
 (set-face 'link                                         'face-salient)
 (set-face 'fringe                                         'face-faded)
 (set-face 'isearch                                       'face-strong)

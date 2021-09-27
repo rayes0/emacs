@@ -21,12 +21,13 @@
 ;; scroll step settings
 (setq scroll-step 1
   scroll-conservatively 10000
-  mouse-wheel-scroll-amount '(1 ((shift) . 1))
+  mouse-wheel-scroll-amount '(3 ((shift) . 1))
   mouse-wheel-progressive-speed nil
-  mouse-wheel-follow-mouse 't)
+  mouse-wheel-follow-mouse t)
 
 ;; Other
-(add-to-list 'default-frame-alist '(font . "SFMono-11:medium"))
+(add-to-list 'default-frame-alist '(font . "Cascadia Code 11"))
+(set-face-attribute 'default nil :font "Cascadia Code 11")
 
 ;; Line spacing
 (setq-default line-spacing 0.15)
@@ -59,23 +60,34 @@
   (lookup-key mode-line-major-mode-keymap [mode-line]))
 
 (defun mode-line-render (left right)
-  (let* ((available-width (- (window-width) (length left) )))
-    (format (format "%%s %%%ds" available-width) left right)))
+  (append left
+    (list (format (format "%%%ds" (- (window-total-width)
+                      (+ (length (format-mode-line left))
+                        (length (format-mode-line right)))))
+            ""))
+    right))
+
+;;(defun mode-line-right-render (text)
+;;  (format "%s%s"
+;;    (propertize " "
+;;      'display
+;;      `((space :align-to (- right, (length (format-mode-line text))))))
+;;    (format-mode-line text)))
 
 (setq-default mode-line-format
-  '((:eval
-      (mode-line-render
-        (format-mode-line (list
-                            " %b "
-                            (if (and buffer-file-name (buffer-modified-p))
-                              (propertize "(modified)" 'face `(:inherit face-faded)))))
-        (format-mode-line
-          (propertize "%4l:%2c | %m " 'face `(:inherit face-faded)))))))
+  '((:eval (mode-line-render
+             (list " %I %P")
+             (list
+               (propertize "%b" 'face `(:slant italic))
+               (if (and buffer-file-name (buffer-modified-p))
+                 (propertize "*" 'face `(:inherit face-faded)))
+               (propertize " (%m)" 'face `(:inherit face-faded))
+               )))))
 
 
 ;; use only the header line
-(setq-default header-line-format mode-line-format)
-(setq-default mode-line-format'(""))
+;;(setq-default header-line-format mode-line-format)
+;;(setq-default mode-line-format nil)
 
 ;; Vertical window divider
 (setq window-divider-default-right-width 3)
@@ -85,5 +97,65 @@
 ;; allow recursive minibuffer
 (setq enable-recursive-minibuffers t)
 (minibuffer-depth-indicate-mode t)
+
+;; replace list-buffers with ibuffer
+(require 'ibuffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+(defun my/human-readable-file-sizes-to-bytes (string)
+  "Convert a human-readable file size into bytes."
+  (interactive)
+  (cond
+    ((string-suffix-p "G" string t)
+      (* 1000000000 (string-to-number (substring string 0 (- (length string) 1)))))
+    ((string-suffix-p "M" string t)
+      (* 1000000 (string-to-number (substring string 0 (- (length string) 1)))))
+    ((string-suffix-p "K" string t)
+      (* 1000 (string-to-number (substring string 0 (- (length string) 1)))))
+    (t
+      (string-to-number (substring string 0 (- (length string) 1))))
+    )
+  )
+
+(defun my/bytes-to-human-readable-file-sizes (bytes)
+  "Convert number of bytes to human-readable file size."
+  (interactive)
+  (cond
+    ((> bytes 1000000000) (format "%10.1fG" (/ bytes 1000000000.0)))
+    ((> bytes 100000000) (format "%10.0fM" (/ bytes 1000000.0)))
+    ((> bytes 1000000) (format "%10.1fM" (/ bytes 1000000.0)))
+    ((> bytes 100000) (format "%10.0fk" (/ bytes 1000.0)))
+    ((> bytes 1000) (format "%10.1fk" (/ bytes 1000.0)))
+    (t (format "%10d" bytes)))
+  )
+
+;; Use human readable Size column instead of original one
+(define-ibuffer-column size-h
+  (:name "Size"
+    :inline t
+    :summarizer
+    (lambda (column-strings)
+      (let ((total 0))
+        (dolist (string column-strings)
+          (setq total
+            (+ (float (my/human-readable-file-sizes-to-bytes string))
+              total)))
+        (my/bytes-to-human-readable-file-sizes total)))
+    )
+  (my/bytes-to-human-readable-file-sizes (buffer-size)))
+
+;; Modify the default ibuffer-formats
+(setq ibuffer-formats
+  '((mark modified read-only locked " "
+      (name 20 20 :left :elide)
+      " "
+      (size-h 11 -1 :right)
+      " "
+      (mode 16 16 :left :elide)
+      " "
+      filename-and-process)
+     (mark " "
+       (name 16 -1)
+       " " filename)))
 
 (provide 'interface)

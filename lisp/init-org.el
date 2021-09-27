@@ -7,28 +7,40 @@
 (add-hook 'org-mode-hook (lambda ()
                            (visual-line-mode t)
                            (variable-pitch-mode t)
-                           (flyspell-mode t)))
+                           (flyspell-mode t)
+                           (electric-indent-local-mode -1)))
 
 (with-eval-after-load 'org
   (setq
     org-src-fontify-natively t
     org-fontify-done-headline t
-    ;;org-fontify-whole-heading-line t
     org-fontify-quote-and-verse-blocks t
     org-src-tab-acts-natively t
-    org-startup-indented t
     org-startup-truncated nil
     org-hide-emphasis-markers t
     org-hide-leading-stars t
     org-pretty-entities t
+
+    org-startup-indented t
+    org-adapt-indentation t
 
     org-ellipsis " ⬎"
     org-display-inline-images t
     org-redisplay-inline-images t
     org-startup-with-inline-images t
 
-    org-format-latex-options (plist-put org-format-latex-options :scale 1.7)
-    )
+    org-special-ctrl-a/e t
+    org-special-ctrl-k t
+
+    org-format-latex-options (plist-put org-format-latex-options :scale 1.7))
+
+  (defun org-toggle-emphasis ()
+    "Toggle hiding/showing of org emphasize markers."
+    (interactive)
+    (if org-hide-emphasis-markers
+      (set-variable 'org-hide-emphasis-markers nil)
+      (set-variable 'org-hide-emphasis-markers t)))
+  (define-key org-mode-map (kbd "C-c e") 'org-toggle-emphasis)
 
   (defun my/fix-inline-images ()
     (when org-inline-image-overlays
@@ -61,8 +73,6 @@
   (set-face 'org-footnote                                 'face-faded)
   (set-face 'org-formula                                  'face-faded)
   (set-face 'org-headline-done                            'face-faded)
-  ;;  (set-face 'org-hide                                     'face-faded)
-  ;;  (set-face 'org-indent                                   'face-faded)
   (set-face 'org-latex-and-related                        'face-faded)
   (set-face 'org-link                                   'face-salient)
   (set-face 'org-list-dt                                  'face-faded)
@@ -78,8 +88,7 @@
   (set-face 'org-scheduled-today                          'face-faded)
   (set-face 'org-sexp-date                                'face-faded)
   (set-face 'org-special-keyword                          'face-faded)
-	(set-face 'org-table                                       'default)
-  (set-face 'org-tag                                      'face-faded)
+  (set-face 'org-table                                       'default)
   (set-face 'org-tag-group                                'face-faded)
   (set-face 'org-target                                   'face-faded)
   (set-face 'org-time-grid                                'face-faded)
@@ -97,11 +106,11 @@
   (set-face 'org-level-7                                 'face-strong)
   (set-face 'org-level-8                                 'face-strong)
 
-	(set-face-attribute 'org-block            nil :inherit 'fixed-pitch)
-	(set-face-attribute 'org-block-begin-line nil :inherit '(face-faded fixed-pitch))
-	(set-face-attribute 'org-block-end-line   nil :inherit '(face-faded fixed-pitch))
-	(set-face-attribute 'org-quote            nil :slant 'italic)
-	(set-face-attribute 'org-table            nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-block            nil :inherit '(face-block fixed-pitch))
+  (set-face-attribute 'org-block-begin-line nil :inherit '(face-faded face-block fixed-pitch))
+  (set-face-attribute 'org-block-end-line   nil :inherit '(face-faded face-block fixed-pitch))
+  (set-face-attribute 'org-quote            nil :slant 'italic)
+  (set-face-attribute 'org-table            nil :inherit 'fixed-pitch)
 
   (set-face-attribute 'org-checkbox nil :inherit '(face-salient fixed-pitch)
     :weight 'bold)
@@ -109,6 +118,7 @@
     :weight 'bold)
   (set-face-attribute 'org-checkbox-statistics-done nil :inherit '(face-faded fixed-pitch))
   (set-face-attribute 'org-priority nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-hide nil     :inherit 'fixed-pitch)
 
   (set-face-attribute 'org-code                   nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-table            nil :inherit 'fixed-pitch)
@@ -118,14 +128,39 @@
   (set-face-attribute 'org-meta-line              nil :inherit '(face-faded fixed-pitch)
     :weight 'normal)
 
-	(set-face-attribute 'org-level-1 nil :weight 'bold :height 180)
-  (set-face-attribute 'org-level-2 nil :weight 'bold :height 170)
-  (set-face-attribute 'org-level-3 nil :weight 'bold :height 165)
-  (set-face-attribute 'org-level-4 nil :weight 'bold :height 160)
-  (set-face-attribute 'org-level-5 nil :weight 'bold :height 155)
-  (set-face-attribute 'org-level-6 nil :weight 'bold :height 155)
-  (set-face-attribute 'org-level-7 nil :weight 'bold :height 155)
-  (set-face-attribute 'org-level-8 nil :weight 'bold :height 155))
+  (set-face-attribute 'org-level-1 nil :weight 'bold :height 160)
+  (set-face-attribute 'org-level-2 nil :weight 'bold :height 145)
+  (set-face-attribute 'org-level-3 nil :weight 'bold :height 140)
+  (set-face-attribute 'org-level-4 nil :weight 'bold :height 140)
+  (set-face-attribute 'org-level-5 nil :weight 'bold :height 135)
+  (set-face-attribute 'org-level-6 nil :weight 'bold :height 135)
+  (set-face-attribute 'org-level-7 nil :weight 'bold :height 135)
+  (set-face-attribute 'org-level-8 nil :weight 'bold :height 135)
+  (set-face-attribute 'org-tag nil :weight 'bold :inherit '(face-faded fixed-pitch)))
+
+;; latex export
+(with-eval-after-load 'ox-latex
+  (add-to-list 'org-latex-classes
+    '("tufte-book"
+       "\\documentclass{tufte-book}"
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\paragraph{%s}" . "\\paragraph*{%s}")
+       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  (add-to-list 'org-latex-classes
+    '("tufte-handout"
+       "\\documentclass{tufte-handout}"
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\paragraph{%s}" . "\\paragraph*{%s}")
+       ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+;; fix conflict with visual line mode
+(add-hook 'org-mode-hook
+  (lambda ()
+    (define-key org-mode-map "\C-a" 'org-beginning-of-line)
+    (define-key org-mode-map "\C-e" 'org-end-of-line)
+    (define-key org-mode-map "\C-k" 'org-kill-line)))
 
 
 ;; org-agenda
@@ -147,8 +182,6 @@
   (set-face 'org-agenda-filter-tags                       'face-faded)
   ;; fixes issue #18 (set-face 'org-agenda-property-face                     'face-faded)
   (set-face 'org-agenda-restriction-lock                  'face-faded)
-  (set-face 'org-agenda-structure                        'face-faded)
-
-  (setq org-agenda-start-with-follow-mode t))
+  (set-face 'org-agenda-structure                        'face-faded))
 
 (provide 'init-org)
