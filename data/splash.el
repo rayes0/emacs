@@ -64,4 +64,4 @@
                 (float-time (time-subtract after-init-time before-init-time))
                 gcs-done) 'face 'face-faded))
 
-(provide 'Splash)
+(provide 'splash)

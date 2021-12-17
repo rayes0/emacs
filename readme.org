@@ -1,0 +1,132 @@
+* Emacs Configuration
+[[file:previews/preview1.png]]
+[[file:previews/preview2.png]]
+
+A fairly minimal, vanilla configuration for emacs. It was written mostly from scratch, though some functions are taken/inspired by [[https://github.com/rougier/elegant-emacs][elegant-emacs]].
+
+** Dependencies
+- Emacs built from master branch. Older versions are not guaranteed to work. If you have an emacs version < 27, this config definitely won't work. Given the various enhancements, I don't think you should be running a version less than 27 anyways.
+- Fonts:
+  - Fixed pitch: Cascadia code
+  - Variable pitch: ETBembo
+
+** Recommended Usage
+Make sure to check the =lisp/custom-ops.el= before you use the config. These contain system specific options that you will need to change to match your system. In fact, if you want you can remove the contents of the entire file, leaving only ~(provide 'custom-ops)~. I recommend you put all your custom system-specific configuration in this one file, so it's all in one place. This is also the file which stores your options set with ~M-x customize~.
+
+This config is created with the intent to replace most system interaction with emacs. Though the startup time is fairly reasonable due to lazy loading most things (should be <1s on any relatively modern system), using emacs as a daemon is still highly recommended. Here are some additional usage info about this config:
+- Packages :: I use the built-in package.el. I prefer managing the loading of packages manually rather than using something like ~use-package~, though you can use that if you want to. If you want to a streamlined way to fetch code snippets from places like EmacsWiki or Github that aren't in any package repo, I strongly suggest using ~quelpa~ recipes. Don't forget to run ~M-x package-refresh-contents~ each time before you perform package actions.
+- Org-mode :: This config is fairly heavily optimized for writing in Org-mode.
+  - The default LaTeX compiler is ~lualatex~, so if you are planning on exporting with LaTeX, make sure you have that installed, or change it.
+  - I recommend using Org agenda for planning. It can be called with ~C-c a~.
+  - I recommend the additional org packages to look into: ~org-cdlatex~ , ~org-download~, ~org-fragtog~
+  - For citing sources in academic writing, the following is the setup I use, integrating the built-in org-cite (~C-c C-x @~) with BibTeX:
+  #+begin_src elisp
+    ;; Use after M-x package-install bibtex-completion
+    ;; replace paths with ones on your system
+    (require 'bibtex-completion)
+    (setq bibtex-completion-bibliography '("~/media/academic/references.bib")
+      bibtex-completion-library-path "~/media/academic/pdfs/"
+      bibtex-completion-notes-path "~/media/academic/notes/")
+
+    (defun open-pdf-from-bibtex ()
+      "Open a pdf file from a bibtex entry, if it exists"
+      (interactive)
+      (bibtex-completion-open-pdf (list (bibtex-completion-get-key-bibtex))))
+    (defun open-notes-from-bibtex ()
+      (interactive)
+      (bibtex-completion-edit-notes (list (bibtex-completion-get-key-bibtex))))
+
+    (define-key bibtex-mode-map (kbd "C-c C-v p") 'open-pdf-from-bibtex)
+    (define-key bibtex-mode-map (kbd "C-c C-v n") 'open-notes-from-bibtex)
+
+    (setq org-cite-global-bibliography bibtex-completion-bibliography)
+  #+end_src
+- Shell commands :: 90% of shell commands can be run through emacs using the ~(shell-command)~ (M-S-!)and ~(async-shell-command)~ (M-S-&) functions. If you need to run a command in another directory, this config allows you to prefix a negative argument (C-u -1) before these to select a directory. In the case you need an interactive shell, I recommend the built-in ~eshell~, some usability customizations of it are included in this config. In the case you need a full terminal emulator, I recommend the ~vterm~ package.
+- Dired :: This config includes configuration for ~dired~. Before you use it, I would very strongly recommend you install and enable the ~dired-async~ package. Otherwise, if you move a large file that takes some time, it will block emacs until the operation is finished.
+- RSS/atom feed reader :: This config includes configuration for the built-in ~newsticker~. If you have ~curl~ installed, I strongly recommend you to use that instead of emacs built-in ~(url-retrieve)~, which is often the root source of a lot of complaints of this package being slower and worse than elfeed (which uses curl by default).
+  #+begin_src elisp
+    (setq newsticker-retrieval-method 'extern
+      newsticker-wget-name "curl"
+      newsticker-wget-arguments '("--silent" "--location"))
+  #+end_src
+- Matrix and IRC :: I recommend using ~ement~ for Matrix, and the builtin ~ERC~ for IRC.
+- Light/Dark theme :: This config includes both a light and dark theme. The default theme is light theme and the function is called ~blossom~. The dark theme function is called ~sayo~. To toggle theme on the fly, use ~M-x theme-toggle~.
+- Splash Screen :: This config includes a very rudimentary splash screen (see ~data/splash.el~) which shows an image, and the init time. To customize the images, just change the files in the ~data/splash-img~ directory. An image will be randomly chosen from there. The names of the files don't matter, and you can use any image type supported by your build of emacs.
+- Ligatures :: Use this snippet with [[https://github.com/mickeynp/ligature.el][this]] (assuming you are using Cascadia code and ET Bembo). Note that performance will be impacted:
+  #+begin_src elisp
+    (let ((mono-ligset '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+                          ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                          "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                          "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                          "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                          "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                          "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                          "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                          ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                          "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                          "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                          "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                          "\\\\" "://"))
+           (variable-ligset '("fl" "fi" "ffi" "ffl")))
+      (ligature-set-ligatures 't '("www"))
+      (dolist (mode '(eww-mode org-mode))
+        (ligature-set-ligatures mode variable-ligset))
+      (ligature-set-ligatures 'prog-mode mono-ligset)
+      (ligature-set-ligatures 'org-mode mono-ligset) ;; for codeblocks
+      (global-ligature-mode t))
+  #+end_src
+- Buffer management :: This config comes with configuration for ibuffer. You can set your own rules for filter groups. For example, I have:
+  #+begin_src elisp
+    (setq ibuffer-saved-filter-groups
+      '(("main"
+          ("MODIFIED" (and
+                        (modified . t)
+                        (visiting-file . t)))
+          ("term" (or
+                    (mode . vterm-mode)
+                    (mode . eshell-mode)
+                    (mode . term-mode)
+                    (mode . shell-mode)))
+          ("planning" (or
+                        (name . "^\\*Calendar\\*$")
+                        (name . "^diary$")
+                        (mode . org-agenda-mode)))
+          ("blog" (filename . "/sites/personal-site/"))
+          ("browser" (mode . xwidget-webkit-mode))
+          ("notes" (and (filename . "/Notes/")
+                     (or (mode . org-mode)
+                       (mode . markdown-mode))))
+          ("org" (mode . org-mode))
+          ("books" (filename . "/Books/"))
+          ("docs" (or
+                    (mode . pdf-view-mode)
+                    (mode . doc-view-mode)))
+          ("img" (mode . image-mode))
+          ("elisp" (or (filename . "/.emacs.d/")
+                     (filename . "/.config/emacs/")
+                     (mode . Custom-mode)))
+          ("config" (or (filename . "/.config/")
+                      (filename . "/.themes/")))
+          ("code" (or
+                    (derived-mode . prog-mode)
+                    (mode . ess-mode)
+                    (filename . "/projects/")))
+          ("dired" (mode . dired-mode))
+          ("chat" (or
+                    (mode . ement-room-list-mode)
+                    (mode . ement-room-mode)))
+          ("help" (or (name . "\*Help\*")
+                    (name . "\*Apropos\*")
+                    (name . "\*info\*")
+                    (mode . help-mode)))
+          ("internal" (name . "^\*.*$"))
+          ("other" (name . "^.*$"))
+          )))
+    (add-hook 'ibuffer-mode-hook
+      (lambda ()
+        (ibuffer-auto-mode 1)
+        (ibuffer-switch-to-saved-filter-groups "main")))
+  #+end_src
+- Scratch buffer :: The scratch buffer is very useful for storing temporary information and testing code. This config is set up with Org-mode in the scratch buffer with three headings and a code block for testing. I highly recommend using [[https://github.com/Fanael/persistent-scratch][persistent-scratch]] to save the scratch buffer across sessions.
+- Scrolling enhancements :: This config comes with reasonable defaults for keyboard and mouse wheel scrolling. If you would like smooth scrolling, I recommend the [[https://github.com/io12/good-scroll.el][good-scroll]] package.
+- Use =M-x customize= for interactive customization. Your custom options will be stored in =lisp/custom-ops.el=. Or just edit any of the files directly. You don't need black magic or anything :)

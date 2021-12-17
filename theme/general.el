@@ -93,7 +93,8 @@
     :family     'unspecified :slant      'unspecified
     :weight     'unspecified :height     'unspecified
     :underline  'unspecified :overline   'unspecified
-    :box        'unspecified :inherit    style))
+    :box        'unspecified :inverse-video 'unspecified
+    :extend     'unspecified :inherit    style))
 
 ;; Structural
 ;; (set-face 'bold                                          'face-strong)
@@ -102,7 +103,7 @@
 (set-face 'highlight                                     'face-subtle)
 (set-face 'fixed-pitch                                       'default)
 (set-face 'fixed-pitch-serif                                 'default)
-(set-face 'variable-pitch                                    'default)
+;;(set-face 'variable-pitch                                    'default)
 (set-face 'cursor                                            'default)
 
 ;; Highlights
@@ -260,10 +261,10 @@ function is a convenience wrapper used by `describe-package-1'."
 
 ;; Flyspell
 (with-eval-after-load 'flyspell
-  ;;(set-face 'flyspell-duplicate                         'face-popout)
-  ;;(set-face 'flyspell-incorrect                         'face-popout))
-  (set-face-attribute 'flyspell-incorrect nil :inherit 'face-strong :underline "red")
-  (set-face-attribute 'flyspell-duplicate nil :inherit 'face-strong :underline "red"))
+  (set-face-attribute 'flyspell-incorrect nil
+    :underline '(:color "#ce9c85" :style wave))
+  (set-face-attribute 'flyspell-duplicate nil
+    :underline '(:color "#9c7b9c" :style wave)))
 
 ;; Ido 
 (with-eval-after-load 'ido

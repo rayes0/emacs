@@ -18,3 +18,4 @@ games/
 speed-type
 package-quickstart.el
 .persistent-scratch
+pkg/

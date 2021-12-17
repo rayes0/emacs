@@ -80,8 +80,10 @@
   ;; fonts
   (set-face-attribute 'variable-pitch nil
     :family "ETBembo"
-    :height 135)
-  (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
+    :inherit 'unspecified)
+    ;;:height 135)
+  (add-to-list 'face-font-rescale-alist '("ETBembo" . 1.2))
+  (set-face-attribute 'fixed-pitch nil :family "Cascadia Code")
   
   (with-eval-after-load 'cus-edit (set-button-faces)))
 

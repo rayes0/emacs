@@ -8,9 +8,7 @@
 
 ;; set initial scratch message
 (setq initial-major-mode 'org-mode)
-(setq initial-scratch-message "#+title: Scratch
-
-* Notes
+(setq initial-scratch-message "* Notes
 
 
 * Tasks [0/0]
@@ -32,8 +30,10 @@
 ;; hide bars
 (menu-bar-mode 0)
 (tool-bar-mode 0)
-(tooltip-mode  0)
 (scroll-bar-mode 0)
+
+(tooltip-mode t)
+(setq tooltip-use-echo-area t)
 
 ;; Fringes
 (set-fringe-mode 2)
@@ -53,3 +53,5 @@
 
 ;; disable dialog windows
 (setq use-dialog-box nil)
+
+;;(setq package-enable-at-startup nil)

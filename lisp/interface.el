@@ -1,19 +1,48 @@
-;;; Text editing, spacing, and all interface settings
+;;; All interface settings
 ;;; NOTE: Some interface settings are also set in early-init.el, mainly to reduce startup time (percieved and actual)
 
-;; don't auto add newline at end of file
-(setq require-final-newline nil
-  mode-require-final-newline nil)
-
 ;; change all yes-or-no prompts to y-or-n
-(fset 'yes-or-no-p 'y-or-n-p)
+;;(fset 'yes-or-no-p 'y-or-n-p)
+(setq use-short-answers t)
+
+;; require confirmation to kill
+(setq confirm-kill-emacs 'y-or-n-p)
 
 ;; enable ido-everywhere
-(ido-mode 1)
-(ido-everywhere 1)
+;;(ido-mode 1)
+;;(ido-everywhere 1)
+;;(setq ido-enable-flex-matching t
+;;  ido-file-extensions-order '(".org")
+;;  ido-use-virtual-buffers 'auto)
+;;  show-help-function nil)
 
-;; icomplete mode
-(icomplete-mode 1)
+;; minibuffer and completion buffer tweaks
+(setq completion-auto-help t
+  completion-cycle-threshold 5
+  completion-pcm-complete-word-inserts-delimiters t
+  completion-styles '(basic flex initials)
+  completion-ignore-case t
+  completions-detailed t
+  completions-format 'vertical
+  enable-recursive-minibuffers t
+  history-delete-duplicates t
+  minibuffer-default-prompt-format " [%s]"
+  minibuffer-eldef-shorten-default t
+  minibuffer-follows-selected-frame 'hybrid
+  minibuffer-prompt-properties '(read-only t cursor-intangible face minibuffer-prompt)
+  icomplete-compute-delay 0.05
+  icomplete-max-delay-chars 2)
+(minibuffer-depth-indicate-mode t)
+(minibuffer-electric-default-mode t)
+
+(setq read-buffer-completion-ignore-case t
+  read-file-name-completion-ignore-case t)
+
+(fido-mode 1)
+(fido-vertical-mode 1)
+
+;; prettify symbols
+(global-prettify-symbols-mode 1)
 
 ;; windmove bindings
 (windmove-default-keybindings)
@@ -21,8 +50,8 @@
 ;; scroll step settings
 (setq scroll-step 1
   scroll-conservatively 10000
-  mouse-wheel-scroll-amount '(3 ((shift) . 1))
-  mouse-wheel-progressive-speed nil
+  mouse-wheel-scroll-amount '(1 ((shift) . 1))
+  mouse-wheel-progressive-speed t
   mouse-wheel-follow-mouse t)
 
 ;; Other
@@ -94,68 +123,40 @@
 (setq window-divider-default-places 'right-only)
 (window-divider-mode)
 
-;; allow recursive minibuffer
-(setq enable-recursive-minibuffers t)
-(minibuffer-depth-indicate-mode t)
+;; winner mode
+(winner-mode 1)
 
-;; replace list-buffers with ibuffer
-(require 'ibuffer)
-(global-set-key (kbd "C-x C-b") 'ibuffer)
+;; read only buffers in view mode
+(setq view-read-only t
+  help-window-select t)
 
-(defun my/human-readable-file-sizes-to-bytes (string)
-  "Convert a human-readable file size into bytes."
+;; window split function
+;; https://www.emacswiki.org/emacs/ToggleWindowSplit
+(defun toggle-window-split ()
+  "Toggle the window split"
   (interactive)
-  (cond
-    ((string-suffix-p "G" string t)
-      (* 1000000000 (string-to-number (substring string 0 (- (length string) 1)))))
-    ((string-suffix-p "M" string t)
-      (* 1000000 (string-to-number (substring string 0 (- (length string) 1)))))
-    ((string-suffix-p "K" string t)
-      (* 1000 (string-to-number (substring string 0 (- (length string) 1)))))
-    (t
-      (string-to-number (substring string 0 (- (length string) 1))))
-    )
-  )
-
-(defun my/bytes-to-human-readable-file-sizes (bytes)
-  "Convert number of bytes to human-readable file size."
-  (interactive)
-  (cond
-    ((> bytes 1000000000) (format "%10.1fG" (/ bytes 1000000000.0)))
-    ((> bytes 100000000) (format "%10.0fM" (/ bytes 1000000.0)))
-    ((> bytes 1000000) (format "%10.1fM" (/ bytes 1000000.0)))
-    ((> bytes 100000) (format "%10.0fk" (/ bytes 1000.0)))
-    ((> bytes 1000) (format "%10.1fk" (/ bytes 1000.0)))
-    (t (format "%10d" bytes)))
-  )
-
-;; Use human readable Size column instead of original one
-(define-ibuffer-column size-h
-  (:name "Size"
-    :inline t
-    :summarizer
-    (lambda (column-strings)
-      (let ((total 0))
-        (dolist (string column-strings)
-          (setq total
-            (+ (float (my/human-readable-file-sizes-to-bytes string))
-              total)))
-        (my/bytes-to-human-readable-file-sizes total)))
-    )
-  (my/bytes-to-human-readable-file-sizes (buffer-size)))
-
-;; Modify the default ibuffer-formats
-(setq ibuffer-formats
-  '((mark modified read-only locked " "
-      (name 20 20 :left :elide)
-      " "
-      (size-h 11 -1 :right)
-      " "
-      (mode 16 16 :left :elide)
-      " "
-      filename-and-process)
-     (mark " "
-       (name 16 -1)
-       " " filename)))
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+         (next-win-buffer (window-buffer (next-window)))
+         (this-win-edges (window-edges (selected-window)))
+         (next-win-edges (window-edges (next-window)))
+         (this-win-2nd (not (and (<= (car this-win-edges)
+                     (car next-win-edges))
+                     (<= (cadr this-win-edges)
+                     (cadr next-win-edges)))))
+         (splitter
+          (if (= (car this-win-edges)
+             (car (window-edges (next-window))))
+          'split-window-horizontally
+        'split-window-vertically)))
+    (delete-other-windows)
+    (let ((first-win (selected-window)))
+      (funcall splitter)
+      (if this-win-2nd (other-window 1))
+      (set-window-buffer (selected-window) this-win-buffer)
+      (set-window-buffer (next-window) next-win-buffer)
+      (select-window first-win)
+      (if this-win-2nd (other-window 1))))))
+(global-set-key (kbd "C-x |") 'toggle-window-split)
 
 (provide 'interface)

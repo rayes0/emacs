@@ -1,7 +1,6 @@
 ;; Org mode config
 
 (require 'org)
-
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode)) ; make org work with files ending in .org
 
 (add-hook 'org-mode-hook (lambda ()
@@ -11,8 +10,8 @@
                            (electric-indent-local-mode -1)))
 
 (with-eval-after-load 'org
-  (setq
-    org-src-fontify-natively t
+  (require 'org-tempo)
+  (setq org-src-fontify-natively t
     org-fontify-done-headline t
     org-fontify-quote-and-verse-blocks t
     org-src-tab-acts-natively t
@@ -23,6 +22,7 @@
 
     org-startup-indented t
     org-adapt-indentation t
+    org-startup-shrink-all-tables t
 
     org-ellipsis " ⬎"
     org-display-inline-images t
@@ -32,7 +32,9 @@
     org-special-ctrl-a/e t
     org-special-ctrl-k t
 
-    org-format-latex-options (plist-put org-format-latex-options :scale 1.7))
+    org-confirm-babel-evaluate nil
+
+    org-highlight-latex-and-related '(native latex script entities))
 
   (defun org-toggle-emphasis ()
     "Toggle hiding/showing of org emphasize markers."
@@ -64,6 +66,7 @@
   (set-face 'org-date                                     'face-faded)
   (set-face 'org-date-selected                            'face-faded)
   (set-face 'org-default                                  'face-faded)
+  (set-face 'org-dispatcher-highlight                    'face-subtle)
   (set-face 'org-document-info                            'face-faded)
   (set-face 'org-document-info-keyword                    'face-faded)
   (set-face 'org-document-title                          'face-strong)
@@ -74,6 +77,9 @@
   (set-face 'org-formula                                  'face-faded)
   (set-face 'org-headline-done                            'face-faded)
   (set-face 'org-latex-and-related                        'face-faded)
+  (set-face-attribute 'org-latex-and-related nil
+    :background (face-background 'default)
+    :inherit 'face-faded)
   (set-face 'org-link                                   'face-salient)
   (set-face 'org-list-dt                                  'face-faded)
   (set-face 'org-macro                                    'face-faded)
@@ -128,28 +134,53 @@
   (set-face-attribute 'org-meta-line              nil :inherit '(face-faded fixed-pitch)
     :weight 'normal)
 
-  (set-face-attribute 'org-level-1 nil :weight 'bold :height 160)
-  (set-face-attribute 'org-level-2 nil :weight 'bold :height 145)
-  (set-face-attribute 'org-level-3 nil :weight 'bold :height 140)
-  (set-face-attribute 'org-level-4 nil :weight 'bold :height 140)
-  (set-face-attribute 'org-level-5 nil :weight 'bold :height 135)
-  (set-face-attribute 'org-level-6 nil :weight 'bold :height 135)
-  (set-face-attribute 'org-level-7 nil :weight 'bold :height 135)
-  (set-face-attribute 'org-level-8 nil :weight 'bold :height 135)
+  (set-face-attribute 'org-level-1 nil :weight 'bold :height 130)
+  (set-face-attribute 'org-level-2 nil :weight 'bold :height 125)
+  (set-face-attribute 'org-level-3 nil :weight 'bold :height 120)
+  (set-face-attribute 'org-level-4 nil :weight 'bold :height 120)
+  (set-face-attribute 'org-level-5 nil :weight 'bold :height 113)
+  (set-face-attribute 'org-level-6 nil :weight 'bold :height 113)
+  (set-face-attribute 'org-level-7 nil :weight 'bold :height 113)
+  (set-face-attribute 'org-level-8 nil :weight 'bold :height 113)
   (set-face-attribute 'org-tag nil :weight 'bold :inherit '(face-faded fixed-pitch)))
 
 ;; latex export
 (with-eval-after-load 'ox-latex
+  (setq org-latex-compiler "lualatex")
   (add-to-list 'org-latex-classes
     '("tufte-book"
-       "\\documentclass{tufte-book}"
+       "\\documentclass{tufte-book}
+\\usepackage{ifluatex, ifxetex}
+%Next block avoids bug, from  http://tex.stackexchange.com/a/200725/1913 
+\\ifx\\ifxetex\\ifluatex\\else % if lua- or xelatex http://tex.stackexchange.com/a/140164/1913
+  \\newcommand{\\textls}[2][5]{%
+    \\begingroup\\addfontfeatures{LetterSpace=#1}#2\\endgroup
+  }
+  \\renewcommand{\\allcapsspacing}[1]{\\textls[15]{#1}}
+  \\renewcommand{\\smallcapsspacing}[1]{\\textls[10]{#1}}
+  \\renewcommand{\\allcaps}[1]{\\textls[15]{\\MakeTextUppercase{#1}}}
+  \\renewcommand{\\smallcaps}[1]{\\smallcapsspacing{\\scshape\\MakeTextLowercase{#1}}}
+  \\renewcommand{\\textsc}[1]{\\smallcapsspacing{\\textsmallcaps{#1}}}
+\\fi "
        ("\\section{%s}" . "\\section*{%s}")
        ("\\subsection{%s}" . "\\subsection*{%s}")
        ("\\paragraph{%s}" . "\\paragraph*{%s}")
        ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
   (add-to-list 'org-latex-classes
     '("tufte-handout"
-       "\\documentclass{tufte-handout}"
+       "\\documentclass{tufte-handout}
+\\usepackage{ifluatex, ifxetex}
+%Next block avoids bug, from  http://tex.stackexchange.com/a/200725/1913 
+\\ifx\\ifxetex\\ifluatex\\else % if lua- or xelatex http://tex.stackexchange.com/a/140164/1913
+  \\newcommand{\\textls}[2][5]{%
+    \\begingroup\\addfontfeatures{LetterSpace=#1}#2\\endgroup
+  }
+  \\renewcommand{\\allcapsspacing}[1]{\\textls[15]{#1}}
+  \\renewcommand{\\smallcapsspacing}[1]{\\textls[10]{#1}}
+  \\renewcommand{\\allcaps}[1]{\\textls[15]{\\MakeTextUppercase{#1}}}
+  \\renewcommand{\\smallcaps}[1]{\\smallcapsspacing{\\scshape\\MakeTextLowercase{#1}}}
+  \\renewcommand{\\textsc}[1]{\\smallcapsspacing{\\textsmallcaps{#1}}}
+\\fi "
        ("\\section{%s}" . "\\section*{%s}")
        ("\\subsection{%s}" . "\\subsection*{%s}")
        ("\\paragraph{%s}" . "\\paragraph*{%s}")
@@ -161,7 +192,6 @@
     (define-key org-mode-map "\C-a" 'org-beginning-of-line)
     (define-key org-mode-map "\C-e" 'org-end-of-line)
     (define-key org-mode-map "\C-k" 'org-kill-line)))
-
 
 ;; org-agenda
 (with-eval-after-load 'org-agenda
@@ -180,8 +210,23 @@
   (set-face 'org-agenda-filter-effort                     'face-faded)
   (set-face 'org-agenda-filter-regexp                     'face-faded)
   (set-face 'org-agenda-filter-tags                       'face-faded)
-  ;; fixes issue #18 (set-face 'org-agenda-property-face                     'face-faded)
   (set-face 'org-agenda-restriction-lock                  'face-faded)
-  (set-face 'org-agenda-structure                        'face-faded))
+  (set-face 'org-agenda-structure                         'face-faded)
+
+  (global-set-key "\C-ca" 'org-agenda)
+  (setq org-agenda-use-time-grid t
+    org-agenda-timegrid-use-ampm t
+    org-agenda-current-time-string "now ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+  (setcar (nthcdr 3 org-agenda-time-grid) "───────────────"))
+
+;; org babel load languages on demand
+;; https://emacs.stackexchange.com/questions/20577/org-babel-load-all-languages-on-demand
+(defadvice org-babel-execute-src-block (around load-language nil activate)
+  "Load language if needed"
+  (let ((language (org-element-property :language (org-element-at-point))))
+    (unless (cdr (assoc (intern language) org-babel-load-languages))
+      (add-to-list 'org-babel-load-languages (cons (intern language) t))
+      (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
+    ad-do-it))
 
 (provide 'init-org)
