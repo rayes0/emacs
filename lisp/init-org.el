@@ -1,13 +1,37 @@
 ;; Org mode config
 
 (require 'org)
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode)) ; make org work with files ending in .org
+(require 'org-agenda)
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 
 (add-hook 'org-mode-hook (lambda ()
                            (visual-line-mode t)
                            (variable-pitch-mode t)
                            (flyspell-mode t)
                            (electric-indent-local-mode -1)))
+
+(with-eval-after-load 'org-agenda
+  (require 'org-habit)
+  (setq org-habit-graph-column 57
+    org-habit-show-all-today nil
+    org-habit-completed-glyph 8226
+    org-habit-today-glyph 9702
+    org-habit-preceding-days 7
+    org-habit-show-done-always-green t)
+  (set-face-attribute 'org-habit-clear-future-face nil
+    :background (face-background 'face-block))
+  (set-face-attribute 'org-habit-clear-face nil
+    :background (face-background 'face-block))
+  (set-face-attribute 'org-habit-ready-face nil
+    :background (face-background 'face-block))
+  (set-face-attribute 'org-habit-overdue-future-face nil
+    :background (face-background 'face-subtle))
+  (set-face-attribute 'org-habit-alert-face nil
+    :background (face-background 'face-critical))
+  (set-face-attribute 'org-habit-alert-future-face nil
+    :background (face-background 'face-critical))
+  (set-face-attribute 'org-habit-overdue-face nil
+    :background (face-background 'face-critical)))
 
 (with-eval-after-load 'org
   (require 'org-tempo)
@@ -64,6 +88,8 @@
   (set-face 'org-column                                   'face-faded)
   (set-face 'org-column-title                             'face-faded)
   (set-face 'org-date                                     'face-faded)
+  (set-face-attribute 'org-date nil
+    :inherit '(face-faded fixed-pitch))
   (set-face 'org-date-selected                            'face-faded)
   (set-face 'org-default                                  'face-faded)
   (set-face 'org-dispatcher-highlight                    'face-subtle)
@@ -72,6 +98,9 @@
   (set-face 'org-document-title                          'face-strong)
   (set-face 'org-done                                        'default)
   (set-face 'org-drawer                                   'face-faded)
+  (set-face-attribute 'org-drawer nil
+    :weight 'bold
+    :inherit '(face-faded fixed-pitch))
   (set-face 'org-ellipsis                                 'face-faded)
   (set-face 'org-footnote                                 'face-faded)
   (set-face 'org-formula                                  'face-faded)
@@ -94,6 +123,8 @@
   (set-face 'org-scheduled-today                          'face-faded)
   (set-face 'org-sexp-date                                'face-faded)
   (set-face 'org-special-keyword                          'face-faded)
+  (set-face-attribute 'org-special-keyword nil
+    :inherit '(face-salient fixed-pitch))
   (set-face 'org-table                                       'default)
   (set-face 'org-tag-group                                'face-faded)
   (set-face 'org-target                                   'face-faded)
@@ -144,9 +175,12 @@
   (set-face-attribute 'org-level-8 nil :weight 'bold :height 113)
   (set-face-attribute 'org-tag nil :weight 'bold :inherit '(face-faded fixed-pitch)))
 
+(setq org-export-async-init-file (expand-file-name "./async-init.el" user-emacs-directory)
+  org-export-in-background t)
+
 ;; latex export
 (with-eval-after-load 'ox-latex
-  (setq org-latex-compiler "lualatex")
+  (setq org-latex-compiler "xelatex")
   (add-to-list 'org-latex-classes
     '("tufte-book"
        "\\documentclass{tufte-book}
@@ -217,7 +251,9 @@
   (setq org-agenda-use-time-grid t
     org-agenda-timegrid-use-ampm t
     org-agenda-current-time-string "now ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-  (setcar (nthcdr 3 org-agenda-time-grid) "───────────────"))
+  (setcar (nthcdr 3 org-agenda-time-grid) "───────────────")
+
+  (setq org-agenda-block-separator 9552))
 
 ;; org babel load languages on demand
 ;; https://emacs.stackexchange.com/questions/20577/org-babel-load-all-languages-on-demand

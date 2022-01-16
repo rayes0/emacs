@@ -1,12 +1,16 @@
+;; -*- lexical-binding: t -*-
 ;;; Settings for various interaction with the host system and emacs ecosystem
-;;(require 'general)
-;;(require 'colors)
 
 ;; dired
 (with-eval-after-load 'dired
   (setq dired-dwim-target t
-    dired-listing-switches "-Alh --dired"
-    dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\|\\`[.].*\\'")
+    dired-listing-switches "-Alh"
+    dired-use-ls-dired t
+    dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\|\\`[.].*\\'"
+    dired-always-read-filesystem t
+    dired-create-destination-dirs 'ask
+    dired-hide-details-hide-symlink-targets nil
+    dired-isearch-filenames 'dwim)
   (define-key dired-mode-map (kbd "^") (lambda () (interactive) (find-alternate-file ".."))))
 (add-hook 'dired-mode-hook 'dired-hide-details-mode)
 (add-hook 'dired-mode-hook 'dired-omit-mode)
@@ -34,9 +38,7 @@
       ((string-suffix-p "K" string t)
         (* 1000 (string-to-number (substring string 0 (- (length string) 1)))))
       (t
-        (string-to-number (substring string 0 (- (length string) 1))))
-      )
-    )
+        (string-to-number (substring string 0 (- (length string) 1))))))
 
   (defun my/bytes-to-human-readable-file-sizes (bytes)
     "Convert number of bytes to human-readable file size."
@@ -47,8 +49,7 @@
       ((> bytes 1000000) (format "%10.1fM" (/ bytes 1000000.0)))
       ((> bytes 100000) (format "%10.0fk" (/ bytes 1000.0)))
       ((> bytes 1000) (format "%10.1fk" (/ bytes 1000.0)))
-      (t (format "%10d" bytes)))
-    )
+      (t (format "%10d" bytes))))
 
   ;; Use human readable Size column instead of original one
   (define-ibuffer-column size-h
@@ -96,16 +97,36 @@
   (setq eshell-highlight-prompt nil)
   (setq eshell-prompt-function
     (lambda nil
-      (concat
+      (propertize (concat
         (if (string= (eshell/pwd) (getenv "HOME"))
-          (propertize "~" 'face `(:inherit 'face-faded :weight 'bold))
+          (propertize "~" 'face '(:inherit 'face-faded :weight 'bold))
           (replace-regexp-in-string
             (getenv "HOME")
-            (propertize "~" 'face `(:inherit 'face-faded :weight 'bold))
-            (propertize (eshell/pwd) 'face `(:inherit face-faded :weight 'bold))))
-        (propertize " λ" 'face `(:inherit 'face-faded :weight 'bold))
-        (propertize "  " 'face nil))))
-  (setq eshell-banner-message ""))
+            (propertize "~" 'face '(:inherit 'face-faded :weight 'bold))
+            (propertize (eshell/pwd) 'face '(:inherit face-faded :weight 'bold))))
+        (propertize "  λ" 'face '(:inherit 'face-faded :weight 'bold))
+                    (propertize "  " 'face nil))
+        'front-sticky '(font-lock-face read-only)
+        'rear-nonsticky '(font-lock-face read-only)
+        'read-only t)))
+  (setq eshell-banner-message ""
+    eshell-prompt-regexp "^.*  λ  "
+    eshell-hist-ignoredups 'erase
+    eshell-review-quick-commands t
+    eshell-where-to-jump 'after)
+  (setq eshell-cp-interactive-query t
+    eshell-cp-overwrite-files nil
+    eshell-ln-interactive-query t
+    eshell-mv-interactive-query t
+    eshell-mv-overwrite-files nil))
+
+(with-eval-after-load 'em-term
+  (setq eshell-visual-subcommands '(("git" "log" "diff" "show")))
+  (dolist (cmd '("mpv" "bluetoothctl" "powertop" "nvtop" "unison" "cmus"))
+    (add-to-list 'eshell-visual-commands cmd)))
+;;    (add-to-list 'eshell-visual-subcommands `("doas" ,cmd))
+  ;;  (add-to-list 'eshell-visual-subcommands `("sudo" ,cmd))))
+
 (with-eval-after-load 'em-ls
   ;;(set-face 'eshell-ls-backup 'default)
   ;;(set-face 'eshell-ls-clutter 'default)
@@ -151,8 +172,10 @@
 
 ;; shr html rendering
 (with-eval-after-load 'shr
-  (setq shr-bullet "•"))
-    ;;shr-hr-line "─"))
+  (setq shr-bullet "•"
+    shr-max-width 80
+    ;;    shr-hr-line (kbd "─")))
+    shr-hr-line 9472))
 
 ;; authinfo password entry
 (setf epa-pinentry-mode 'loopback)
@@ -198,8 +221,10 @@
 
 
 ;; bookmarks
-(set-face-attribute 'bookmark-face nil
-  :foreground (face-foreground 'face-strong)
-  :background (face-background 'face-block))
+(with-eval-after-load 'bookmark
+  (set-face-attribute 'bookmark-face nil
+    :foreground (face-foreground 'face-strong)
+    :background (face-background 'face-block))
+  (setq bookmark-save-flag 1))
 
 (provide 'init-system)

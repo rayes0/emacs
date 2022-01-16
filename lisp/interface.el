@@ -57,6 +57,9 @@
 ;; Other
 (add-to-list 'default-frame-alist '(font . "Cascadia Code 11"))
 (set-face-attribute 'default nil :font "Cascadia Code 11")
+(set-fontset-font "fontset-default" 'han (font-spec :size 16 :name "Noto Serif CJK JP") nil 'prepend)
+(set-fontset-font "fontset-default" 'kana (font-spec :size 16 :name "Noto Serif CJK JP") nil 'prepend)
+(set-fontset-font "fontset-default" 'cjk-misc (font-spec :size 16 :name "Noto Serif CJK JP") nil 'prepend)
 
 ;; Line spacing
 (setq-default line-spacing 0.15)
@@ -89,30 +92,82 @@
   (lookup-key mode-line-major-mode-keymap [mode-line]))
 
 (defun mode-line-render (left right)
-  (append left
-    (list (format (format "%%%ds" (- (window-total-width)
-                      (+ (length (format-mode-line left))
-                        (length (format-mode-line right)))))
-            ""))
-    right))
+  "Return a string of `window-width' length.
+Containing LEFT, and RIGHT aligned respectively."
+  (let ((available-width
+          (- (window-width)
+            (+ (length (format-mode-line left))
+               (length (format-mode-line right))))))
+    (append left
+            (list (format (format "%%%ds" available-width) ""))
+      right)))
 
-;;(defun mode-line-right-render (text)
-;;  (format "%s%s"
-;;    (propertize " "
-;;      'display
-;;      `((space :align-to (- right, (length (format-mode-line text))))))
-;;    (format-mode-line text)))
+;; affects `mode-line-position'
+(column-number-mode -1)
+(line-number-mode -1)
+(size-indication-mode -1)
 
-(setq-default mode-line-format
-  '((:eval (mode-line-render
-             (list " %I %P")
-             (list
-               (propertize "%b" 'face `(:slant italic))
-               (if (and buffer-file-name (buffer-modified-p))
-                 (propertize "*" 'face `(:inherit face-faded)))
-               (propertize " (%m)" 'face `(:inherit face-faded))
-               )))))
+(if (featurep 'all-the-icons)
+  (setq-default mode-line-format
+    '((:eval (mode-line-render
+               '(" %I "
+                  mode-line-position
+                  mode-line-misc-info
+                  (vc-mode vc-mode)
+                  (:eval (if (bound-and-true-p vc-mode) "  "))
+                  (:eval (custom-modeline-pyvenv-check))
+                  (:eval (if (bound-and-true-p pyvenv-virtual-env-name) "  "))
+                  (:eval (custom-modeline-flycheck-status)))
+               '((:eval (propertize "%b" 'face `(:slant italic)))
+                  (:eval (if (and buffer-file-name (buffer-modified-p))
+                           (propertize "*" 'face `(:inherit face-faded))))
+                  (:eval (if (buffer-narrowed-p)
+                           (propertize "-" 'face `(:inherit face-faded))))
+                  (:eval (format " %s  x"
+                           ;; (propertize "%m" 'face `(:inherit face-faded))
+                           (custom-modeline-mode-icon))))))))
+  (setq-default mode-line-format
+    '((:eval (mode-line-render
+               '(" %I "
+                  mode-line-position
+                  mode-line-misc-info
+                  (vc-mode vc-mode))
+               '((:eval (propertize "%b" 'face `(:slant italic)))
+                  (:eval (if (and buffer-file-name (buffer-modified-p))
+                           (propertize "*" 'face `(:inherit face-faded))))
+                  (:eval (if (buffer-narrowed-p)
+                           (propertize "-" 'face `(:inherit face-faded))))
+                  (:eval (propertize " (%m)  " 'face `(:inherit face-faded)))))))))
 
+(defun custom-modeline-mode-icon ()
+    (propertize (all-the-icons-icon-for-mode major-mode :height 0.8 :v-adjust 0.01)
+                'help-echo (format "Major-mode: `%s`" major-mode)))
+
+(defun custom-modeline-flycheck-status ()
+  (when (and (featurep 'flycheck) flycheck-mode)
+    (let* ((text (pcase flycheck-last-status-change
+                   (`finished (if flycheck-current-errors
+                                (let ((count (let-alist (flycheck-count-errors flycheck-current-errors)
+                                               (+ (or .warning 0) (or .error 0)))))
+                                  (format "✖ Err: %s" count))
+                                "✔"))
+                   (`running     "⟲")
+                   (`no-checker  "⚠ No Checker")
+                   (`not-checked "")
+                   (`errored     "⚠ Error")
+                   (`interrupted "⛔ Interrupted")
+                   (`suspicious  ""))))
+      (propertize text
+        'help-echo "Show Flycheck Errors"
+        'mouse-face '(:weight 'bold)
+        'local-map (make-mode-line-mouse-map
+                     'mouse-1 (lambda () (interactive) (flycheck-list-errors)))))))
+
+(defun custom-modeline-pyvenv-check ()
+  (when (and (featurep 'pyvenv) pyvenv-virtual-env-name)
+    (format "[%s venv: %s]"
+      (all-the-icons-icon-for-mode 'python-mode :height 0.9 :v-adjust 0.01)
+      pyvenv-virtual-env-name)))
 
 ;; use only the header line
 ;;(setq-default header-line-format mode-line-format)

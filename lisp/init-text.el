@@ -7,8 +7,7 @@
 (add-hook 'prog-mode
   'flyspell-prog-mode)
 
-(setq
-  kill-ring-max 30
+(setq kill-ring-max 30
   view-read-only t)
 
 ;; make some usability changes

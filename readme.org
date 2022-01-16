@@ -9,6 +9,7 @@ A fairly minimal, vanilla configuration for emacs. It was written mostly from sc
 - Fonts:
   - Fixed pitch: Cascadia code
   - Variable pitch: ETBembo
+  - CJK: Noto Serif CJK JP (optional)
 
 ** Recommended Usage
 Make sure to check the =lisp/custom-ops.el= before you use the config. These contain system specific options that you will need to change to match your system. In fact, if you want you can remove the contents of the entire file, leaving only ~(provide 'custom-ops)~. I recommend you put all your custom system-specific configuration in this one file, so it's all in one place. This is also the file which stores your options set with ~M-x customize~.
@@ -16,7 +17,7 @@ Make sure to check the =lisp/custom-ops.el= before you use the config. These con
 This config is created with the intent to replace most system interaction with emacs. Though the startup time is fairly reasonable due to lazy loading most things (should be <1s on any relatively modern system), using emacs as a daemon is still highly recommended. Here are some additional usage info about this config:
 - Packages :: I use the built-in package.el. I prefer managing the loading of packages manually rather than using something like ~use-package~, though you can use that if you want to. If you want to a streamlined way to fetch code snippets from places like EmacsWiki or Github that aren't in any package repo, I strongly suggest using ~quelpa~ recipes. Don't forget to run ~M-x package-refresh-contents~ each time before you perform package actions.
 - Org-mode :: This config is fairly heavily optimized for writing in Org-mode.
-  - The default LaTeX compiler is ~lualatex~, so if you are planning on exporting with LaTeX, make sure you have that installed, or change it.
+  - The default LaTeX compiler is ~xelatex~, so if you are planning on exporting with LaTeX, make sure you have that installed, or change it.
   - I recommend using Org agenda for planning. It can be called with ~C-c a~.
   - I recommend the additional org packages to look into: ~org-cdlatex~ , ~org-download~, ~org-fragtog~
   - For citing sources in academic writing, the following is the setup I use, integrating the built-in org-cite (~C-c C-x @~) with BibTeX:

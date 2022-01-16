@@ -4,21 +4,48 @@
 (add-to-list 'load-path (expand-file-name "./theme" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "./data" user-emacs-directory))
 
-(require 'interface)
-(require 'colors)
-(require 'general)
-(run-with-timer 0.5 nil
-  (lambda ()
-    (require 'init-org)
-    (require 'init-text)
-    (require 'init-system)))
+(defun my/require-all ()
+  (require 'interface)
+  (require 'colors)
+  (require 'general)
+  (require 'init-org)
+  (require 'init-text)
+  (require 'init-system)
+  ;; Theme
+  ;; (sayo)
+  (blossom))
+(load-file (expand-file-name "./data/splash.el" user-emacs-directory))
+(show-splash)
+
+;; ;; (defun my/get-window-system ()
+;; ;;   (cond ((window-system) 'pgtk)
+;; ;;     ))
+;; (if (daemonp)
+;;   (if (display-graphic-p)
+;;     (let ((frame (make-frame '((window-system . pgtk)))))
+;;       (select-frame frame)
+;;       (my/require-all))
+;;     (run-with-timer 0.5 nil #'my/require-all))
+;;   (my/require-all))
+;; (blossom)
+
+(defvar my/everything-is-loaded nil)
+(if (daemonp)
+  (add-hook 'after-make-frame-functions
+    (lambda (frame)
+      (with-selected-frame frame
+        (unless my/everything-is-loaded
+          (my/require-all)
+          (setq my/everything-is-loaded t)))))
+  (my/require-all))
 
 (package-initialize)
 (package-activate-all)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                           ("nongnu" . "https://elpa.nongnu.org/nongnu")
                           ("gnu" . "https://elpa.gnu.org/packages/")))
-                          ;;("org" . "https://orgmode.org/elpa/")))
+;;("org" . "https://orgmode.org/elpa/")))
+
 (require 'custom-ops)
 (setq custom-file (expand-file-name "./lisp/custom-ops.el" user-emacs-directory))
 (defadvice en/disable-command (around put-in-custom-file activate)
@@ -36,18 +63,26 @@
   kept-new-versions 10
   kept-old-versions 2)
 
-(load-file (expand-file-name "./data/splash.el" user-emacs-directory))
-(show-splash)
+;; (defun on-after-init ()
+;;   (unless (display-graphic-p (selected-frame))
+;;     (set-face-background 'default "unspecified-bg" (selected-frame))))
 
-(defun on-after-init ()
-  (unless (display-graphic-p (selected-frame))
-    (set-face-background 'default "unspecified-bg" (selected-frame))))
-
-(add-hook 'window-setup-hook 'on-after-init)
+;; (add-hook 'window-setup-hook 'on-after-init)
 
 ;; set theme
-(blossom)
-;;(sayo)
+;; (if (daemonp)
+;;   (lambda ()
+;;     (defvar my/theme-set nil)
+;;     (add-hook 'after-make-frame-functions
+;;       (lambda ()
+;;         (unless my/theme-set
+;;           (blossom)
+;;           ;; (sayo)
+;;           (setq my/theme-set t)))))
+;;   (blossom))
+
+;;(setq-default print-level nil
+;;  print-length nil)
 
 (setq gc-cons-threshold 1600000)
 

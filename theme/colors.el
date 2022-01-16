@@ -1,30 +1,25 @@
 ;; Colors
 
 (defun set-modeline-faces ()
-  "Mode line at top."
   (set-face 'mode-line 'default)
   (set-face 'mode-line-inactive 'face-faded)
   (set-face-attribute 'mode-line nil
+    :overline (face-foreground 'face-faded)
     :underline (face-foreground 'face-faded)
-    :inherit 'fixed-pitch)
+    :box `(:line-width 4 :color ,(face-background 'face-block))
+    :inherit 'fixed-pitch
+    :inherit 'face-block)
   (set-face-attribute 'mode-line-inactive nil
+    :overline (face-foreground 'face-faded)
     :underline (face-foreground 'face-faded)
+    :box `(:line-width 4 :color ,(face-background 'default))
     :weight 'light
     :inherit 'fixed-pitch)
   (set-face 'header-line 'face-faded)
   (set-face-attribute 'header-line nil
     :slant 'italic
+    :box `(:line-width 2 :color ,(face-background 'face-block))
     :inherit 'face-block)
-    ;;:underline (face-foreground 'face-faded))
-  ;;(set-face-attribute 'mode-line nil
-  ;;  :height 10
-  ;;  :underline (face-foreground 'default)
-  ;;  :overline nil
-  ;;  :box nil 
-  ;;  :foreground (face-background 'default)
-  ;;  :background (face-background 'default))
-  ;;(set-face 'mode-line-inactive 'mode-line)
-
   (set-face-attribute 'window-divider nil
     :foreground (face-background 'mode-line))
   (set-face-attribute 'window-divider-first-pixel nil
@@ -43,13 +38,9 @@
   (set-face-attribute 'face-critical nil :foreground "#6c605a"
     :background "#fccec1")
   (set-face-attribute 'face-popout nil :foreground "#9e552f")
-    ;;:weight 'bold)
   (set-face-attribute 'face-strong nil :foreground "#574b45")
-    ;;:weight 'regular)
-  (set-face-attribute 'face-salient nil :foreground "#407680"
-    :weight 'light)
-  (set-face-attribute 'face-faded nil :foreground "#938680"
-    :weight 'light)
+  (set-face-attribute 'face-salient nil :foreground "#407680" :weight 'light)
+  (set-face-attribute 'face-faded nil :foreground "#938680" :weight 'light)
   (set-face-attribute 'face-italic-faded nil :foreground "#8f8678"
     :slant 'italic
     :weight 'light)
@@ -70,9 +61,9 @@
   (set-face-attribute 'face-pre nil :foreground "#407680"
     :weight 'normal
     :slant 'italic)
-  (set-face-attribute 'face-light nil :foreground "#6c605a")
+  (set-face-attribute 'face-light nil :foreground "#82756f")
 
-  (set-face-attribute 'show-paren-match nil    :background "#dad3d0"
+  (set-face-attribute 'show-paren-match nil :background "#dad3d0"
     :weight 'bold)
 
   (set-modeline-faces)
@@ -81,7 +72,6 @@
   (set-face-attribute 'variable-pitch nil
     :family "ETBembo"
     :inherit 'unspecified)
-    ;;:height 135)
   (add-to-list 'face-font-rescale-alist '("ETBembo" . 1.2))
   (set-face-attribute 'fixed-pitch nil :family "Cascadia Code")
   
