@@ -1,32 +1,36 @@
 ;; -*- lexical-binding: t; eval: (ligature-mode -1) -*-
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(auth-source-save-behavior nil)
- '(org-agenda-files '("/home/rayes/Notes/org/todo.org"))
- '(package-selected-packages
-    '(eglot pyvenv lua-mode empv eshell-vterm pdf-tools elpher spray speedread elfeed sublimity darkroom ligature fanyi aria2 langtool-ignore-fonts flycheck pkg-info epl bibtex-completion ido-better-flex ement plz ido-at-point free-keys good-scroll biblio haskell-mode cmus flyspell-correct-avy-menu frame-purpose rainbow-identifiers tracking ov a dash-functional anaphora org-latex-impatient org-contrib org w3m htmlize nov sx auctex cdlatex avy bash-completion transient named-timer mediawiki app-launcher xterm-color visual-fill-column dash s tablist spinner f markdown-mode request jeison polymode poly-noweb ht async memoize lv hydra goto-chg all-the-icons beginend ido-grid-mode ido-completing-read+ el-easydraw ts quelpa indent-guide org-noter persistent-scratch smartparens all-the-icons-ibuffer all-the-icons-dired org-bullets org-superstar speed-type poly-R poly-markdown ess ytdious activity-watch-mode org-autolist undo-tree unicode-math-input math-symbols writegood-mode powerthesaurus ox-hugo centered-window org-fragtog org-download anki-editor gnuplot vterm which-key rustic writeroom-mode))
- '(pdf-view-resize-factor 1.01)
- '(safe-local-variable-values
-    '((pyvenv-activate . "./venv")
-       (eval ligature-mode -1)
-       (eval flycheck-mode nil)
-       (flycheck-mode)
-       (org-time-stamp-custom-formats "%m/%d/%y" . "%m/%d/%y"))))
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+  '(auth-source-save-behavior nil)
+  '(org-agenda-files
+     '("/home/rayes/Notes/org/Exercise.org" "/home/rayes/Notes/org/Insights.org" "/home/rayes/Notes/org/Meta.org" "/home/rayes/Notes/org/Programming.org" "/home/rayes/Notes/org/media-list.org" "/home/rayes/Notes/org/programs.org" "/home/rayes/Notes/org/tea.org" "/home/rayes/Notes/org/todo.org"))
+  '(package-selected-packages
+     '(ein polymode deferred anaphora websocket beacon smtpmail-multi lv ht spray magit magit-section git-commit with-editor transient avy-menu ytdious writeroom-mode writegood-mode which-key unicode-math-input speed-type smartparens rustic rainbow-delimiters quelpa pyvenv pytest powerthesaurus persistent-scratch pdf-tools ox-hugo org-fragtog org-download org-bullets org-autolist nov mediawiki math-symbols lua-mode ligature langtool-ignore-fonts highlight-indent-guides haskell-mode good-scroll gnuplot flyspell-correct flycheck-vale flycheck-languagetool fic-mode ess eshell-vterm empv ement elpher el-easydraw eglot company-quickhelp cmus centered-window cdlatex bibtex-completion aria2 all-the-icons-ibuffer all-the-icons-dired all-the-icons-completion aggressive-indent))
+  '(pdf-view-resize-factor 1.01)
+  '(safe-local-variable-values
+     '((pyvenv-activate . "./venv")
+        (eval ligature-mode -1)
+        (eval flycheck-mode nil)
+        (flycheck-mode)
+        (org-time-stamp-custom-formats "%m/%d/%y" . "%m/%d/%y")))
+  '(send-mail-function 'smtpmail-send-it))
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+  )
 
 ;; org agenda files
 (setq org-directory "~/Notes/org"
   org-agenda-files (list org-directory))
 
 (add-hook 'eshell-mode-hook 'eshell-vterm-mode)
+(with-eval-after-load 'em-term.el
+  (add-to-list 'eshell-visual-commands "mtpsync.sh"))
 
 (setq org-format-latex-options
   '(:foreground default
@@ -43,8 +47,8 @@
   (call-process "/home/rayes/bin/link-open" nil 0 nil url))
 (setq browse-url-browser-function 'browse-url-misc)
 
-;;(require 'cmus)
-;;(cmus-setup-default)
+;; (require 'cmus)
+;; (cmus-setup-default)
 
 ;; mediawiki
 (require 'mediawiki)
@@ -75,20 +79,21 @@
       :command '("hugo" "server" "--navigateToChanged"))))
 
 ;; ido-at-point
-(autoload 'ido-at-point-mode "ido-at-point")
-(ido-at-point-mode)
-
-;; undo tree
-;;(global-undo-tree-mode)
+;; (autoload 'ido-at-point-mode "ido-at-point")
+;; (ido-at-point-mode)
 
 ;; markdown-mode
 (require 'init-mdown)
 
 (put 'dired-find-alternate-file 'disabled nil)
 
+;; haskell
+(add-hook 'haskell-mode-hook #'flycheck-install-setup)
+
 ;; rustic-mode
-(setq rustic-lsp-client 'eglot)
-(add-hook 'rustic-mode-hook 'eglot-ensure)
+(with-eval-after-load 'rustic
+  (setq rustic-lsp-client 'eglot)
+  (add-hook 'rustic-mode-hook 'eglot-ensure))
 
 ;; eglot
 (with-eval-after-load 'eglot
@@ -96,22 +101,64 @@
   (define-key eglot-mode-map (kbd "C-c r") 'eglot-rename)
   (define-key eglot-mode-map (kbd "C-c o") 'eglot-code-action-organize-imports)
   (define-key eglot-mode-map (kbd "C-c h") 'eldoc)
-  (define-key eglot-mode-map (kbd "<f6>") 'xref-find-definitions))
+  (define-key eglot-mode-map (kbd "<f6>") 'xref-find-definitions)
+  (setq eglot-sync-connect 0))
 
-(setq eglot-sync-connect 0)
+;; flycheck with vale
+;; (flycheck-define-checker vale
+;;   "A checker for prose using vale"
+;;   :command ("vale" "--output" "line"
+;;              source)
+;;   :standard-input nil
+;;   :error-patterns
+;;   ((error line-start (file-name) ":" line ":" column ":" (id (one-or-more (not (any ":")))) ":" (message) line-end))
+;;   :modes (markdown-mode org-mode text-mode))
+;; (add-to-list 'flycheck-checkers 'vale)
+(require 'flycheck-vale)
+(flycheck-vale-setup)
 
 ;; change default python interpreter to ipython
 (setq python-shell-interpreter "ipython"
-    python-shell-interpreter-args "-i --simple-prompt --InteractiveShell.display_page=True")
+  python-shell-interpreter-args "-i --simple-prompt --InteractiveShell.display_page=True")
+
+;; highlight indent guides
+(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+(highlight-indent-guides-auto-set-faces)
+(setq highlight-indent-guides-method 'character
+  highlight-indent-guides-responsive 'top
+  highlight-indent-guides-delay 0)
+
+;; aggressive indent
+(aggressive-indent-global-mode 1)
+
+;; rainbow delimiters
+(dolist (mode '(lisp-mode common-lisp-mode elisp-mode))
+  (add-hook mode 'rainbow-delimiters-mode))
 
 ;; which-key-mode
 (which-key-mode t)
 
+;; company
+(require 'company)
+(global-company-mode 1)
+(company-quickhelp-mode 1)
+(setq company-quickhelp-delay nil
+  company-quickhelp-color-background "#dad3d0")
+(define-key company-active-map (kbd "C-h") 'company-quickhelp-manual-begin)
+(define-key company-active-map (kbd "M-h") 'company-show-doc-buffer)
+
+(set-face 'company-tooltip 'face-block)
+(set-face-attribute 'company-tooltip nil :background "#f5ece9" :inherit 'fixed-pitch)
+(set-face 'company-tooltip-common 'face-italic-faded)
+(set-face 'company-tooltip-selection 'secondary-selection)
+(set-face-attribute 'company-tooltip-scrollbar-thumb nil :background "#dad3d0")
+(set-face-attribute 'company-tooltip-scrollbar-track nil :background (face-background 'face-block))
+
 ;; spray
-(require 'spray)
-(setq spray-height 140
-  spray-margin-top 5
-  spray-margin-left 80)
+;; (require 'spray)
+;; (setq spray-height 140
+;; spray-margin-top 5
+;; spray-margin-left 80)
 
 ;; writegood-mode
 (global-set-key "\C-cg" 'writegood-mode)
@@ -157,11 +204,12 @@
 
 (require 'bibtex-completion)
 (setq bibtex-completion-bibliography
-  (if (file-directory-p "~/media/academic/")
+  (if (file-accessible-directory-p "~/media/academic/")
     (directory-files "~/media/academic/" t ".*.bib")
-    "~/media/academic/references.bib")
+    '("~/media/academic/references.bib"))
   bibtex-completion-library-path "~/media/academic/pdfs/"
-  bibtex-completion-notes-path "~/media/academic/notes/")
+  bibtex-completion-notes-path "~/media/academic/notes/"
+  org-cite-global-bibliography bibtex-completion-bibliography)
 
 (defun open-pdf-from-bibtex ()
   (interactive)
@@ -173,7 +221,7 @@
 (define-key bibtex-mode-map (kbd "C-c C-v p") 'open-pdf-from-bibtex)
 (define-key bibtex-mode-map (kbd "C-c C-v n") 'open-notes-from-bibtex)
 
-(setq org-cite-global-bibliography bibtex-completion-bibliography)
+
 
 ;;(require 'citeproc-org)
 ;;(citeproc-org-setup)
@@ -229,10 +277,13 @@
 ;;                                 (auto-revert-set-timer)))
 
 ;; all-the-icons
+(require 'all-the-icons)
 (add-hook 'ibuffer-mode-hook 'all-the-icons-ibuffer-mode)
 (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
 (with-eval-after-load 'all-the-icons-dired
   (set-face-attribute 'all-the-icons-dired-dir-face nil :foreground "#6c605a"))
+
+(all-the-icons-completion-mode 1)
 
 ;; dired async
 (dired-async-mode 1)
@@ -313,14 +364,6 @@
   (setq org-noter-notes-search-path '("~/Notes/org")))
 
 ;; avy
-;;(avy-setup-default)
-;;(define-prefix-command 'avy-map)
-;;(global-set-key (kbd "M-s") 'avy-map)
-;;(define-key avy-map (kbd "c") 'avy-goto-char)
-;;(define-key avy-map (kbd "s") 'avy-goto-char-2)
-;;(define-key avy-map (kbd "w") 'avy-goto-word-1)
-;;(define-key avy-map (kbd "l") 'avy-goto-line)
-;;(define-key avy-map (kbd "h") 'avy-org-goto-heading-timer)
 (global-set-key (kbd "M-s") 'avy-goto-char-timer)
 (setq avy-style 'pre
   avy-background t
@@ -334,6 +377,7 @@
 (define-key flyspell-mode-map (kbd "C-`") 'flyspell-correct-wrapper)
 
 ;; good-scroll
+(require 'good-scroll)
 (good-scroll-mode 1)
 (global-set-key [next] #'good-scroll-up-full-screen)
 (global-set-key [prior] #'good-scroll-down-full-screen)
@@ -344,6 +388,7 @@
   good-scroll-render-rate 0.015)
 
 ;; ement
+(require 'ement)
 (global-set-key (kbd "M-g M-l") 'ement-list-rooms)
 (with-eval-after-load 'ement
   (setq ement-save-sessions t
@@ -362,27 +407,10 @@
   (set-face-attribute 'ement-room-mention nil
     :extend t))
 
-;; quelpa recipes
-;;(quelpa '(el-easydraw :fetcher github :repo "misohena/el-easydraw"))
-;;(quelpa '(plz :fetcher github :repo "alphapapa/plz.el"))
-;;(quelpa '(ement :fetcher github :repo "alphapapa/ement.el"))
-;;(quelpa '(matrix-client :fetcher github :repo "alphapapa/matrix-client.el"))
-;;(quelpa '(app-launcher :fetcher github :repo "SebastienWae/app-launcher"))
-;;(quelpa '(emacs-webkit :fetcher github :repo "akirakyle/emacs-webkit"))
-;;(quelpa '(eva :fetcher github :repo "meedstrom/eva"))
-;;(quelpa '(ido-better-flex :fetcher github :repo "vic/ido-better-flex"))
-;;(quelpa '(flycheck-languagetool :fetcher github :repo "emacs-languagetool/flycheck-languagetool"))
-;;(quelpa '(aria2 :fetcher gitlab :repo "unmem/aria2"))
-;;(quelpa '(ligature :fetcher github :repo "mickeynp/ligature.el"))
-;;(quelpa '(zen-mode :fetcher github :repo "aki237/zen-mode"))
-;;(quelpa '(centered-window :fetcher github :repo "anler/centered-window-mode"))
-;;(quelpa '(speedread :fetcher github :repo "vapniks/speedread"))
-;;(quelpa '(empv :fetcher github :repo "isamert/empv.el"))
-;;(quelpa '(eglot :fetcher github :repo "joaotavora/eglot"))
-
 (setq empv-mpv-args '("--ytdl-format=best" "--no-terminal" "--idle" "--input-ipc-server=/tmp/empv-socket"))
 
 ;; cascadia code ligatures
+(require 'ligature)
 (let ((mono-ligset '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
@@ -404,19 +432,26 @@
   (ligature-set-ligatures 'org-mode mono-ligset) ;; for codeblocks
   (global-ligature-mode t))
 
-;; flycheck
-(global-flycheck-mode)
+;; ;; flycheck
+(require 'flycheck)
+(global-flycheck-mode 1)
 (setq flycheck-emacs-lisp-load-path 'inherit)
 (setq flycheck-global-modes '(not org-mode))
 (setq flycheck-textlint-config "~/.textlintrc.json"
   flycheck-textlint-executable "~/node_modules/.bin/textlint")
-;;(setq flycheck-languagetool-server-jar "~/.local/opt/LanguageTool-5.5/languagetool-server.jar")
 
-(setq langtool-language-tool-jar "~/.local/opt/LanguageTool-5.5/languagetool-commandline.jar")
+(setq flycheck-languagetool-server-jar "~/.local/opt/LanguageTool-5.5/languagetool-server.jar")
+
 (require 'langtool)
+(setq langtool-language-tool-jar "~/.local/opt/LanguageTool-5.5/languagetool-commandline.jar")
+
+(require 'langtool-ignore-fonts)
+(langtool-ignore-fonts-add 'org-mode
+  '(org-meta-line org-table org-indent '(org-block font-latex-math-face)
+     org-level-1))
 
 ;; pyvenv
-(pyvenv-mode nil)
+(pyvenv-mode -1)
 (pyvenv-tracking-mode 1)
 
 ;; native comp options
@@ -424,18 +459,42 @@
 (setq package-native-compile t)
 (setq native-comp-compiler-options '("-O2" "-march=skylake" "-mtune=native"))
 
-;; eaf
-;;(add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/")
-;;(add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/app/")
-;;(require 'eaf)
-;;(require 'eaf-browser)
-;;(require 'eaf-pdf-viewer)
-;;(require 'eaf-terminal)
+;; fic mode
+(require 'fic-mode)
+(define-globalized-minor-mode global-fic-mode fic-mode
+  (lambda ()
+    (when (derived-mode-p 'prog-mode)
+      (fic-mode 1))))
+  
+(global-fic-mode 1)
+(add-hook 'org-mode 'fic-mode)
+
+(set-face 'fic-face 'secondary-selection)
+(setq fic-highlighted-words '("FIXME" "TODO" "BUG" "HOMEWORK")
+  fic-activated-faces '(font-lock-doc-face font-lock-comment-face))
+
+;; smartparens
+(require 'smartparens-config)
 
 ;; centered window
 (setq cwm-centered-window-width 80)
 
+;; beacon
+(with-eval-after-load 'beacon
+  (setq beacon-color (face-background 'secondary-selection)
+    beacon-size 60)
+  (add-to-list 'beacon-dont-blink-major-modes 'eshell-mode)
+  (add-to-list 'beacon-dont-blink-major-modes 'vterm-mode)
+  (add-to-list 'beacon-dont-blink-major-modes 'term-mode)
+  (add-to-list 'beacon-dont-blink-major-modes 'comint-mode))
+
+(with-eval-after-load 'ein
+  (set-face-attribute 'ein:basecell-input-area-face nil
+    :extend t
+    :inherit 'face-block))
+
 ;; newsticker
+(require 'newsticker)
 (setq newsticker-url-list-defaults nil
   newsticker-automatically-mark-visited-items-as-old t
   newsticker-treeview-automatically-mark-displayed-items-as-old nil
@@ -483,6 +542,7 @@
      ("Gwern.net Newsletter" "https://gwern.substack.com/feed" nil 86400)
      ("Suspended Reason" "https://suspendedreason.com/feed" nil 86400)
      ("Melting Asphalt" "https://meltingasphalt.com/feed")
+     ("nearcyan" "https://nearcyan.com/feed")
      ("For me, in full bloom" "https://formeinfullbloom.wordpress.com/feed/" nil 86400)
      ("Therefore it is" "https://thereforeitis.wordpress.com/feed" nil 86400)
      ("Wrong Every Time" "https://wrongeverytime.com/feed" nil 86400)

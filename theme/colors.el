@@ -4,17 +4,18 @@
   (set-face 'mode-line 'default)
   (set-face 'mode-line-inactive 'face-faded)
   (set-face-attribute 'mode-line nil
-    :overline (face-foreground 'face-faded)
-    :underline (face-foreground 'face-faded)
+    ;; :overline (face-foreground 'face-faded)
+    ;; :underline (face-foreground 'face-faded)
     :box `(:line-width 4 :color ,(face-background 'face-block))
     :inherit 'fixed-pitch
     :inherit 'face-block)
   (set-face-attribute 'mode-line-inactive nil
-    :overline (face-foreground 'face-faded)
-    :underline (face-foreground 'face-faded)
-    :box `(:line-width 4 :color ,(face-background 'default))
+    ;; :overline (face-foreground 'face-faded)
+    ;; :underline (face-foreground 'face-faded)
+    :box `(:line-width 4 :color ,(face-background 'face-block))
     :weight 'light
-    :inherit 'fixed-pitch)
+    :inherit 'fixed-pitch
+    :inherit 'face-block)
   (set-face 'header-line 'face-faded)
   (set-face-attribute 'header-line nil
     :slant 'italic
@@ -35,18 +36,13 @@
     :foreground (face-foreground 'default)
     :background (face-background 'default))
   (set-face-background 'cursor "#6c605a")
-  (set-face-attribute 'face-critical nil :foreground "#6c605a"
-    :background "#fccec1")
+  (set-face-attribute 'face-critical nil :foreground "#6c605a" :background "#fccec1")
   (set-face-attribute 'face-popout nil :foreground "#9e552f")
   (set-face-attribute 'face-strong nil :foreground "#574b45")
   (set-face-attribute 'face-salient nil :foreground "#407680" :weight 'light)
   (set-face-attribute 'face-faded nil :foreground "#938680" :weight 'light)
-  (set-face-attribute 'face-italic-faded nil :foreground "#8f8678"
-    :slant 'italic
-    :weight 'light)
-  (set-face-attribute 'face-italic nil :foreground (face-foreground 'default)
-    :weight 'normal
-    :slant 'italic)
+  (set-face-attribute 'face-italic-faded nil :foreground "#8f8678" :slant 'italic :weight 'light)
+  (set-face-attribute 'face-italic nil :foreground (face-foreground 'default) :weight 'normal :slant 'italic)
   (set-face-attribute 'face-subtle nil :background "#e3d0cb")
   (set-face-attribute 'face-block  nil :background "#e7e0dd")
 
@@ -54,7 +50,6 @@
   (set-face-attribute 'face-identifier nil :foreground "#9e552f"
     :weight 'bold
     :slant 'italic)
-  ;;(set-face-attribute 'face-keyword nil :foreground "#995c8c"
   (set-face-attribute 'face-keyword nil :foreground (face-foreground 'default)
     :weight 'normal
     :slant 'italic)
@@ -66,16 +61,8 @@
   (set-face-attribute 'show-paren-match nil :background "#dad3d0"
     :weight 'bold)
 
-  (set-modeline-faces)
-
-  ;; fonts
-  (set-face-attribute 'variable-pitch nil
-    :family "ETBembo"
-    :inherit 'unspecified)
-  (add-to-list 'face-font-rescale-alist '("ETBembo" . 1.2))
-  (set-face-attribute 'fixed-pitch nil :family "Cascadia Code")
-  
-  (with-eval-after-load 'cus-edit (set-button-faces)))
+  (set-modeline-faces))
+;; (with-eval-after-load 'cus-edit (set-button-faces)))
 
 ;; Term
 (with-eval-after-load 'term
@@ -97,6 +84,34 @@
     :foreground "#ce9c85" :background "#ce9c85")
   (set-face-attribute 'term-color-yellow nil
     :foreground "#a09c80" :background "#a09c80"))
+
+(with-eval-after-load 'ansi-color
+  (set-face-attribute 'ansi-color-black nil
+    :foreground "#ede6e3" :background "#ede6e3")
+  (set-face-attribute 'ansi-color-bright-black nil
+    :foreground "#dad3d0" :background "#dad3d0")
+  (set-face-attribute 'ansi-color-white nil
+    :foreground "#6c605a" :background "#6c605a")
+  (set-face-attribute 'ansi-color-blue nil
+    :foreground "#8f8678" :background "#8f8678")
+  (set-face-attribute 'ansi-color-cyan nil
+    :foreground "#75998e" :background "#75998e")
+  (set-face-attribute 'ansi-color-green nil
+    :foreground "#839773" :background "#839773")
+  (set-face-attribute 'ansi-color-magenta nil
+    :foreground "#9c7b9c" :background "#9c7b9c")
+  (set-face-attribute 'ansi-color-red nil
+    :foreground "#ce9c85" :background "#ce9c85")
+  (set-face-attribute 'ansi-color-yellow nil
+    :foreground "#a09c80" :background "#a09c80")
+
+  (set-face 'ansi-color-bright-white 'ansi-color-white)
+  (set-face 'ansi-color-bright-blue 'ansi-color-blue)
+  (set-face 'ansi-color-bright-cyan 'ansi-color-cyan)
+  (set-face 'ansi-color-bright-green 'ansi-color-green)
+  (set-face 'ansi-color-bright-magenta 'ansi-color-magenta)
+  (set-face 'ansi-color-bright-red 'ansi-color-red)
+  (set-face 'ansi-color-bright-yellow 'ansi-color-yellow))
 
 ;; Dark theme
 (defun sayo ()
@@ -139,15 +154,8 @@
 
   (set-face-attribute 'show-paren-match nil :background "#3a3a3a"
     :weight 'bold)
-
+  
   (set-modeline-faces)
-
-  ;; fonts
-  (set-face-attribute 'variable-pitch nil
-    :family "ETBembo"
-    :height 135)
-  (set-face-attribute 'fixed-pitch nil :family "Cascadia Code" :height 110)
-
   (with-eval-after-load 'cus-edit (set-button-faces)))
 
 (defun theme-toggle ()

@@ -14,6 +14,8 @@ A fairly minimal, vanilla configuration for emacs. It was written mostly from sc
 ** Recommended Usage
 Make sure to check the =lisp/custom-ops.el= before you use the config. These contain system specific options that you will need to change to match your system. In fact, if you want you can remove the contents of the entire file, leaving only ~(provide 'custom-ops)~. I recommend you put all your custom system-specific configuration in this one file, so it's all in one place. This is also the file which stores your options set with ~M-x customize~.
 
+If you want to use the same packages I do, just do ~M-x package-install-selected-packages~ after running ~M-x package-refresh-contents~.
+
 This config is created with the intent to replace most system interaction with emacs. Though the startup time is fairly reasonable due to lazy loading most things (should be <1s on any relatively modern system), using emacs as a daemon is still highly recommended. Here are some additional usage info about this config:
 - Packages :: I use the built-in package.el. I prefer managing the loading of packages manually rather than using something like ~use-package~, though you can use that if you want to. If you want to a streamlined way to fetch code snippets from places like EmacsWiki or Github that aren't in any package repo, I strongly suggest using ~quelpa~ recipes. Don't forget to run ~M-x package-refresh-contents~ each time before you perform package actions.
 - Org-mode :: This config is fairly heavily optimized for writing in Org-mode.
@@ -53,7 +55,7 @@ This config is created with the intent to replace most system interaction with e
 - Matrix and IRC :: I recommend using ~ement~ for Matrix, and the builtin ~ERC~ for IRC.
 - Light/Dark theme :: This config includes both a light and dark theme. The default theme is light theme and the function is called ~blossom~. The dark theme function is called ~sayo~. To toggle theme on the fly, use ~M-x theme-toggle~.
 - Splash Screen :: This config includes a very rudimentary splash screen (see ~data/splash.el~) which shows an image, and the init time. To customize the images, just change the files in the ~data/splash-img~ directory. An image will be randomly chosen from there. The names of the files don't matter, and you can use any image type supported by your build of emacs.
-- Ligatures :: Use this snippet with [[https://github.com/mickeynp/ligature.el][this]] (assuming you are using Cascadia code and ET Bembo). Note that performance will be impacted:
+- Ligatures :: Use this snippet with [[https://github.com/mickeynp/ligature.el][this]] (assuming you are using Cascadia code and ET Bembo). Note that performance will be negatively impacted:
   #+begin_src elisp
     (let ((mono-ligset '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
                           ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
@@ -130,4 +132,4 @@ This config is created with the intent to replace most system interaction with e
   #+end_src
 - Scratch buffer :: The scratch buffer is very useful for storing temporary information and testing code. This config is set up with Org-mode in the scratch buffer with three headings and a code block for testing. I highly recommend using [[https://github.com/Fanael/persistent-scratch][persistent-scratch]] to save the scratch buffer across sessions.
 - Scrolling enhancements :: This config comes with reasonable defaults for keyboard and mouse wheel scrolling. If you would like smooth scrolling, I recommend the [[https://github.com/io12/good-scroll.el][good-scroll]] package.
-- Use =M-x customize= for interactive customization. Your custom options will be stored in =lisp/custom-ops.el=. Or just edit any of the files directly. You don't need black magic or anything :)
+

@@ -1,6 +1,7 @@
 ;; -*- eval: (flycheck-mode -1) -*-
 
 (require 'org)
+(require 'ox)
 
 (with-eval-after-load 'ox-latex
   (setq org-latex-compiler "xelatex")

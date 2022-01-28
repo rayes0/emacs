@@ -1,6 +1,9 @@
 ;; -*- lexical-binding: t -*-
 ;;; Settings for various interaction with the host system and emacs ecosystem
 
+(setq eval-expression-print-level nil
+  eval-expression-print-length nil)
+
 ;; dired
 (with-eval-after-load 'dired
   (setq dired-dwim-target t
@@ -85,12 +88,18 @@
   (setq ansi-color-names-vector
     ["#ede6e3" "#ce9c85" "#839773" "#a09c80" "#8f8678" "#9c7b9c" "#75998e" "#685c56"])
   (setq ansi-color-map (ansi-color-make-color-map)))
+
 (with-eval-after-load 'comint
+  (ansi-color-for-comint-mode-on)
   (setq comint-prompt-read-only t
     comint-input-ignoredups t
-    comint-completion-autolist t)
-  (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-  (add-to-list 'comint-output-filter-functions 'ansi-color-process-output))
+    comint-completion-autolist t))
+;; (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+;; (add-to-list 'comint-output-filter-functions 'ansi-color-process-output))
+
+(with-eval-after-load 'compile
+  (setq ansi-color-for-compilation-mode t)
+  (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter))
 
 ;; eshell
 (with-eval-after-load 'eshell
@@ -98,13 +107,13 @@
   (setq eshell-prompt-function
     (lambda nil
       (propertize (concat
-        (if (string= (eshell/pwd) (getenv "HOME"))
-          (propertize "~" 'face '(:inherit 'face-faded :weight 'bold))
-          (replace-regexp-in-string
-            (getenv "HOME")
-            (propertize "~" 'face '(:inherit 'face-faded :weight 'bold))
-            (propertize (eshell/pwd) 'face '(:inherit face-faded :weight 'bold))))
-        (propertize "  λ" 'face '(:inherit 'face-faded :weight 'bold))
+                    (if (string= (eshell/pwd) (getenv "HOME"))
+                      (propertize "~" 'face '(:inherit face-faded :weight light))
+                      (replace-regexp-in-string
+                        (getenv "HOME")
+                        (propertize "~" 'face '(:inherit face-faded :weight light))
+                        (propertize (eshell/pwd) 'face '(:inherit face-faded :weight light))))
+                    (propertize "  λ" 'face '(:inherit face-faded :weight light))
                     (propertize "  " 'face nil))
         'front-sticky '(font-lock-face read-only)
         'rear-nonsticky '(font-lock-face read-only)
@@ -113,19 +122,24 @@
     eshell-prompt-regexp "^.*  λ  "
     eshell-hist-ignoredups 'erase
     eshell-review-quick-commands t
-    eshell-where-to-jump 'after)
-  (setq eshell-cp-interactive-query t
+    eshell-where-to-jump 'after
+    eshell-cp-interactive-query t
     eshell-cp-overwrite-files nil
     eshell-ln-interactive-query t
+    eshell-ln-overwrite-files nil
     eshell-mv-interactive-query t
     eshell-mv-overwrite-files nil))
 
 (with-eval-after-load 'em-term
-  (setq eshell-visual-subcommands '(("git" "log" "diff" "show")))
-  (dolist (cmd '("mpv" "bluetoothctl" "powertop" "nvtop" "unison" "cmus"))
+  (setq eshell-visual-subcommands '(("git" "log" "diff" "show")
+                                     ("sudo" "dnf" "upgrade")
+                                     ("doas" "dnf" "upgrade")
+                                     ("systemctl" "status")
+                                     ("cargo" "build")
+                                     ("rustup" "upgrade")))
+  (dolist (cmd '("mpv" "bluetoothctl" "powertop" "nvtop" "unison" "cmus"
+                  "wget" "curl" "aria2c"))
     (add-to-list 'eshell-visual-commands cmd)))
-;;    (add-to-list 'eshell-visual-subcommands `("doas" ,cmd))
-  ;;  (add-to-list 'eshell-visual-subcommands `("sudo" ,cmd))))
 
 (with-eval-after-load 'em-ls
   ;;(set-face 'eshell-ls-backup 'default)
@@ -218,7 +232,6 @@
 
 (advice-add 'shell-command :around #'ad-read-default-directory-&-call)
 (advice-add 'async-shell-command :around #'ad-read-default-directory-&-call)
-
 
 ;; bookmarks
 (with-eval-after-load 'bookmark

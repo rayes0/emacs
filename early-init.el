@@ -1,21 +1,22 @@
 ;; inhibit frame resize to reduce startup time
-(setq frame-inhibit-implied-resize t)
-
-(setq inhibit-startup-screen t
+(setq frame-inhibit-implied-resize t
+  inhibit-startup-screen t
   inhibit-startup-message t
   inhibit-startup-area-message t
   inhibit-x-resources t)
+
+(setq-default frame-title-format '("emacs - %b"))
 
 ;; hide bars
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 (scroll-bar-mode 0)
 
-(tooltip-mode t)
-(setq tooltip-use-echo-area t)
+(tooltip-mode nil)
+;; (setq tooltip-use-echo-area t)
 
 ;; Fringes
-(set-fringe-mode 2)
+(set-fringe-mode 10)
 (setq-default
   fringes-outside-margins t
   fringe-indicator-alist

@@ -8,12 +8,11 @@
   'flyspell-prog-mode)
 
 (setq kill-ring-max 30
-  view-read-only t)
+  view-read-only t
+  compilation-scroll-output t)
 
-;; make some usability changes
 (setq-default sentence-end-double-space nil)
-(setq compilation-scroll-output t)
-(delete-selection-mode t)
+(delete-selection-mode 1)
 
 (setq backward-delete-char-untabify-method 'hungry
   require-final-newline nil
@@ -23,30 +22,28 @@
 (global-set-key (kbd "C-`") 'flyspell-auto-correct-previous-word)
 
 ;; pair matching
-(setq electric-pair-pairs '(
-                            (?\{ . ?\})
-                            (?\( . ?\))
-                            (?\[ . ?\])
-                            (?\" . ?\")
-                             ))
+(add-hook 'prog-mode-hook 'electric-pair-local-mode)
+(setq electric-pair-pairs '((?\{ . ?\})
+                             (?\( . ?\))
+                             (?\[ . ?\])
+                             (?\" . ?\")))
+
 (add-hook 'org-mode-hook
   (lambda ()
-    (setq-local electric-pair-pairs '(
-                                       (?\{ . ?\})
+    (setq-local electric-pair-pairs '((?\{ . ?\})
                                        (?\( . ?\))
                                        (?\[ . ?\])
                                        (?\" . ?\")
                                        (?\$ . ?\$)
                                        ))
     (electric-pair-local-mode 1)))
-(add-hook 'prog-mode-hook 'electric-pair-local-mode)
 
 ;; shell script
 (require 'sh-script)
 (set-face 'sh-quoted-exec     'face-keyword)
 (set-face 'sh-heredoc           'face-faded)
 
-;; set indentation settings to tab-width, important to do otherwise emacs screws up indents
+;; global indentation settings to tab-width
 (defvaralias 'c-basic-offset     'tab-width)
 (defvaralias 'cperl-basic-offset 'tab-width)
 (defvaralias 'smie-indent-basic  'tab-width)

@@ -1,7 +1,10 @@
 ;; Org mode config
 
 (require 'org)
+(require 'org-tempo)
 (require 'org-agenda)
+(require 'org-habit)
+(require 'general)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 
 (add-hook 'org-mode-hook (lambda ()
@@ -10,8 +13,30 @@
                            (flyspell-mode t)
                            (electric-indent-local-mode -1)))
 
-(with-eval-after-load 'org-agenda
-  (require 'org-habit)
+(with-eval-after-load 'org
+  (setq org-src-fontify-natively t
+    org-fontify-done-headline t
+    org-fontify-quote-and-verse-blocks t
+    org-src-tab-acts-natively t
+    org-startup-truncated nil
+    org-hide-emphasis-markers t
+    org-hide-leading-stars t
+    org-pretty-entities t
+
+    org-startup-indented t
+    org-adapt-indentation t
+    org-startup-shrink-all-tables t
+
+    org-ellipsis " ⬎"
+    org-startup-with-inline-images t
+
+    org-special-ctrl-a/e t
+    org-special-ctrl-k t
+
+    org-confirm-babel-evaluate nil
+
+    org-highlight-latex-and-related '(native latex script entities))
+
   (setq org-habit-graph-column 57
     org-habit-show-all-today nil
     org-habit-completed-glyph 8226
@@ -31,34 +56,7 @@
   (set-face-attribute 'org-habit-alert-future-face nil
     :background (face-background 'face-critical))
   (set-face-attribute 'org-habit-overdue-face nil
-    :background (face-background 'face-critical)))
-
-(with-eval-after-load 'org
-  (require 'org-tempo)
-  (setq org-src-fontify-natively t
-    org-fontify-done-headline t
-    org-fontify-quote-and-verse-blocks t
-    org-src-tab-acts-natively t
-    org-startup-truncated nil
-    org-hide-emphasis-markers t
-    org-hide-leading-stars t
-    org-pretty-entities t
-
-    org-startup-indented t
-    org-adapt-indentation t
-    org-startup-shrink-all-tables t
-
-    org-ellipsis " ⬎"
-    org-display-inline-images t
-    org-redisplay-inline-images t
-    org-startup-with-inline-images t
-
-    org-special-ctrl-a/e t
-    org-special-ctrl-k t
-
-    org-confirm-babel-evaluate nil
-
-    org-highlight-latex-and-related '(native latex script entities))
+    :background (face-background 'face-critical))
 
   (defun org-toggle-emphasis ()
     "Toggle hiding/showing of org emphasize markers."
@@ -77,8 +75,6 @@
     '(("^ *\\([-]\\) "
         (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-  ;; The set-face function is defined in theme/general.el
-  (require 'general)
   (set-face 'org-archived                                 'face-faded)
   ;;(set-face 'org-checkbox                                 'face-faded)
   (set-face 'org-checkbox-statistics-done                 'face-faded)
@@ -175,6 +171,7 @@
   (set-face-attribute 'org-level-8 nil :weight 'bold :height 113)
   (set-face-attribute 'org-tag nil :weight 'bold :inherit '(face-faded fixed-pitch)))
 
+(require 'ox)
 (setq org-export-async-init-file (expand-file-name "./async-init.el" user-emacs-directory)
   org-export-in-background t)
 
