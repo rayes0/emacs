@@ -21,6 +21,9 @@
 ;; tramp
 (setq tramp-default-method "ssh")
 
+;; gnus
+(setq gnus-init-file (expand-file-name ".gnus.el" user-emacs-directory))
+
 ;; docview
 (setq doc-view-resolution 300)
 (setq doc-view-continuous t)
@@ -103,8 +106,12 @@
 
 ;; eshell
 (with-eval-after-load 'eshell
-  (setq eshell-highlight-prompt nil)
-  (setq eshell-prompt-function
+  (add-to-list 'eshell-modules-list 'eshell-rebind)
+  (add-to-list 'eshell-modules-list 'eshell-tramp)
+  ;; (add-to-list 'eshell-modules-list 'eshell-smart)
+  (add-to-list 'eshell-modules-list 'eshell-xtra)
+  (setq eshell-highlight-prompt nil
+    eshell-prompt-function
     (lambda nil
       (propertize (concat
                     (if (string= (eshell/pwd) (getenv "HOME"))
@@ -121,14 +128,19 @@
   (setq eshell-banner-message ""
     eshell-prompt-regexp "^.*  λ  "
     eshell-hist-ignoredups 'erase
-    eshell-review-quick-commands t
-    eshell-where-to-jump 'after
+
+    ;; eshell-review-quick-commands t
+    ;; eshell-where-to-jump 'after
+
+    eshell-default-target-is-dot nil
     eshell-cp-interactive-query t
     eshell-cp-overwrite-files nil
     eshell-ln-interactive-query t
     eshell-ln-overwrite-files nil
     eshell-mv-interactive-query t
-    eshell-mv-overwrite-files nil))
+    eshell-mv-overwrite-files nil
+
+    eshell-prefer-lisp-functions t))
 
 (with-eval-after-load 'em-term
   (setq eshell-visual-subcommands '(("git" "log" "diff" "show")

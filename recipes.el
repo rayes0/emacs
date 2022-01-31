@@ -4,7 +4,7 @@
 
 ;; code
 (quelpa '(eglot        :fetcher github :repo "joaotavora/eglot"))
-(quelpa '(lsp-mode     :fetcher github :repo "emacs-lsp/lsp-mode" :files (:defaults "clients/*.el")))
+;; (quelpa '(lsp-mode     :fetcher github :repo "emacs-lsp/lsp-mode" :files (:defaults "clients/*.el")))
 (quelpa '(rustic       :fetcher github :repo "brotzeit/rustic"))
 (quelpa '(gnuplot      :fetcher github :repo "emacsorphanage/gnuplot"))
 (quelpa '(ess          :fetcher github :repo "emacs-ess/ESS"))
@@ -35,7 +35,7 @@
 (quelpa '(flyspell-correct      :fetcher github :repo "d12frosted/flyspell-correct"))
 
 ;; prose
-(quelpa '(auctex :fetcher git :url "https://git.savannah.gnu.org/git/emacs/elpa.git"
+(quelpa '(auctex                :fetcher git :url "https://git.savannah.gnu.org/git/emacs/elpa.git"
            :branch "externals/auctex" :files ("*.el" "*.info" "tests" "style" "latex")))
 (quelpa '(langtool-ignore-fonts :fetcher github :repo "cjl8zf/langtool-ignore-fonts"))
 (quelpa '(writeroom-mode        :fetcher github :repo "joostkremers/writeroom-mode"))
@@ -45,6 +45,8 @@
 (quelpa '(unicode-math-input    :fetcher github :repo "astoff/unicode-math-input.el"))
 (quelpa '(biblio                :fetcher github :repo "cpitclaudel/biblio.el"))
 (quelpa '(bibtex-completion     :fetcher github :repo "tmalsburg/helm-bibtex" :files ("bibtex-completion.el")))
+(quelpa '(valign                :fetcher github :repo "casouri/valign"
+           :files ("*" (:exclude "*.png" "Makefile" "test.org"))))
 
 (quelpa '(markdown-mode :fetcher github :repo "jrblevin/markdown-mode"))
 (quelpa '(mediawiki     :fetcher github :repo "hexmode/mediawiki-el"))
@@ -53,7 +55,6 @@
 (quelpa '(org-download :fetcher github :repo "abo-abo/org-download"))
 (quelpa '(org-fragtog  :fetcher github :repo "io12/org-fragtog"))
 (quelpa '(ox-hugo      :fetcher github :repo "kaushalmodi/ox-hugo"))
-(quelpa '(org-autolist :fetcher github :repo "calvinwyoung/org-autolist"))
 (quelpa '(org-bullets  :fetcher github :repo "integral-dw/org-bullets"))
 (quelpa '(cdlatex      :fetcher github :repo "cdominik/cdlatex"))
 (quelpa '(el-easydraw  :fetcher github :repo "misohena/el-easydraw"))
@@ -64,11 +65,6 @@
 (quelpa '(pdf-tools                :fetcher github :repo "vedang/pdf-tools"
            :files ("lisp/*.el" "README" ("build" "Makefile") ("build" "server")
                     (:exclude "lisp/tablist.el" "lisp/tablist-filter.el"))))
-(quelpa '(magit :fetcher github :repo "magit/magit"
-           :files ("lisp/magit" "lisp/magit*.el" "lisp/git-rebase.el" "docs/magit.texi"
-                    (:exclude "lisp/magit-libgit.el" "lisp/magit-libgit-pkg.el"
-                      "lisp/magit-section.el" "lisp/magit-section-pkg.el"
-                      "Documentation/magit.texi" "Documentation/AUTHORS.md"))))
 (quelpa '(eshell-vterm             :fetcher github :repo "iostapyshyn/eshell-vterm"))
 (quelpa '(nov                      :fetcher git    :url "https://depp.brause.cc/nov.el.git"))
 (quelpa '(which-key                :fetcher github :repo "justbur/emacs-which-key"))
@@ -79,15 +75,25 @@
 (quelpa '(all-the-icons-completion :fetcher github :repo "iyefrat/all-the-icons-completion"))
 (quelpa '(good-scroll              :fetcher github :repo "io12/good-scroll.el"))
 
-
-;; Other
+;; network
+(quelpa '(magit :fetcher github :repo "magit/magit"
+           :files ("lisp/magit" "lisp/magit*.el" "lisp/git-rebase.el" "docs/magit.texi"
+                    (:exclude "lisp/magit-libgit.el" "lisp/magit-libgit-pkg.el"
+                      "lisp/magit-section.el" "lisp/magit-section-pkg.el"
+                      "Documentation/magit.texi" "Documentation/AUTHORS.md"))))
 (quelpa '(ytdious         :fetcher github :repo "spiderbit/ytdious"))
-(quelpa '(speed-type      :fetcher github :repo "parkouss/speed-type"))
-(quelpa '(spray           :fetcher git    :url "https://git.sr.ht/~iank/spray"))
 (quelpa '(elpher          :fetcher git    :url "https://thelambdalab.xyz/git/elpher.git"))
 (quelpa '(empv            :fetcher github :repo "isamert/empv.el"))
 (quelpa '(plz             :fetcher github :repo "alphapapa/plz.el"))
 (quelpa '(ement           :fetcher github :repo "alphapapa/ement.el"))
 (quelpa '(aria2           :fetcher gitlab :repo "unmem/aria2"))
+;; (quelpa '(nnreddit        :fetcher github :repo "dickmao/nnreddit"
+;; :files ("lisp/*.el" "setup.py" "requirements.txt" "nnreddit")))
+;; (quelpa '(nnhackernews    :fetcher github :repo "dickmao/nnhackernews"))
+;; (quelpa '(md4rd           :fetcher github :repo "ahungry/md4rd"))
+
+;; Other
+(quelpa '(speed-type      :fetcher github :repo "parkouss/speed-type"))
+(quelpa '(spray           :fetcher git    :url "https://git.sr.ht/~iank/spray"))
 (quelpa '(centered-window :fetcher github :repo "anler/centered-window-mode"))
 (quelpa '(smtpmail-multi  :fetcher github :repo "vapniks/smtpmail-multi"))

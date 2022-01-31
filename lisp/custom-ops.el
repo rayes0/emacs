@@ -5,10 +5,8 @@
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
   '(auth-source-save-behavior nil)
-  '(org-agenda-files
-     '("/home/rayes/Notes/org/Exercise.org" "/home/rayes/Notes/org/Insights.org" "/home/rayes/Notes/org/Meta.org" "/home/rayes/Notes/org/Programming.org" "/home/rayes/Notes/org/media-list.org" "/home/rayes/Notes/org/programs.org" "/home/rayes/Notes/org/tea.org" "/home/rayes/Notes/org/todo.org"))
   '(package-selected-packages
-     '(ein polymode deferred anaphora websocket beacon smtpmail-multi lv ht spray magit magit-section git-commit with-editor transient avy-menu ytdious writeroom-mode writegood-mode which-key unicode-math-input speed-type smartparens rustic rainbow-delimiters quelpa pyvenv pytest powerthesaurus persistent-scratch pdf-tools ox-hugo org-fragtog org-download org-bullets org-autolist nov mediawiki math-symbols lua-mode ligature langtool-ignore-fonts highlight-indent-guides haskell-mode good-scroll gnuplot flyspell-correct flycheck-vale flycheck-languagetool fic-mode ess eshell-vterm empv ement elpher el-easydraw eglot company-quickhelp cmus centered-window cdlatex bibtex-completion aria2 all-the-icons-ibuffer all-the-icons-dired all-the-icons-completion aggressive-indent))
+     '(semi flim apel pdf-tools valign tree-mode hierarchy virtualenvwrapper json-rpc cmus ein polymode deferred anaphora websocket beacon smtpmail-multi lv ht spray magit magit-section git-commit with-editor transient avy-menu ytdious writeroom-mode writegood-mode which-key unicode-math-input speed-type smartparens rustic rainbow-delimiters quelpa pyvenv pytest powerthesaurus persistent-scratch ox-hugo org-fragtog org-download org-bullets nov mediawiki math-symbols lua-mode ligature langtool-ignore-fonts highlight-indent-guides haskell-mode good-scroll gnuplot flyspell-correct flycheck-vale flycheck-languagetool fic-mode ess eshell-vterm empv ement elpher el-easydraw eglot company-quickhelp centered-window cdlatex bibtex-completion aria2 all-the-icons-ibuffer all-the-icons-dired all-the-icons-completion aggressive-indent))
   '(pdf-view-resize-factor 1.01)
   '(safe-local-variable-values
      '((pyvenv-activate . "./venv")
@@ -28,6 +26,8 @@
 (setq org-directory "~/Notes/org"
   org-agenda-files (list org-directory))
 
+(add-hook 'org-mode-hook #'valign-mode)
+
 (add-hook 'eshell-mode-hook 'eshell-vterm-mode)
 (with-eval-after-load 'em-term.el
   (add-to-list 'eshell-visual-commands "mtpsync.sh"))
@@ -35,10 +35,10 @@
 (setq org-format-latex-options
   '(:foreground default
      :background "Transparent"
-     :scale 1.2
+     :scale 0.85
      :html-foreground "Black"
      :html-background "Transparent"
-     :html-scale 1.2
+     :html-scale 1.0
      :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
 
 ;; link opener
@@ -252,6 +252,9 @@
 ;; ytdious
 (setq ytdious-invidious-api-url "https://invidious.snopyta.org")
 
+;; magit
+(setq magit-process-find-password-functions '(magit-process-password-auth-source))
+
 ;; R markdown
 (defun rmd-mode ()
   "ESS Markdown mode for rmd files"
@@ -271,6 +274,7 @@
 
 ;; pdf-tools
 (pdf-tools-install)
+(setq pdf-view-resize-factor 1.05)
 ;; (add-hook 'pdf-view-mode-hook (lambda ()
 ;;                                 (setq-local auto-revert-interval 0.5)
 ;;                                 (auto-revert-mode 1)
@@ -487,6 +491,7 @@
   (add-to-list 'beacon-dont-blink-major-modes 'vterm-mode)
   (add-to-list 'beacon-dont-blink-major-modes 'term-mode)
   (add-to-list 'beacon-dont-blink-major-modes 'comint-mode))
+(beacon-mode 1)
 
 (with-eval-after-load 'ein
   (set-face-attribute 'ein:basecell-input-area-face nil
@@ -500,30 +505,30 @@
   newsticker-treeview-automatically-mark-displayed-items-as-old nil
   newsticker-automatically-mark-items-as-old nil
   newsticker-obsolete-item-max-age 259200 ;; 3 days
-  newsticker-retrieval-interval 259200
-;;  newsticker-retrieval-interval 10800 ;; 3 hours
-;;  newsticker-retrieval-interval 1.0e+INF
+  ;; newsticker-retrieval-interval 259200
+  newsticker-retrieval-interval 10800 ;; 3 hours
+  ;;  newsticker-retrieval-interval 1.0e+INF
   newsticker-download-logos nil
   newsticker-retrieval-method 'extern
   newsticker-wget-name "curl"
   newsticker-wget-arguments '("--silent" "--location" "--connect-timeout" "8"))
 
 
-(defun my/newsticker-treeview-custom-quit ()
-  "quit without messing up groups"
-  (interactive)
-  (setq newsticker--sentinel-callback nil)
-  (bury-buffer "*Newsticker Tree*")
-  (bury-buffer "*Newsticker List*")
-  (bury-buffer "*Newsticker Item*")
-  (set-window-configuration newsticker--saved-window-config)
-  (when newsticker--frame
-    (if (frame-live-p newsticker--frame)
-      (delete-frame newsticker--frame))
-    (setq newsticker--frame nil)))
-;;(define-key newsticker-treeview-mode-map (kbd "q") 'my/newsticker-treeview-quit-and-stop)
-(with-eval-after-load 'newst-treeview
-  (substitute-key-definition 'newsticker-treeview-quit 'my/newsticker-treeview-custom-quit newsticker-treeview-mode-map))
+;; (defun my/newsticker-treeview-custom-quit ()
+;;   "quit without messing up groups"
+;;   (interactive)
+;;   (setq newsticker--sentinel-callback nil)
+;;   (bury-buffer "*Newsticker Tree*")
+;;   (bury-buffer "*Newsticker List*")
+;;   (bury-buffer "*Newsticker Item*")
+;;   (set-window-configuration newsticker--saved-window-config)
+;;   (when newsticker--frame
+;;     (if (frame-live-p newsticker--frame)
+;;       (delete-frame newsticker--frame))
+;;     (setq newsticker--frame nil)))
+;; ;;(define-key newsticker-treeview-mode-map (kbd "q") 'my/newsticker-treeview-quit-and-stop)
+;; (with-eval-after-load 'newst-treeview
+;;   (substitute-key-definition 'newsticker-treeview-quit 'my/newsticker-treeview-custom-quit newsticker-treeview-mode-map))
 
 (setq newsticker-url-list
   '(("arXiv q-bio" "https://arxiv.org/rss/q-bio")
@@ -581,66 +586,6 @@
      ("Halcyon" "https://invidious.kavin.rocks/feed/channel/UC8tyyA-UIbefEexcLatHmUQ" nil 86400)
      ("SLS" "https://invidious.kavin.rocks/feed/channel/UCmKy7mz6tRLv7OFdSqbAkrg" nil 86400)
      ("mdbg" "https://www.mdbg.net/chinese/feed?feed=hsk_1_h")))
-
-;;(setq elfeed-feeds '("https://www.lesswrong.com/feed.xml?view=community-rss&karmaThreshold=45"))
-;; (setq elfeed-feeds
-;;   '(("https://arxiv.org/rss/q-bio" rxiv)
-;;      ("https://connect.biorxiv.org/biorxiv_xml.php?subject=all" rxiv)
-;;      ("https://connect.medrxiv.org/medrxiv_xml.php?subject=all" rxiv)
-;;      ("https://arxiv.org/rss/math" rxiv)
-;;      ("https://terrytao.wordpress.com/feed/" math)
-;;      ("https://www.lesswrong.com/feed.xml?view=community-rss&karmaThreshold=45" philosophy)
-;;      ("https://astralcodexten.substack.com/feed" philosophy)
-;;      ("https://fantasticanachronism.com/atom.xml" books)
-;;      ("https://protesilaos.com/master.xml" philosophy)
-;;      ("https://gwern.substack.com/feed" philosophy)
-;;      ("https://suspendedreason.com/feed" philosophy)
-;;      ("https://formeinfullbloom.wordpress.com/feed/" animanga)
-;;      ("https://thereforeitis.wordpress.com/feed" animanga)
-;;      ("https://wrongeverytime.com/feed" animanga)
-;;      ("https://www.animenewsnetwork.com/all/rss.xml?ann-edition=us" animanga)
-;;      ("https://rweekly.org/atom.xml" tech)
-;;      ("https://blogs.gnome.org/feed/" tech)
-;;      ("https://drewdevault.com/blog/index.xml" tech)
-;;      ("https://freedom-to-tinker.com/feed/rss/" tech)
-;;      ("https://stackexchange.com/feeds/questions" stackexchange)
-;;      ("https://linguistics.stackexchange.com/feeds/week" stackexchange)
-;;      ("https://psychology.stackexchange.com/feeds/week" stackexchange)
-;;      ("https://scifi.stackexchange.com/feeds/week" stackexchange)
-;;      ("https://stats.stackexchange.com/feeds/week" stackexchange)
-;;      ("https://music.stackexchange.com/feeds/week" stackexchange)
-;;      ("https://unix.stackexchange.com/feeds/week" stackexchange)
-;;      ("https://anime.stackexchange.com/feeds/week" stackexchange)
-;;      ("https://chinese.stackexchange.com/feeds/week" stackexchange)
-;;      ("https://emacs.stackexchange.com/feeds/week" stackexchange)
-;;      ("https://mathoverflow.net/feeds/week" stackexchange)
-;;      ("https://skeptics.stackexchange.com/feeds/week" stackexchange)
-;;      ("https://bioinformatics.stackexchange.com/feeds/week" stackexchange)
-;;      ("https://hermeneutics.stackexchange.com/feeds/week" stackexchange)
-;;      ("https://xkcd.com/rss.xml")
-;;      ("https://github.com/emacs-mirror/emacs/commits.atom" github)
-;;      ("https://github.com/zrythm/zrythm/commits.atom" github)
-;;      ("https://fedoramagazine.org/feed" tech)
-;;      ("https://invidious.kavin.rocks/feed/channel/UC0uTPqBCFIpZxlz_Lv1tk_g" youtube)
-;;      ("https://invidious.kavin.rocks/feed/channel/UC_QG8miwKHFNuWY9VpkrI8w" youtube)
-;;      ("https://invidious.kavin.rocks/feed/channel/UCyW-leqPXUunrXXxFjpZ7VA" youtube)
-;;      ("https://invidious.kavin.rocks/feed/channel/UCcvLSRIWJIAGFDyWtzkbiHA" youtube)
-;;      ("https://invidious.kavin.rocks/feed/channel/UCk0UErv9b4Hn5ucNNjqD1UQ" youtube)
-;;      ("https://invidious.kavin.rocks/feed/channel/UCk2g7q-RY455IuRWCIJ0bmw" youtube)
-;;      ("https://invidious.kavin.rocks/feed/channel/UC8tyyA-UIbefEexcLatHmUQ" youtube)
-;;      ("https://invidious.kavin.rocks/feed/channel/UCmKy7mz6tRLv7OFdSqbAkrg" youtube)))
-
-;; (require 'elfeed)
-;; (setq elfeed-user-agent "")
-;; (setq-default elfeed-search-filter "@1-week-ago ")
-;; (global-set-key (kbd "C-x w") 'elfeed)
-;; (set-face 'elfeed-search-title-face 'default)
-;; (set-face 'elfeed-search-feed-face 'face-keyword)
-;; (set-face 'elfeed-search-tag-face 'face-salient)
-;; (set-face-attribute 'elfeed-search-tag-face nil
-;;   :weight 'bold)
-;; (set-face 'elfeed-search-date-face 'face-faded)
-;; (set-face 'elfeed-search-unread-count-face 'face-strong)
 
 (provide 'custom-ops)
 (put 'list-timers 'disabled nil)

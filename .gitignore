@@ -21,3 +21,6 @@ pkg/
 quelpa
 kkcrc
 .org-id-locations
+tree-widget/
+srecode-map.el
+network-security.data

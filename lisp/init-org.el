@@ -35,7 +35,7 @@
 
     org-confirm-babel-evaluate nil
 
-    org-highlight-latex-and-related '(native latex script entities))
+    org-highlight-latex-and-related '(latex script entities))
 
   (setq org-habit-graph-column 57
     org-habit-show-all-today nil
@@ -104,7 +104,7 @@
   (set-face 'org-latex-and-related                        'face-faded)
   (set-face-attribute 'org-latex-and-related nil
     :background (face-background 'default)
-    :inherit 'face-faded)
+    :inherit '(face-salient fixed-pitch))
   (set-face 'org-link                                   'face-salient)
   (set-face 'org-list-dt                                  'face-faded)
   (set-face 'org-macro                                    'face-faded)
@@ -140,6 +140,7 @@
   (set-face 'org-level-8                                 'face-strong)
 
   (set-face-attribute 'org-block            nil :inherit '(face-block fixed-pitch))
+  ;; (set-face-attribute 'tex-math nil :inherit 'face-salient)
   (set-face-attribute 'org-block-begin-line nil :inherit '(face-faded face-block fixed-pitch))
   (set-face-attribute 'org-block-end-line   nil :inherit '(face-faded face-block fixed-pitch))
   (set-face-attribute 'org-quote            nil :slant 'italic)

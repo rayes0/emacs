@@ -12,8 +12,8 @@
 (tool-bar-mode 0)
 (scroll-bar-mode 0)
 
-(tooltip-mode nil)
-;; (setq tooltip-use-echo-area t)
+(tooltip-mode t)
+(setq tooltip-use-echo-area t)
 
 ;; Fringes
 (set-fringe-mode 10)

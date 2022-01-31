@@ -19,6 +19,7 @@
   (require 'init-org)
   (require 'init-text)
   (require 'init-system)
+
   ;; Theme
   ;; (sayo)
   (blossom))
@@ -71,26 +72,10 @@
   kept-new-versions 10
   kept-old-versions 2)
 
-;; (defun on-after-init ()
-;;   (unless (display-graphic-p (selected-frame))
-;;     (set-face-background 'default "unspecified-bg" (selected-frame))))
-
-;; (add-hook 'window-setup-hook 'on-after-init)
-
-;; set theme
-;; (if (daemonp)
-;;   (lambda ()
-;;     (defvar my/theme-set nil)
-;;     (add-hook 'after-make-frame-functions
-;;       (lambda ()
-;;         (unless my/theme-set
-;;           (blossom)
-;;           ;; (sayo)
-;;           (setq my/theme-set t)))))
-;;   (blossom))
-
-;;(setq-default print-level nil
-;;  print-length nil)
+(run-with-timer 10 nil
+  (lambda ()
+    (require 'midnight)
+    (setq clean-buffer-list-delay-general 1)))
 
 (setq gc-cons-threshold 1600000)
 
@@ -103,25 +88,4 @@
 
 (add-hook 'minibuffer-setup-hook 'my/minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook 'my/minibuffer-exit-hook)
-(custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
-  '(auth-source-save-behavior nil)
-  '(org-agenda-files '("/home/rayes/Notes/org/todo.org"))
-  '(package-selected-packages
-     '(avy-menu ytdious writeroom-mode writegood-mode which-key unicode-math-input speed-type smartparens smart-tab rustic rainbow-delimiters quelpa pyvenv pytest powerthesaurus persistent-scratch pdf-tools ox-hugo org-fragtog org-download org-bullets org-autolist nov mediawiki math-symbols lua-mode ligature langtool-ignore-fonts highlight-indent-guides haskell-mode good-scroll gnuplot flyspell-correct flycheck-vale flycheck-languagetool fic-mode ess eshell-vterm empv ement elpher el-easydraw eglot company-quickhelp cmus centered-window cdlatex bibtex-completion aria2 all-the-icons-ibuffer all-the-icons-dired all-the-icons-completion aggressive-indent))
-  '(pdf-view-resize-factor 1.01)
-  '(safe-local-variable-values
-     '((pyvenv-activate . "./venv")
-        (eval ligature-mode -1)
-        (eval flycheck-mode nil)
-        (flycheck-mode)
-        (org-time-stamp-custom-formats "%m/%d/%y" . "%m/%d/%y"))))
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
-  )
+
