@@ -1,11 +1,9 @@
 ;; inhibit frame resize to reduce startup time
 (setq frame-inhibit-implied-resize t
-  inhibit-startup-screen t
-  inhibit-startup-message t
-  inhibit-startup-area-message t
-  inhibit-x-resources t)
-
-(setq-default frame-title-format '("emacs - %b"))
+      inhibit-startup-screen t
+      inhibit-startup-message t
+      inhibit-startup-area-message t
+      inhibit-x-resources t)
 
 ;; hide bars
 (menu-bar-mode 0)
@@ -13,20 +11,23 @@
 (scroll-bar-mode 0)
 
 (tooltip-mode t)
-(setq tooltip-use-echo-area t)
+(setq tooltip-use-echo-area t
+      tooltip-delay 0.1)
 
 ;; Fringes
 (set-fringe-mode 10)
-(setq-default
-  fringes-outside-margins t
-  fringe-indicator-alist
-  (delq (assq 'continuation fringe-indicator-alist) fringe-indicator-alist))
+(setq-default fringes-outside-margins t
+              fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist) fringe-indicator-alist))
 
 ;; Other
 (setq default-frame-alist '((width . 80) (height . 36)
-                             (left . 0.5) (top . 0)
-                             (vertical-scroll-bars . nil)
-			                       (internal-border-width . 36)))
+                            (left . 0.5) (top . 0)
+                            (vertical-scroll-bars . nil)
+			                      (internal-border-width . 36))
+      frame-title-format `(("%b - emacs [%m] (")
+                           (buffer-file-name "%f")
+                           ")")
+      icon-title-format frame-title-format)
 
 ;; set initial scratch message
 (setq initial-major-mode 'org-mode)
@@ -44,8 +45,8 @@
 ")
 
 ;; protect scratch buffer
-(with-current-buffer "*scratch*"
-  (emacs-lock-mode 'all))
+;; (with-current-buffer "*scratch*"
+;;   (emacs-lock-mode 'all))
 
 ;; don't warn about non emergency, useless things
 (setq warning-minimum-level :error)

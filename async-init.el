@@ -1,4 +1,4 @@
-;; -*- eval: (flycheck-mode -1) -*-
+;; -*- eval: (flycheck-mode -1); lexical-binding: t; -*-
 
 (require 'org)
 (require 'ox)

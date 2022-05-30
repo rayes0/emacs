@@ -1,4 +1,4 @@
-;; Markdown config
+;; Markdown config  -*- lexical-binding: t; -*-
 
 (with-eval-after-load 'markdown-mode
 

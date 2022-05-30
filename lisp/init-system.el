@@ -1,20 +1,62 @@
 ;; -*- lexical-binding: t -*-
 ;;; Settings for various interaction with the host system and emacs ecosystem
 
+(require 'general)
+
 (setq eval-expression-print-level nil
-  eval-expression-print-length nil)
+      eval-expression-print-length nil)
+
+;; recentf
+(recentf-mode 1)
+(setq recentf-max-menu-items 20
+      recentf-max-saved-items 20)
+(run-at-time nil (* 5 60) (lambda ()
+                            (let ((inhibit-message t))
+                              (recentf-save-list))))
+
+;; rename recentf entries from dired
+;; (defun my/recentf-rename-notify (oldname newname &rest args)
+;;   (if (file-directory-p newname)
+;;       (my/recentf-rename-directory oldname newname)
+;;     (my/recentf-rename-file oldname newname)))
+
+;; (defun my/recentf-rename-file (oldname newname)
+;;   (setq recentf-list
+;;         (mapcar (lambda (name)
+;;                   (if (string-equal name oldname)
+;;                       newname
+;;                     name))
+;;                 recentf-list)))
+
+;; (defun my/recentf-rename-directory (oldname newname)
+;;   (setq recentf-list
+;;         (mapcar (lambda (name)
+;;                   (if (string-prefix-p oldname name)
+;;                       (concat newname (substring name (length oldname)))
+;;                     name))
+;;                 recentf-list)))
+
+;; (advice-add 'dired-rename-file :after #'my/recentf-rename-notify)
 
 ;; dired
 (with-eval-after-load 'dired
   (setq dired-dwim-target t
-    dired-listing-switches "-Alh"
-    dired-use-ls-dired t
-    dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\|\\`[.].*\\'"
-    dired-always-read-filesystem t
-    dired-create-destination-dirs 'ask
-    dired-hide-details-hide-symlink-targets nil
-    dired-isearch-filenames 'dwim)
-  (define-key dired-mode-map (kbd "^") (lambda () (interactive) (find-alternate-file ".."))))
+        dired-listing-switches "-Alh"
+        dired-use-ls-dired t
+        ;; dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\|\\`[.].*\\'"
+        dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.*\\.aria2\\'"
+        dired-always-read-filesystem t
+        dired-create-destination-dirs 'ask
+        dired-hide-details-hide-symlink-targets nil
+        dired-isearch-filenames 'dwim
+        dired-free-space 'separate
+        dired-mouse-drag-files t)
+  (define-key dired-mode-map (kbd "^") (lambda () (interactive) (find-alternate-file "..")))
+  (set-face 'dired-header 'face-salient-cyan)
+  (set-face-attribute 'dired-header nil :underline t)
+  (set-face 'dired-broken-symlink 'face-critical)
+  ;; (add-to-list 'completion-ignored-extensions ".aria2")
+  )
 (add-hook 'dired-mode-hook 'dired-hide-details-mode)
 (add-hook 'dired-mode-hook 'dired-omit-mode)
 
@@ -29,227 +71,298 @@
 (setq doc-view-continuous t)
 
 ;; ibuffer
+(require 'ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
-(with-eval-after-load 'ibuffer
-  (setq ibuffer-expert t
-    ibuffer-show-empty-filter-groups nil)
-  (defun my/human-readable-file-sizes-to-bytes (string)
-    "Convert a human-readable file size into bytes."
-    (interactive)
-    (cond
-      ((string-suffix-p "G" string t)
-        (* 1000000000 (string-to-number (substring string 0 (- (length string) 1)))))
-      ((string-suffix-p "M" string t)
-        (* 1000000 (string-to-number (substring string 0 (- (length string) 1)))))
-      ((string-suffix-p "K" string t)
-        (* 1000 (string-to-number (substring string 0 (- (length string) 1)))))
-      (t
-        (string-to-number (substring string 0 (- (length string) 1))))))
+(setq initial-buffer-choice (lambda ()
+                              (let ((default-directory "~/")
+                                    (buffer (get-buffer "*Ibuffer*")))
+                                (if buffer
+                                    buffer
+                                  (progn
+                                    (ibuffer)
+                                    (get-buffer "*Ibuffer*"))))))
+(setq ibuffer-expert t
+      ibuffer-show-empty-filter-groups nil
+      ibuffer-use-header-line t
+      ibuffer-always-show-last-buffer t
+      ibuffer-formats
+      '((mark modified " "
+              (name 20 20 :left :elide) " "
+              (size-custom 5 -1 :right) " "
+              (mode 16 16 :left :elide) " "
+              filename-and-process)
+        (mark " "
+              (name 16 -1)
+              " " filename)))
 
-  (defun my/bytes-to-human-readable-file-sizes (bytes)
-    "Convert number of bytes to human-readable file size."
-    (interactive)
-    (cond
-      ((> bytes 1000000000) (format "%10.1fG" (/ bytes 1000000000.0)))
-      ((> bytes 100000000) (format "%10.0fM" (/ bytes 1000000.0)))
-      ((> bytes 1000000) (format "%10.1fM" (/ bytes 1000000.0)))
-      ((> bytes 100000) (format "%10.0fk" (/ bytes 1000.0)))
-      ((> bytes 1000) (format "%10.1fk" (/ bytes 1000.0)))
-      (t (format "%10d" bytes))))
+(define-ibuffer-column name-nolabel
+  (:name "Buffer"
+         :inline nil
+         :summarizer
+         (lambda (strings)
+           (let ((bufs (length strings)))
+             (cond ((zerop bufs) "No buffers")
+                   ((= 1 bufs) "1 buffer")
+                   (t (format "%s buffers" bufs))))))
+  (let ((string (propertize (buffer-name)
+                            'font-lock-face
+                            (ibuffer-buffer-name-face buffer mark))))
+    (if (not (seq-position string ?\n))
+        string
+      (string-replace
+       "\n" (propertize "^J" 'font-lock-face 'escape-glyph) string))))
 
-  ;; Use human readable Size column instead of original one
-  (define-ibuffer-column size-h
-    (:name "Size"
-      :inline t
-      :summarizer
-      (lambda (column-strings)
-        (let ((total 0))
-          (dolist (string column-strings)
-            (setq total
-              (+ (float (my/human-readable-file-sizes-to-bytes string))
-                total)))
-          (my/bytes-to-human-readable-file-sizes total)))
-      )
-    (my/bytes-to-human-readable-file-sizes (buffer-size)))
+(define-ibuffer-column size-custom
+  (:name "Size"
+         :inline t
+         :summarizer
+         (lambda (column-strings)
+           (let ((total 0))
+             (dolist (string column-strings)
+               (setq total
+                     (+ (float (my/human-readable-file-sizes-to-bytes string))
+                        total)))
+             (file-size-human-readable total))))
+  (file-size-human-readable (buffer-size)))
 
-  ;; Modify the default ibuffer-formats
-  (setq ibuffer-formats
-    '((mark modified read-only locked " "
-        (name 20 20 :left :elide)
-        " "
-        (size-h 11 -1 :right)
-        " "
-        (mode 16 16 :left :elide)
-        " "
-        filename-and-process)
-       (mark " "
-         (name 16 -1)
-         " " filename))))
+(defun my/human-readable-file-sizes-to-bytes (string)
+  "Convert a human-readable file size into bytes."
+  (interactive)
+  (cond
+   ((string-suffix-p "G" string t)
+    (* 1000000000 (string-to-number (substring string 0 (- (length string) 1)))))
+   ((string-suffix-p "M" string t)
+    (* 1000000 (string-to-number (substring string 0 (- (length string) 1)))))
+   ((string-suffix-p "K" string t)
+    (* 1000 (string-to-number (substring string 0 (- (length string) 1)))))
+   (t
+    (string-to-number (substring string 0 (- (length string) 1))))))
 
 ;; ansi colors
 (with-eval-after-load 'ansi-color
   (setq ansi-color-names-vector
-    ["#ede6e3" "#ce9c85" "#839773" "#a09c80" "#8f8678" "#9c7b9c" "#75998e" "#685c56"])
+        ["#ede6e3" "#ce9c85" "#839773" "#a09c80" "#8f8678" "#9c7b9c" "#75998e" "#685c56"])
   (setq ansi-color-map (ansi-color-make-color-map)))
 
 (with-eval-after-load 'comint
   (ansi-color-for-comint-mode-on)
-  (setq comint-prompt-read-only t
-    comint-input-ignoredups t
-    comint-completion-autolist t))
+  (setq comint-terminfo-terminal "dumb"
+        comint-prompt-read-only t
+        comint-input-ignoredups t
+        comint-completion-autolist t))
 ;; (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 ;; (add-to-list 'comint-output-filter-functions 'ansi-color-process-output))
 
 (with-eval-after-load 'compile
   (setq ansi-color-for-compilation-mode t)
-  (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter))
+  (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
+  (setq compilation-save-buffers-predicate
+        (lambda ()
+          (string-prefix-p default-directory (file-truename (buffer-file-name))))))
 
 ;; eshell
+(add-hook 'eshell-term-load-hook (lambda () (setenv "TERM" comint-terminfo-terminal)))
 (with-eval-after-load 'eshell
   (add-to-list 'eshell-modules-list 'eshell-rebind)
   (add-to-list 'eshell-modules-list 'eshell-tramp)
   ;; (add-to-list 'eshell-modules-list 'eshell-smart)
   (add-to-list 'eshell-modules-list 'eshell-xtra)
+  (add-to-list 'eshell-modules-list 'eshell-elecslash)
   (setq eshell-highlight-prompt nil
-    eshell-prompt-function
-    (lambda nil
-      (propertize (concat
-                    (if (string= (eshell/pwd) (getenv "HOME"))
-                      (propertize "~" 'face '(:inherit face-faded :weight light))
-                      (replace-regexp-in-string
-                        (getenv "HOME")
-                        (propertize "~" 'face '(:inherit face-faded :weight light))
-                        (propertize (eshell/pwd) 'face '(:inherit face-faded :weight light))))
-                    (propertize "  λ" 'face '(:inherit face-faded :weight light))
-                    (propertize "  " 'face nil))
-        'front-sticky '(font-lock-face read-only)
-        'rear-nonsticky '(font-lock-face read-only)
-        'read-only t)))
+        eshell-prompt-function
+        (lambda nil
+          (propertize (concat
+                       (if (string= (eshell/pwd) (getenv "HOME"))
+                           (propertize "~" 'face '(:inherit face-faded :weight light))
+                         (replace-regexp-in-string
+                          (getenv "HOME")
+                          (propertize "~" 'face '(:inherit face-faded :weight light))
+                          (propertize (eshell/pwd) 'face '(:inherit face-faded :weight light))))
+                       ;; (propertize "  λ" 'face '(:inherit face-faded :weight light))
+                       (propertize "  *" 'face '(:inherit face-faded :weight light))
+                       (propertize "  " 'face nil))
+                      'front-sticky '(font-lock-face read-only)
+                      'rear-nonsticky '(font-lock-face read-only)
+                      'read-only t)))
   (setq eshell-banner-message ""
-    eshell-prompt-regexp "^.*  λ  "
-    eshell-hist-ignoredups 'erase
+        eshell-prompt-regexp "^.*  .  "
+        eshell-hist-ignoredups 'erase
+        ;; eshell-review-quick-commands t
+        ;; eshell-where-to-jump 'after
+        eshell-default-target-is-dot nil
+        eshell-cp-interactive-query t
+        eshell-cp-overwrite-files nil
+        eshell-ln-interactive-query t
+        eshell-ln-overwrite-files nil
+        eshell-mv-interactive-query t
+        eshell-mv-overwrite-files nil
+        eshell-prefer-lisp-functions t
+        eshell-destroy-buffer-when-process-dies t)
 
-    ;; eshell-review-quick-commands t
-    ;; eshell-where-to-jump 'after
-
-    eshell-default-target-is-dot nil
-    eshell-cp-interactive-query t
-    eshell-cp-overwrite-files nil
-    eshell-ln-interactive-query t
-    eshell-ln-overwrite-files nil
-    eshell-mv-interactive-query t
-    eshell-mv-overwrite-files nil
-
-    eshell-prefer-lisp-functions t))
+  (defun eshell/doas (&rest args)
+    "Alias \"doas\" to call Tramp."
+    (eshell-eval-using-options
+     "doas" args
+     '((?h "help" nil nil "show this usage screen")
+       (?u "user" t user "execute command as another USER")
+       :show-usage
+       :parse-leading-options-only
+       :usage "[(-u | --user) USER] COMMAND")
+     (throw 'eshell-external
+            (let* ((user (or user "root"))
+                   (host (or (file-remote-p default-directory 'host)
+                             tramp-default-host))
+                   (dir (file-local-name (expand-file-name default-directory)))
+                   (prefix (file-remote-p default-directory))
+                   (default-directory
+                    (if (and prefix
+                             (or (not (string-equal
+                                       "doas"
+                                       (file-remote-p default-directory 'method)))
+                                 (not (string-equal
+                                       user
+                                       (file-remote-p default-directory 'user)))))
+                        (format "%s|doas:%s@%s:%s"
+                                (substring prefix 0 -1) user host dir)
+                      (format "/doas:%s@%s:%s" user host dir))))
+              ;; (eshell-command (car args) (cdr args))
+              (eshell-command (mapconcat 'identity args " ") t))))))
 
 (with-eval-after-load 'em-term
   (setq eshell-visual-subcommands '(("git" "log" "diff" "show")
-                                     ("sudo" "dnf" "upgrade")
-                                     ("doas" "dnf" "upgrade")
-                                     ("systemctl" "status")
-                                     ("cargo" "build")
-                                     ("rustup" "upgrade")))
+                                    ("sudo" "dnf" "upgrade")
+                                    ("doas" "dnf" "upgrade")
+                                    ("systemctl" "status")
+                                    ("cargo" "build")
+                                    ("rustup" "upgrade")))
   (dolist (cmd '("mpv" "bluetoothctl" "powertop" "nvtop" "unison" "cmus"
-                  "wget" "curl" "aria2c"))
+                 "wget" "curl" "aria2c"))
     (add-to-list 'eshell-visual-commands cmd)))
 
 (with-eval-after-load 'em-ls
-  ;;(set-face 'eshell-ls-backup 'default)
   ;;(set-face 'eshell-ls-clutter 'default)
-  ;;(set-face 'eshell-ls-symlink 'default)
   ;;(set-face 'eshell-ls-missing 'default)
-  ;;(set-face 'eshell-ls-archive 'default)
   ;;(set-face 'eshell-ls-product 'default)
   ;;(set-face 'eshell-ls-special 'default)
-  ;;(set-face 'eshell-ls-readonly 'default)
   ;;(set-face 'eshell-ls-unreadable 'default)
 
-  (set-face 'eshell-ls-directory 'default)
-  (set-face-attribute 'eshell-ls-directory nil :weight 'bold)
+  (set-face 'eshell-ls-directory 'face-identifier)
   (set-face 'eshell-ls-executable 'face-salient)
-  (set-face-attribute 'eshell-ls-executable nil :weight 'normal))
+  (set-face 'eshell-ls-backup 'face-faded)
+  (set-face 'eshell-ls-missing 'face-popout)
+  (set-face 'eshell-ls-archive 'face-salient-cyan)
+  (set-face 'eshell-ls-symlink 'face-subtle-purple)
+  (set-face 'eshell-ls-readonly 'face-salient-green)
+  (set-face 'eshell-ls-special 'face-italic))
 
 ;; newsticker
 (global-set-key (kbd "C-:") 'newsticker-show-news)
 (with-eval-after-load 'newst-treeview
   (setq newsticker-treeview-date-format "%b %d, %I:%M %p  "
-    newsticker-date-format "%a %b %d, %I:%M %p")
+        newsticker-date-format "%a %b %d, %I:%M %p")
   (set-face 'newsticker-treeview-face 'default)
   (set-face 'newsticker-treeview-selection-face 'default)
   (set-face 'newsticker-treeview-new-face 'default)
   (set-face-attribute 'newsticker-treeview-selection-face nil
-    :weight 'bold
-    :background (face-background 'face-block)
-    :inherit 'face-salient)
+                      :weight 'bold
+                      :background (face-background 'face-block)
+                      :inherit 'face-salient)
   (set-face-attribute 'newsticker-treeview-new-face nil
-    :weight 'bold
-    :inherit 'default)
+                      :weight 'bold
+                      :inherit 'default)
   (set-face-attribute 'newsticker-treeview-old-face nil
-    :weight 'light
-    :inherit 'face-faded)
+                      :weight 'light
+                      :inherit 'face-faded)
   (set-face-attribute 'newsticker-feed-face nil
-    :weight 'bold
-    :height 1.2
-    :foreground (face-foreground 'face-strong)
-    :underline t)
+                      :weight 'bold
+                      :height 1.2
+                      :foreground (face-foreground 'face-strong)
+                      :underline t)
   (set-face-attribute 'newsticker-treeview-immortal-face nil
-    :slant 'italic
-    :foreground (face-foreground 'face-strong)))
+                      :slant 'italic
+                      :foreground (face-foreground 'face-strong)))
 
 ;; shr html rendering
 (with-eval-after-load 'shr
+  (set-face 'shr-text 'variable-pitch)
+  (set-face-attribute 'shr-text nil :height 1.1)
   (setq shr-bullet "•"
-    shr-max-width 80
-    ;;    shr-hr-line (kbd "─")))
-    shr-hr-line 9472))
+        shr-max-width 85
+        ;;    shr-hr-line (kbd "─")))
+        shr-hr-line 9472))
+
+;; eww
+(with-eval-after-load 'eww
+  (setq eww-auto-rename-buffer 'title
+        eww-header-line-format nil
+        eww-use-external-browser-for-content-type "\\`\\(video/\\|audio/\\|application/ogg\\)")
+  (set-face 'eww-form-text 'widget-field)
+  (set-face 'eww-form-select 'face-block)
+  (set-face-attribute 'eww-form-select nil :box 1)
+  (set-face 'eww-form-submit 'face-block)
+  (set-face-attribute 'eww-form-submit nil
+                      :box 1))
+
+(defvar shr-sans-serif-cookie)
+(define-minor-mode shr-sans-serif
+  "buffer local sans serif for shr"
+  :init-value nil
+  (if shr-sans-serif
+      (setq shr-sans-serif-cookie (list (face-remap-add-relative 'shr-text
+                                                                 :family "Cantarell"
+                                                                 :height 1.0)
+                                        (face-remap-add-relative 'shr-link
+                                                                 :weight 'normal)))
+    (dolist (face shr-sans-serif-cookie)
+      (face-remap-remove-relative face))))
 
 ;; authinfo password entry
 (setf epa-pinentry-mode 'loopback)
 
 ;; shell command
 (setq history-length 30
-  shell-command-prompt-show-cwd t
-  async-shell-command-display-buffer nil
-  async-shell-command-buffer 'new-buffer)
-
-;; Based off https://emacs.stackexchange.com/questions/48954/the-elisp-function-to-run-the-shell-command-in-specific-file-path#
-(defun ad-read-default-directory-args (interactive-spec)
-  "Read default directory and apply INTERACTIVE-SPEC.
-  Return a list (DIRECTORY PREFIX-ARG RESULT-OF-INTERACTIVE-SPEC).
-  The default directory is only read with numeric `current-prefix-arg'."
-  (let ((default-directory (or
-                             (and
-                               (numberp current-prefix-arg)
-                               (expand-file-name (read-directory-name "Default directory: " nil nil t)))
-                             default-directory))
-         (current-prefix-arg (and (numberp current-prefix-arg)
-                               (null (< current-prefix-arg 0))
-                               current-prefix-arg)))
-    (append
-      (list
-        current-prefix-arg ;; never a string
-        default-directory)
-      (advice-eval-interactive-spec interactive-spec))))
-
-(defun ad-read-default-directory-&-call (fun &rest args)
-  "Run FUN with ARGS with `default-directory' set to DIRECTORY and PREFIX-ARG.
-  Only change `default-directory' if the prefix arg is numeric.
-  Positive prefix args are passed to FUN negative are not."
-  (interactive #'ad-read-default-directory-args)
-  (if (stringp (car args))
-    (apply fun args)
-    (let ((default-directory (or (cl-second args) default-directory))
-           (current-prefix-arg (cl-first args)))
-      (apply fun (nthcdr 2 args)))))
-
-(advice-add 'shell-command :around #'ad-read-default-directory-&-call)
-(advice-add 'async-shell-command :around #'ad-read-default-directory-&-call)
+      shell-command-prompt-show-cwd t
+      async-shell-command-display-buffer nil
+      async-shell-command-buffer 'new-buffer)
 
 ;; bookmarks
 (with-eval-after-load 'bookmark
   (set-face-attribute 'bookmark-face nil
-    :foreground (face-foreground 'face-strong)
-    :background (face-background 'face-block))
+                      :foreground (face-foreground 'face-strong)
+                      :background (face-background 'face-block))
   (setq bookmark-save-flag 1))
+
+;; calc
+;; (with-eval-after-load 'calc)
+;; (calc-algebraic-mode 1))
+
+;; compilation
+(with-eval-after-load 'compile
+  (set-face-attribute 'compilation-mode-line-exit nil
+                      :weight 'bold
+                      :inherit 'face-salient-yellow)
+  (set-face-attribute 'compilation-mode-line-fail nil
+                      :foreground 'unspecified
+                      :weight 'normal
+                      :inherit 'face-critical)
+  (set-face-attribute 'compilation-mode-line-run nil
+                      :inherit 'face-salient))
+
+;; serif mono modes
+(add-hook 'Info-mode-hook (lambda ()
+                            (my/serif-monospace-fonts)
+                            (face-remap-add-relative 'header-line :height 0.8)))
+(add-hook 'help-mode-hook (lambda () (unless (string= (buffer-name) "*Faces*")
+                                  (my/serif-monospace-fonts))))
+(defun my/serif-monospace-fonts ()
+  "Set serif monospace fonts for current buffer."
+  (interactive)
+  (face-remap-add-relative 'default :family "Go Mono")
+  (face-remap-add-relative 'header-line :family "Go Mono"))
+
+;; browse-url-handlers
+(setq browse-url-handlers '(("https?://melpa\\.org/.*" (lambda (url &rest _args)
+                                                         (describe-package (intern (file-name-base url)))))))
+
 
 (provide 'init-system)

@@ -1,51 +1,149 @@
 ;; -*- lexical-binding: t; eval: (ligature-mode -1) -*-
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
-  '(auth-source-save-behavior nil)
-  '(package-selected-packages
-     '(semi flim apel pdf-tools valign tree-mode hierarchy virtualenvwrapper json-rpc cmus ein polymode deferred anaphora websocket beacon smtpmail-multi lv ht spray magit magit-section git-commit with-editor transient avy-menu ytdious writeroom-mode writegood-mode which-key unicode-math-input speed-type smartparens rustic rainbow-delimiters quelpa pyvenv pytest powerthesaurus persistent-scratch ox-hugo org-fragtog org-download org-bullets nov mediawiki math-symbols lua-mode ligature langtool-ignore-fonts highlight-indent-guides haskell-mode good-scroll gnuplot flyspell-correct flycheck-vale flycheck-languagetool fic-mode ess eshell-vterm empv ement elpher el-easydraw eglot company-quickhelp centered-window cdlatex bibtex-completion aria2 all-the-icons-ibuffer all-the-icons-dired all-the-icons-completion aggressive-indent))
-  '(pdf-view-resize-factor 1.01)
-  '(safe-local-variable-values
-     '((pyvenv-activate . "./venv")
-        (eval ligature-mode -1)
-        (eval flycheck-mode nil)
-        (flycheck-mode)
-        (org-time-stamp-custom-formats "%m/%d/%y" . "%m/%d/%y")))
-  '(send-mail-function 'smtpmail-send-it))
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(auth-source-save-behavior nil)
+ '(canlock-password "bced4bd58b8ed6e6926cd99793d3f0c43af09e65")
+ '(org-agenda-files
+   '("/home/rayes/Notes/org/Exercise.org" "/home/rayes/Notes/org/Insights.org" "/home/rayes/Notes/org/Meta.org" "/home/rayes/Notes/org/Programming.org" "/home/rayes/Notes/org/anki.org" "/home/rayes/Notes/org/media-list.org" "/home/rayes/Notes/org/programs.org" "/home/rayes/Notes/org/tea.org" "/home/rayes/Notes/org/todo.org"))
+ '(package-selected-packages
+   '(bencoding nnshimbun w3m nnchan lexic md4rd hierarchy code-review emojify uuidgen htmlize a nnreddit ement nnhackernews json-rpc lua-mode plz slime macrostep rustic fountain-mode taxy-magit-section taxy chika promise arbtt typit mmt ox-hugo csv-mode arietta forge magit magit-section transient vterm flycheck company biblio avy auctex org-appear dired-rsync math-delimiters sx yaml ghub treepy closql emacsql-sqlite emacsql rust-mode beacon iscroll tsc realgud test-simple loc-changes load-relative yascroll org-mime org-contrib semi flim apel pdf-tools valign tree-mode virtualenvwrapper cmus ein polymode deferred anaphora websocket smtpmail-multi lv ht spray git-commit with-editor avy-menu ytdious writeroom-mode writegood-mode which-key unicode-math-input speed-type rainbow-delimiters quelpa pyvenv pytest powerthesaurus persistent-scratch org-fragtog org-download org-bullets nov mediawiki math-symbols ligature langtool-ignore-fonts highlight-indent-guides haskell-mode gnuplot flyspell-correct flycheck-vale flycheck-languagetool fic-mode ess eshell-vterm empv elpher el-easydraw eglot company-quickhelp cdlatex bibtex-completion all-the-icons-ibuffer all-the-icons-dired all-the-icons-completion aggressive-indent))
+ '(pdf-view-resize-factor 1.01)
+ '(safe-local-variable-values
+   '((eval add-to-list 'fountain-export-command-profiles
+           '("wrap-html" . "wrap html %b --out %B.html"))
+     (org-babel-lilypond-gen-svg . t)
+     (eval advice-add 'org-hugo--get-sanitized-title :override #'blog/org-hugo-title-with-markup)
+     (eval defun blog/org-hugo-title-with-markup
+           (info)
+           (when
+               (plist-get info :with-title)
+             (org-export-data-with-backend
+              (plist-get info :title)
+              'md info)))
+     (eval setq-local org-link-make-description-function 'blog/org-hugo-make-link-desc)
+     (eval defun blog/org-hugo-make-link-desc
+           (l g)
+           (if g g
+             (when
+                 (string-match-p "^/img/.*$" l)
+               (if
+                   (yes-or-no-p "Auto link? ")
+                   (concat "file:" l)
+                 (read-string "Description: " initial-input)
+                 initial-input))))
+     (eval advice-add 'org-insert-link :around
+           (lambda
+             (orig &rest r)
+             (interactive "P")
+             (if
+                 (not blog/org-hugo-function-advices)
+                 (call-interactively orig)
+               (let
+                   ((default-directory "/home/rayes/sites/personal-site/static/img/"))
+                 (call-interactively orig)))))
+     (blog/org-hugo-function-advices . t)
+     (eval define-minor-mode blog/org-hugo-function-advices "Enable custom blog advices")
+     (eval setq-local org-link-file-path-type 'blog/hugo-return-directory-from-static)
+     (eval defun blog/hugo-return-directory-from-static
+           (path)
+           (cond
+            ((cl-search "~/sites/personal-site/static/" path)
+             (replace-regexp-in-string
+              (regexp-quote "~/sites/personal-site/static")
+              "" path))
+            ((cl-search "/home/rayes/sites/personal-site/static/" path)
+             (replace-regexp-in-string
+              (regexp-quote "/home/rayes/sites/personal-site/static")
+              "" path))
+            (t
+             (progn
+               (message "file outside static dir (prob wrong path)")
+               path))))
+     (eval setq-local org-export-filter-link-functions
+           '(blog/org-filter-out-fignum))
+     (eval defun blog/org-filter-out-fignum
+           (data _ _)
+           (replace-regexp-in-string "<span class=.*figure-number.*Figure .*: </span>" "" data))
+     (org-latex-create-formula-image-program quote dvisvgm)
+     (org-format-latex-options quote
+                               (:foreground default :background "Transparent" :scale 0.8 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+                                            ("begin" "$1" "$" "$$" "\\(" "\\[")))
+     (dired-omit-files . "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.*\\.aria2\\'\\|\\.torrent\\'\\|\\.dir-locals.el\\'")
+     (dired-omit-files . "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.*\\.aria2\\'\\|\\.torrent\\'\\|\\\\`.dir-locals.el\\'")
+     (dired-omit-files . "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.*\\.aria2\\'\\|\\.torrent\\'")
+     (dired-omit-files concat dired-omit-files "\\|\\.torrent\\'")
+     (eval setq-local org-export-filter-link-functions
+           '(my/org-filter-out-fignum))
+     (eval defun my/org-filter-out-fignum
+           (data _ _)
+           (replace-regexp-in-string "<span class=.*figure-number.*Figure .*: </span>" "" data))
+     (pyvenv-activate . "./venv")
+     (eval ligature-mode -1)
+     (eval flycheck-mode nil)
+     (flycheck-mode)
+     (org-time-stamp-custom-formats "%m/%d/%y" . "%m/%d/%y")))
+ '(send-mail-function 'smtpmail-send-it)
+ '(warning-suppress-log-types '((websocket))))
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
-  )
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+;; org capture
+(setq org-capture-templates
+      '(("t" "Task" entry (file+headline "~/Notes/org/todo.org" "Misc")
+         "* TODO %?\n%T")
+        ("u" "Uni Task" entry (file+headline "~/Notes/org/todo.org" "Uni")
+         "* UNI %?\n%T")
+        ("b" "Blog" entry (file+headline "~/Notes/org/todo.org" "Site")
+         "* TODO [#A] %?")))
+
+(setq arietta-rpc-secret "aria2")
 
 ;; org agenda files
 (setq org-directory "~/Notes/org"
-  org-agenda-files (list org-directory))
+      org-agenda-files (list org-directory))
 
 (add-hook 'org-mode-hook #'valign-mode)
+
+(setq org-format-latex-options
+      '(:foreground default
+        :background "Transparent"
+        :scale 0.8
+        :html-foreground "Black"
+        :html-background "Transparent"
+        :html-scale 1.0
+        :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
+
+(defun setup-chicken()
+  "set some things for chicken scheme"
+  (interactive)
+  (require 'scheme)
+  (setq scheme-program-name "csi -:c"))
 
 (add-hook 'eshell-mode-hook 'eshell-vterm-mode)
 (with-eval-after-load 'em-term.el
   (add-to-list 'eshell-visual-commands "mtpsync.sh"))
 
-(setq org-format-latex-options
-  '(:foreground default
-     :background "Transparent"
-     :scale 0.85
-     :html-foreground "Black"
-     :html-background "Transparent"
-     :html-scale 1.0
-     :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
-
 ;; link opener
-(defun browse-url-misc (url &rest args)
+(defun browse-url-choose (url &rest _args)
   (interactive)
-  (call-process "/home/rayes/bin/link-open" nil 0 nil url))
-(setq browse-url-browser-function 'browse-url-misc)
+  (let ((browser (condition-case _
+                     (completing-read "browse with: "
+                                      '("tor-browser" "chromium" "mpv" "copy" "feh"))
+                   nil)))
+    (if (string-equal browser "copy")
+        (progn
+          (kill-new url nil)
+          (message "added to kill ring"))
+      (call-process "/home/rayes/bin/link-open" nil 0 nil browser url)
+      (message "opening..."))))
+(setq browse-url-browser-function #'browse-url-choose)
 
 ;; (require 'cmus)
 ;; (cmus-setup-default)
@@ -53,21 +151,23 @@
 ;; mediawiki
 (require 'mediawiki)
 (setq mediawiki-site-alist
-  '(("Wikipedia" "https://en.wikipedia.org/w/" "Rayes0" "" nil "Main Page")
-     ("Mobileread" "https://wiki.mobileread.com/wiki/" "rayes" "" nil "Main Page")))
+      '(("Wikipedia" "https://en.wikipedia.org/w/" "Rayes0" "" nil "Main Page")
+        ;; ("Mobileread" "https://wiki.mobileread.com/wiki/" "rayes" "" nil "Main Page")
+        ("Fandom: Oregairu" "https://oregairu.fandom.com/" "" nil "OreGairu_Wiki")
+        ("Fedora Wiki" "https://fedoraproject.org/wiki/" "rayes" nil "User:Rayes")))
 (add-hook 'mediawiki-mode-hook
-  (lambda ()
-    (flyspell-mode 1)
-    (variable-pitch-mode 1)
-    (visual-line-mode 1)))
+          (lambda ()
+            (flyspell-mode 1)
+            (variable-pitch-mode 1)
+            (visual-line-mode 1)))
 
 ;; some commands to help me with Hugo
 (defun hugo-server-start ()
   (interactive)
   (let ((default-directory "~/sites/personal-site/"))
     (make-process :name "hugo"
-      :buffer "*hugo-server*"
-      :command '("hugo" "server" "-D" "--navigateToChanged"))))
+                  :buffer "*hugo-server*"
+                  :command '("hugo" "server" "-D" "--navigateToChanged"))))
 (defun hugo-server-stop ()
   (interactive)
   (kill-process "hugo"))
@@ -75,8 +175,8 @@
   (interactive)
   (let ((default-directory "~/sites/personal-site/"))
     (make-process :name "hugo"
-      :buffer "*hugo-server*"
-      :command '("hugo" "server" "--navigateToChanged"))))
+                  :buffer "*hugo-server*"
+                  :command '("hugo" "server" "--navigateToChanged"))))
 
 ;; ido-at-point
 ;; (autoload 'ido-at-point-mode "ido-at-point")
@@ -119,14 +219,21 @@
 
 ;; change default python interpreter to ipython
 (setq python-shell-interpreter "ipython"
-  python-shell-interpreter-args "-i --simple-prompt --InteractiveShell.display_page=True")
+      python-shell-interpreter-args "-i --simple-prompt --InteractiveShell.display_page=True")
+
+;; bug-mode
+(with-eval-after-load 'bug-mode
+  (setq bug-default-instance 'bugzilla
+        bug-instance-plist '(:bugzilla (:url "https://bugzilla.redhat.com/"
+                                        ;; :authinfo "~/.authinfo.gpg"
+                                        :type bz-rpc))))
 
 ;; highlight indent guides
 (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
 (highlight-indent-guides-auto-set-faces)
 (setq highlight-indent-guides-method 'character
-  highlight-indent-guides-responsive 'top
-  highlight-indent-guides-delay 0)
+      highlight-indent-guides-responsive nil
+      highlight-indent-guides-delay 0)
 
 ;; aggressive indent
 (aggressive-indent-global-mode 1)
@@ -141,11 +248,14 @@
 ;; company
 (require 'company)
 (global-company-mode 1)
+(setq company-global-modes '(not org-mode))
 (company-quickhelp-mode 1)
 (setq company-quickhelp-delay nil
-  company-quickhelp-color-background "#dad3d0")
+      company-quickhelp-color-background "#dad3d0")
 (define-key company-active-map (kbd "C-h") 'company-quickhelp-manual-begin)
 (define-key company-active-map (kbd "M-h") 'company-show-doc-buffer)
+(setq company-idle-delay 0.4
+      company-minimum-prefix-length 2)
 
 (set-face 'company-tooltip 'face-block)
 (set-face-attribute 'company-tooltip nil :background "#f5ece9" :inherit 'fixed-pitch)
@@ -153,6 +263,23 @@
 (set-face 'company-tooltip-selection 'secondary-selection)
 (set-face-attribute 'company-tooltip-scrollbar-thumb nil :background "#dad3d0")
 (set-face-attribute 'company-tooltip-scrollbar-track nil :background (face-background 'face-block))
+
+;; yascroll
+;; (global-yascroll-bar-mode 1)
+;; (setq yascroll:delay-to-hide 0.7)
+;; (set-face-attribute 'yascroll:thumb-fringe nil
+;; :foreground (face-foreground 'face-faded)
+;; :background (face-foreground 'face-faded))
+;; (set-face-attribute 'yascroll:thumb-text-area nil :background (face-background 'face-block))
+
+;; sublimity
+;; (require 'sublimity)
+;; (require 'sublimity-attractive)
+;; (require 'sublimity-scroll)
+;; (setq sublimity-scroll-drift-length 2
+;;   sublimity-scroll-weight 10)
+;; (setq sublimity-scroll-vertical-frame-delay 0.001)
+;; (add-hook 'eww-mode-hook 'sublimity-mode)
 
 ;; spray
 ;; (require 'spray)
@@ -166,11 +293,11 @@
 (global-set-key "\C-c\C-ge" 'writegood-reading-ease)
 (with-eval-after-load 'writegood-mode
   (set-face-attribute 'writegood-weasels-face nil
-    :underline '(:color "#dad3d0"))
+                      :underline '(:color "#dad3d0"))
   (set-face-attribute 'writegood-passive-voice-face nil
-    :underline '(:color "#75998e"))
+                      :underline '(:color "#75998e"))
   (set-face-attribute 'writegood-duplicates-face nil
-    :underline '(:color "#8f8678" :style wave)))
+                      :underline '(:color "#8f8678" :style wave)))
 
 ;; org-download
 (autoload 'org "org-download")
@@ -179,10 +306,26 @@
 
 ;; org-fragtog and cdlatex
 (add-hook 'org-mode-hook 'org-fragtog-mode)
+(add-hook 'org-mode-hook 'org-appear-mode)
+
 (add-hook 'org-mode-hook 'org-cdlatex-mode)
+(setq cdlatex-simplify-sub-super-scripts nil
+      cdlatex-auto-help-delay 1
+      cdlatex-math-symbol-alist '((i ("\\in" "\\imath" "\\int"))))
+
+;; (advice-add 'cdlatex-math-symbol :around (lambda (f)
+;;                                            (interactive "P")))
+
+;; (with-eval-after-load 'org
+;; (define-key org-mode-map "$" 'cdlatex-dollar)
+;; (define-key org-mode-map (kbd "H-$") '(org-self-insert-command "$")))
+;; (with-eval-after-load 'cdlatex
+;;   (define-key cdlatex-mode-map "$" nil))
+;; (with-eval-after-load 'tex
+;;   (define-key TeX-mode-map "$" 'math-delimiters-insert))
 
 ;; org-latex
-(setq org-latex-create-formula-image-program 'dvisvgm)
+;; (setq org-latex-create-formula-image-program 'dvisvgm)
 
 ;; org-bullets
 (add-hook 'org-mode-hook 'org-bullets-mode)
@@ -196,20 +339,20 @@
 
 ;; bibtex and org-cite setup
 (setq bibtex-field-delimiters 'double-quotes
-  bibtex-entry-format
-  `(opts-or-alts page-dashes required-fields
-     numerical-fields whitespace last-comma delimiters
-     unify-case sort-fields)
-  bibtex-align-at-equal-sign t)
+      bibtex-entry-format
+      `(opts-or-alts page-dashes required-fields
+                     numerical-fields whitespace last-comma delimiters
+                     unify-case sort-fields)
+      bibtex-align-at-equal-sign t)
 
 (require 'bibtex-completion)
 (setq bibtex-completion-bibliography
-  (if (file-accessible-directory-p "~/media/academic/")
-    (directory-files "~/media/academic/" t ".*.bib")
-    '("~/media/academic/references.bib"))
-  bibtex-completion-library-path "~/media/academic/pdfs/"
-  bibtex-completion-notes-path "~/media/academic/notes/"
-  org-cite-global-bibliography bibtex-completion-bibliography)
+      (if (file-accessible-directory-p "~/media/academic/")
+          (directory-files "~/media/academic/" t ".*.bib")
+        '("~/media/academic/references.bib"))
+      bibtex-completion-library-path "~/media/academic/pdfs/"
+      bibtex-completion-notes-path "~/media/academic/notes/"
+      org-cite-global-bibliography bibtex-completion-bibliography)
 
 (defun open-pdf-from-bibtex ()
   (interactive)
@@ -221,8 +364,6 @@
 (define-key bibtex-mode-map (kbd "C-c C-v p") 'open-pdf-from-bibtex)
 (define-key bibtex-mode-map (kbd "C-c C-v n") 'open-notes-from-bibtex)
 
-
-
 ;;(require 'citeproc-org)
 ;;(citeproc-org-setup)
 
@@ -231,16 +372,29 @@
   (defun filter-out-p (str _ _)
     (replace-regexp-in-string "\n<p>\\|</p>\n\\|<p>\\|</p>" "" str))
   (setq anki-editor--ox-anki-html-backend
-    (org-export-create-backend
-      :parent 'html
-      :filters
-      '((:filter-paragraph . filter-out-p)))))
+        (org-export-create-backend
+         :parent 'html
+         :filters
+         '((:filter-paragraph . filter-out-p)))))
 
 ;; activity watch mode
 ;;(global-activity-watch-mode)
 
 ;; vterm
-(setq vterm-buffer-name-string "%s | vterm")
+(setq vterm-buffer-name-string "%s | vterm"
+      vterm-timer-delay nil)
+
+(defvar top-global-buffer)
+(defun systop ()
+  "Run top in vterm"
+  (interactive)
+  (setq top-global-buffer (generate-new-buffer "*top - vterm*"))
+  (when (buffer-live-p top-global-buffer)
+    (let ((vterm-shell (executable-find "top"))
+          (vterm-kill-buffer-on-exit t))
+      (with-current-buffer top-global-buffer
+        (vterm-mode))
+      (switch-to-buffer top-global-buffer))))
 
 ;; ido
 ;;(require 'ido-hacks)
@@ -249,15 +403,84 @@
 ;;(ido-grid-mode 1)
 ;;(setq ido-grid-mode-start-collapsed t)
 
+(with-eval-after-load 'speed-type
+  (set-face 'speed-type-mistake 'face-critical)
+  (set-face 'speed-type-correct 'face-faded))
+
 ;; ytdious
-(setq ytdious-invidious-api-url "https://invidious.snopyta.org")
+(with-eval-after-load 'ytdious
+  (setq ytdious-invidious-api-url "https://invidious.snopyta.org")
+  ;; (setq ytdious-invidious-api-url "https://invidious.kavin.rocks")
+  (set-face 'ytdious-video-published-face 'face-salient-green)
+  (set-face 'ytdious-video-view-face 'face-salient-yellow)
+  (set-face 'ytdious-channel-name-face 'face-identifier)
+  (set-face 'ytdious-video-length-face 'face-salient-cyan))
 
 ;; magit
-(setq magit-process-find-password-functions '(magit-process-password-auth-source))
+(with-eval-after-load 'magit
+  (setq magit-process-find-password-functions '(magit-process-password-auth-source))
+  (set-face-attribute 'magit-section-highlight nil
+                      :background (face-background 'face-block))
+  (set-face 'magit-branch-local 'face-pre)
+  (set-face 'magit-branch-remote 'face-identifier)
+  (set-face-attribute 'magit-branch-current nil :box nil :underline t)
+  (set-face-attribute 'magit-branch-remote nil :weight 'normal :slant 'italic)
+  (set-face 'magit-tag 'face-popout)
+  (set-face 'magit-section-heading 'face-salient-cyan)
+  (set-face-attribute 'magit-section-heading nil :weight 'light)
+
+  (set-face-attribute 'magit-diffstat-added nil :foreground "#839773")
+  (set-face-attribute 'magit-diffstat-removed nil :foreground "#ce9c85")
+
+  (set-face 'magit-log-author 'face-salient-green)
+  (set-face-attribute 'magit-log-author nil
+                      :weight 'bold)
+
+  (require 'forge)
+  (set-face 'forge-topic-merged 'face-faded)
+  (set-face 'forge-topic-closed 'face-faded)
+  (set-face-attribute 'forge-topic-closed nil :weight 'normal)
+  (set-face 'forge-topic-open 'face-strong)
+  (set-face 'forge-topic-unmerged 'face-salient-yellow)
+  (set-face-attribute 'forge-topic-unmerged nil :weight 'bold)
+  (set-face 'forge-topic-label 'face-strong)
+  (set-face-attribute 'forge-topic-label nil
+                      :box nil)
+  (set-face 'magit-dimmed 'face-faded)
+
+  (set-face 'magit-diff-hunk-heading 'face-strong)
+  (set-face-attribute 'magit-diff-hunk-heading nil
+                      :underline t
+                      :weight 'bold
+                      :extend t)
+  (set-face 'magit-diff-hunk-heading-highlight 'face-block)
+  (set-face-attribute 'magit-diff-hunk-heading-highlight nil
+                      :extend t
+                      :underline t))
+
+(with-eval-after-load 'code-review
+  (set-face-attribute 'code-review-timestamp-face nil
+                      :foreground 'unspecified
+                      :slant 'italic
+                      :inherit 'face-light))
+
+;; (add-hook 'forge-topic-mode-hook (lambda ()
+;; (face-remap-add-relative ')))
+
+;; sx
+(require 'sx)
+(require 'sx-question-mode)
+(set-face-attribute 'sx-question-mode-content-face nil
+                    :background (face-background 'default))
+(set-face 'sx-custom-button 'custom-button)
+(set-face-attribute 'sx-question-mode-accepted nil
+                    :foreground (face-foreground  'face-salient-yellow))
+(define-key sx-question-mode-map (kbd "G") 'sx-open-link)
+(define-key sx-question-mode-map (kbd "C-c w") 'center-window-mode)
 
 ;; R markdown
-(defun rmd-mode ()
-  "ESS Markdown mode for rmd files"
+(defun rmd-activate ()
+  "ESS Markdown settings for rmd files"
   (interactive)
   (require 'poly-R)
   (require 'poly-markdown)     
@@ -270,7 +493,7 @@
   (face-remap-add-relative 'markdown-header-face-4 '(:height 110 :underline t))
   (face-remap-add-relative 'markdown-header-face-5 '(:height 110 :underline t))
   (face-remap-add-relative 'markdown-header-face-6 '(:height 110 :underline t)))
-(add-to-list 'auto-mode-alist '("\\.Rmd" . rmd-mode))
+(add-to-list 'auto-mode-alist '("\\.Rmd" . rmd-activate))
 
 ;; pdf-tools
 (pdf-tools-install)
@@ -279,10 +502,29 @@
 ;;                                 (setq-local auto-revert-interval 0.5)
 ;;                                 (auto-revert-mode 1)
 ;;                                 (auto-revert-set-timer)))
+(define-key pdf-view-mode-map "&" #'my/pdf-tools-zathura)
+(defun my/pdf-tools-zathura ()
+  (interactive)
+  (start-process "zathura" nil (executable-find "zathura")
+                 (buffer-file-name)
+                 (concat "--page=" (number-to-string (pdf-view-current-page)))))
 
 ;; all-the-icons
 (require 'all-the-icons)
+(setq all-the-icons-default-adjust 0.5)
 (add-hook 'ibuffer-mode-hook 'all-the-icons-ibuffer-mode)
+(setq all-the-icons-ibuffer-formats
+      '((mark
+         (icon 2 3 :left) " "
+         name-nolabel " ")
+        (mark
+         modified " "
+         (icon 2 3 :left) " "
+         (name 20 20 :left :elide) " "
+         ;; (size-custom 5 -1 :right) " "
+         (mode+ 16 16 :left :elide)  " "
+         filename-and-process+)
+        ))
 (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
 (with-eval-after-load 'all-the-icons-dired
   (set-face-attribute 'all-the-icons-dired-dir-face nil :foreground "#6c605a"))
@@ -292,56 +534,55 @@
 ;; dired async
 (dired-async-mode 1)
 
+;; dired rsync
+(define-key dired-mode-map (kbd "C-c C-r") 'dired-rsync)
+
 ;; ibuffer custom buffers
 (setq ibuffer-saved-filter-groups
-  (quote (("main"
-            ("MODIFIED" (and
-                          (modified . t)
-                          (visiting-file . t)))
-            ("term" (or
-                      (mode . vterm-mode)
-                      (mode . eshell-mode)
-                      (mode . term-mode)
-                      (mode . shell-mode)))
-            ("planning" (or
-                          (name . "^\\*Calendar\\*$")
-                          (name . "^diary$")
-                          (mode . org-agenda-mode)))
-            ("blog" (filename . "/sites/personal-site/"))
-            ("browser" (or (mode . xwidget-webkit-mode)
-                         (mode . eww-mode)))
-            ("notes" (and (filename . "/Notes/")
-                       (or (mode . org-mode)
-                         (mode . markdown-mode))))
-            ("org" (mode . org-mode))
-            ("books" (filename . "/Books/"))
-            ("docs" (or
-                      (mode . pdf-view-mode)
-                      (mode . doc-view-mode)))
-            ("img" (mode . image-mode))
-            ("elisp" (or (filename . "/.emacs.d/")
-                       (filename . "/.config/emacs/")
-                       (mode . Custom-mode)))
-            ("config" (or (filename . "/.config/")
-                        (filename . "/.themes/")))
-            ("code" (or
-                      (derived-mode . prog-mode)
-                      (mode . ess-mode)
-                      (filename . "/projects/")))
-            ("dired" (mode . dired-mode))
-            ("chat" (or
-                      (mode . ement-room-list-mode)
-                      (mode . ement-room-mode)))
-            ("help" (or (name . "\*Help\*")
-                      (name . "\*Apropos\*")
-                      (name . "\*info\*")
-                      (mode . help-mode)))
-            ("internal" (name . "^\*.*$"))
-            ("other" (name . "^.*$"))))))
+      (quote (("main"
+               ("MODIFIED" (and (modified . t)
+                                (visiting-file . t)))
+               ("term" (or (derived-mode . comint-mode)
+                           (mode . vterm-mode)
+                           (mode . eshell-mode)
+                           (mode . term-mode)
+                           (mode . shell-mode)))
+               ("planning" (or (name . "^\\*Calendar\\*$")
+                               (name . "^diary$")
+                               (mode . org-agenda-mode)))
+               ("blog" (filename . "/sites/personal-site/"))
+               ("browser" (or (mode . xwidget-webkit-mode)
+                              (mode . eww-mode)))
+               ("notes" (and (filename . "/Notes/")
+                             (or (mode . org-mode)
+                                 (mode . markdown-mode))))
+               ("org" (mode . org-mode))
+               ("books" (filename . "/Books/"))
+               ("docs" (or (mode . pdf-view-mode)
+                           (mode . doc-view-mode)))
+               ("img" (mode . image-mode))
+               ("elisp" (or (filename . "/.emacs.d/")
+                            (filename . "/.config/emacs/")
+                            (mode . Custom-mode)))
+               ("config" (or (filename . "/.config/")
+                             (filename . "/.themes/")))
+               ("code" (or (derived-mode . prog-mode)
+                           (mode . ess-mode)
+                           (filename . "/projects/")))
+               ("dired" (mode . dired-mode))
+               ("chat" (or (mode . ement-room-list-mode)
+                           (mode . ement-room-mode)
+                           (mode . erc-mode)))
+               ("help" (or (name . "\*Help\*")
+                           (name . "\*Apropos\*")
+                           (name . "\*info\*")
+                           (mode . help-mode)))
+               ("internal" (name . "^\*.*$"))
+               ("other" (name . "^.*$"))))))
 (add-hook 'ibuffer-mode-hook
-  (lambda ()
-    (ibuffer-auto-mode 1)
-    (ibuffer-switch-to-saved-filter-groups "main")))
+          (lambda ()
+            (ibuffer-auto-mode 1)
+            (ibuffer-switch-to-saved-filter-groups "main")))
 
 (setq diary-file "~/Notes/diary")
 
@@ -361,88 +602,248 @@
 ;;                 vterm-mode))
 ;;          (add-to-list 'indent-guide-inhibit-modes mode))
 
-;; easydraw and org noter
-(with-eval-after-load 'org
-  (require 'edraw-org)
-  (edraw-org-setup-default)
-  (setq org-noter-notes-search-path '("~/Notes/org")))
-
 ;; avy
+(require 'avy)
 (global-set-key (kbd "M-s") 'avy-goto-char-timer)
+(set-face 'avy-lead-face 'face-subtle)
+(set-face-attribute 'avy-lead-face nil
+                    :background (face-background 'face-subtle-purple))
+(set-face 'avy-lead-face-0 'face-subtle)
+(set-face 'avy-lead-face-1 'face-italic-faded)
+;; (set-face 'avy-lead-face-2 'face-)
+;; (set-face 'avy)
+(dolist (avy-face '(avy-lead-face avy-lead-face-0
+                    avy-lead-face-1 avy-lead-face-2))
+  (set-face-attribute avy-face nil :height 0.85
+                      :weight 'bold))
+(set-face 'avy-background-face 'face-light)
+
 (setq avy-style 'pre
-  avy-background t
-  avy-flyspell-correct-function 'ispell-word
-  avy-keys '(106 107 108 104 103 102 100 115 97)
-  avy-timeout-seconds 0.4)
-(define-key isearch-mode-map (kbd "M-j") 'avy-isearch)
+      avy-background nil
+      avy-flyspell-correct-function 'ispell-word
+      avy-keys '(106 107 108 104 103 102 100 115 97)
+      avy-timeout-seconds 0.4)
+(define-key isearch-mode-map (kbd "M-s") 'avy-isearch)
 
 ;; flyspell-correct
 (require 'flyspell-correct-avy-menu)
 (define-key flyspell-mode-map (kbd "C-`") 'flyspell-correct-wrapper)
-
-;; good-scroll
-(require 'good-scroll)
-(good-scroll-mode 1)
-(global-set-key [next] #'good-scroll-up-full-screen)
-(global-set-key [prior] #'good-scroll-down-full-screen)
-
-;;(global-set-key "\M-n"  (lambda () (interactive) (good-scroll-up   4)) )
-;;(global-set-key "\M-p"  (lambda () (interactive) (good-scroll-down 4)) )
-(setq good-scroll-duration 0.15
-  good-scroll-render-rate 0.015)
+(define-key flyspell-mode-map (kbd "C-<escape>") 'flyspell-correct-wrapper)
 
 ;; ement
 (require 'ement)
-(global-set-key (kbd "M-g M-l") 'ement-list-rooms)
-(with-eval-after-load 'ement
-  (setq ement-save-sessions t
-    ement-room-send-typing nil
-    ement-room-send-read-receipts nil
-    ement-room-prism nil
-    ;;    ement-room-send-message-filter 'ement-room-send-org-filter
-    ement-room-mark-rooms-read nil
-    ement-room-message-format-spec "%B%r%R%t"
-    ement-room-left-margin-width 0
-    ement-room-right-margin-width 8
-    ement-room-sender-in-headers t
-    ement-room-sender-headers t)
-  (set-face 'ement-room-message-text 'variable-pitch)
-  (set-face 'ement-room-mention 'face-block)
-  (set-face-attribute 'ement-room-mention nil
-    :extend t))
+;; (require 'ement-room-list)
+(global-set-key (kbd "M-g M-l") 'ement-taxy-room-list)
+(add-hook 'ibuffer-mode-hook (lambda () (local-unset-key (kbd "M-g"))))
+(add-hook 'ement-room-mode-hook (lambda ()
+                                  (face-remap-add-relative 'shr-text
+                                                           :family "Cantarell"
+                                                           :inherit 'ement-room-message-text)
+                                  (face-remap-add-relative 'header-line
+                                                           :family "Cantarell")))
+(setq ement-room-retro-messages-number 100
+      ement-save-sessions t
+      ement-room-send-typing nil
+      ement-room-send-read-receipts nil
+      ement-room-prism nil
+      ;;    ement-room-send-message-filter 'ement-room-send-org-filter
+      ement-room-mark-rooms-read nil
+      ;; ement-room-message-format-spec "%B%r%R%t"
+      ement-room-message-format-spec "%t%L%B%r"
+      ;; ement-room-left-margin-width 0
+      ement-room-left-margin-width 7
+      ;; ement-room-right-margin-width 7
+      ement-room-right-margin-width 0
+      ement-room-sender-in-headers nil
+      ement-room-sender-headers t
+      ement-taxy-auto-update t
+      ement-notify-notification-predicates '(ement-notify--event-mentions-session-user-p
+                                             ement-notify--event-mentions-room-p
+                                             ement-notify--room-unread-p))
 
-(setq empv-mpv-args '("--ytdl-format=best" "--no-terminal" "--idle" "--input-ipc-server=/tmp/empv-socket"))
+(with-eval-after-load 'ement-taxy
+  (set-face-attribute 'ement-room-list-name nil
+                      :inherit 'face-light)
+  (set-face-attribute 'ement-room-list-favourite nil
+                      :inherit 'face-salient-cyan)
+  (set-face-attribute 'ement-room-list-space nil
+                      :inherit 'face-identifier)
+  (set-face-attribute 'ement-room-list-recent nil
+                      :inherit 'face-salient-yellow))
+
+(add-hook 'ement-room-mode-hook (lambda () (setq-local mode-line-format nil)))
+(set-face 'ement-room-message-text 'variable-pitch)
+(set-face-attribute 'ement-room-message-text nil
+                    :family "Cantarell"
+                    :height 120)
+(set-face-attribute 'ement-room-fully-read-marker nil
+                    :inherit 'face-block)
+(set-face-attribute 'ement-room-user nil
+                    :family "Cantarell")
+(set-face 'ement-room-mention 'face-block)
+(set-face-attribute 'ement-room-membership nil
+                    :family "Cantarell"
+                    :height 0.8)
+(set-face-attribute 'ement-room-mention nil
+                    :family "Cantarell"
+                    :extend t)
+(set-face-attribute 'ement-room-timestamp nil
+                    :slant 'normal
+                    :height 0.9
+                    :family "Cantarell"
+                    :weight 'normal)
+(set-face 'ement-room-timestamp-header 'face-strong)
+(set-face-attribute 'ement-room-timestamp-header nil
+                    :family "Cantarell"
+                    :weight 'bold
+                    :overline t
+                    :height 1.1)
+(set-face-attribute 'ement-room-reactions nil
+                    :family "Cantarell"
+                    :height 1.0)
+(set-face-attribute 'ement-room-reactions-key nil
+                    :height 1.1)
+;; (with-eval-after-load 'ement-room
+;; (defalias 'ement-room-list 'ement-taxy-room-list))
+
+(defun run-pantalaimon ()
+  (interactive)
+  (make-process :name "pantalaimon"
+                :buffer "*pantalaimon*"
+                :command '("pantalaimon")))
+
+;; empv
+(require 'cmus)
+(require 'empv)
+(setq empv-mpv-args '("--ytdl-format=best" "--no-terminal" "--idle" "--input-ipc-server=/tmp/empv-socket")
+      empv-invidious-instance "https://invidious.snopyta.org/api/v2"
+      empv-base-directory "/home/rayes/media/"
+      empv-video-dir "/home/rayes/media/anime")
+(global-set-key (kbd "H-p") 'empv-toggle)
+
+(global-set-key (kbd "<XF86AudioPlay>") 'my/handle-play-pause)
+(global-set-key (kbd "<XF86AudioNext>") 'my/handle-play-next)
+(global-set-key (kbd "<XF86AudioPrev>") 'my/handle-play-prev)
+
+(defun my/handle-play-pause ()
+  (interactive)
+  (cond ((empv--running?) (empv-toggle))
+        ((cmus-running-p) (cmus-play-pause))))
+(defun my/handle-play-next ()
+  (interactive)
+  (cond ((empv--running?) (empv-playlist-next))
+        ((cmus-running-p) (cmus-next))))
+(defun my/handle-play-prev ()
+  (interactive)
+  (cond ((empv--running?) (empv-playlist-prev))
+        ((cmus-running-p) (cmus-previous))))
+
+;; writeroom mode
+(with-eval-after-load 'writeroom-mode
+  (setq writeroom-global-effects '(writeroom-set-menu-bar-lines
+                                   writeroom-set-tool-bar-lines
+                                   writeroom-set-vertical-scroll-bars
+                                   ;; writeroom-set-bottom-divider-width
+                                   writeroom-set-internal-border-width)
+        writeroom-border-width 40
+        writeroom-header-line nil
+        writeroom-restore-window-config t
+        writeroom-fringes-outside-margins nil
+        writeroom-mode-line nil
+        writeroom-width 85))
+
+(define-minor-mode center-window-mode nil
+  :init-value nil
+  (if center-window-mode
+      (progn (add-hook 'window-configuration-change-hook
+                       #'move-window-center-maybe 'append 'local)
+             (move-window-center-maybe))
+    (writeroom-mode -1)
+    (remove-hook 'window-configuration-change-hook
+                 #'move-window-center-maybe t)))
+
+(global-set-key (kbd "C-c w") 'center-window-mode)
+
+(define-globalized-minor-mode global-center-window-mode
+    center-window-mode (lambda () (center-window-mode 1)))
+
+(require 'writeroom-mode)
+(defun move-window-center-maybe ()
+  (interactive)
+  (if (and (<= (- (count-windows) 1) 1)
+           ;; (< (/ (x-display-pixel-width) 2) (window-pixel-width))
+           (< 990 (window-pixel-width))
+           (< 540 (window-pixel-height))
+           (not (or (minibufferp)
+                    (eq (current-buffer) org-agenda-buffer)
+                    (eq (current-buffer) (get-buffer "*Ement Taxy*")))))
+      ;; (< (/ (x-display-pixel-height) 2) (window-pixel-height)))
+      (writeroom-mode 1)
+    (writeroom-mode -1)))
+
+(with-eval-after-load 'eww
+  (define-key eww-mode-map (kbd "C-c h") #'eww-header-line-toggle)
+  (defvar eww--previous-header eww-header-line-format)
+  (defun eww-header-line-toggle ()
+    (interactive)
+    (if eww-header-line-format
+        (progn
+          (setq eww--previous-header eww-header-line-format)
+          (setq eww-header-line-format nil))
+      (setq eww-header-line-format eww--previous-header))
+    (when (called-interactively-p 'any)
+      (redraw-display))))
+
+;; (define-globalized-minor-mode global-center-window-mode center-window-mode nil
+;;                               ;; :init-value nil
+;;                               (if global-center-window-mode
+;;                                   (remove-hook 'window-configuration-change-hook 'center-window--enter-or-leave)
+;;                                 (add-hook 'window-configuration-change-hook 'center-window--enter-or-leave)))
+
+;; (defun center-window--enter-or-leave ()
+;;   "Enter or leave according to window configuration."
+;;   (unless (not (= (count-windows) 1))
+;;     (center-window-mode 1)))
+
+
+;; (dolist (mode '(eww-mode Info-mode )))
 
 ;; cascadia code ligatures
 (require 'ligature)
 (let ((mono-ligset '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-                      ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-                      "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
-                      "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
-                      "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-                      "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
-                      "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
-                      "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
-                      ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
-                      "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
-                      "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-                      "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-                      "\\\\" "://"))
-       (variable-ligset '("fl" "fi" "ffi" "ffl")))
+                     ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                     "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                     "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                     "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                     "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                     "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                     "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                     ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                     "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                     "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                     "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                     "\\\\" "://"))
+                      (variable-ligset '("fl" "fi" "ffi" "ffl")))
   (ligature-set-ligatures 't '("www"))
-  (dolist (mode '(eww-mode org-mode))
+  (dolist (mode '(eww-mode))
     (ligature-set-ligatures mode variable-ligset))
   (ligature-set-ligatures 'prog-mode mono-ligset)
   (ligature-set-ligatures 'org-mode mono-ligset) ;; for codeblocks
   (global-ligature-mode t))
 
-;; ;; flycheck
+;; flycheck
 (require 'flycheck)
 (global-flycheck-mode 1)
-(setq flycheck-emacs-lisp-load-path 'inherit)
-(setq flycheck-global-modes '(not org-mode))
+(setq flycheck-emacs-lisp-load-path 'inherit
+      flycheck-global-modes '(not org-mode))
+(set-face-attribute 'flycheck-info nil
+                    :underline nil)
+(set-face-attribute 'flycheck-warning nil
+                    :underline (face-foreground 'face-salient-yellow))
+(set-face-attribute 'flycheck-error nil
+                    :underline (face-foreground 'face-popout))
 (setq flycheck-textlint-config "~/.textlintrc.json"
-  flycheck-textlint-executable "~/node_modules/.bin/textlint")
+      flycheck-textlint-executable "~/node_modules/.bin/textlint")
 
 (setq flycheck-languagetool-server-jar "~/.local/opt/LanguageTool-5.5/languagetool-server.jar")
 
@@ -451,12 +852,16 @@
 
 (require 'langtool-ignore-fonts)
 (langtool-ignore-fonts-add 'org-mode
-  '(org-meta-line org-table org-indent '(org-block font-latex-math-face)
-     org-level-1))
+                           '(org-meta-line org-table org-indent '(org-block font-latex-math-face)
+                             org-level-1))
 
 ;; pyvenv
 (pyvenv-mode -1)
 (pyvenv-tracking-mode 1)
+
+;; lua mode
+(with-eval-after-load 'lua-mode
+  (setq lua-indent-level 2))
 
 ;; native comp options
 (setq native-comp-always-compile t)
@@ -469,123 +874,267 @@
   (lambda ()
     (when (derived-mode-p 'prog-mode)
       (fic-mode 1))))
-  
+
 (global-fic-mode 1)
 (add-hook 'org-mode 'fic-mode)
 
 (set-face 'fic-face 'secondary-selection)
 (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "HOMEWORK")
-  fic-activated-faces '(font-lock-doc-face font-lock-comment-face))
+      fic-activated-faces '(font-lock-doc-face font-lock-comment-face))
+
+;; lexic
+(add-hook 'lexic-mode-hook #'variable-pitch-mode)
 
 ;; smartparens
-(require 'smartparens-config)
-
-;; centered window
-(setq cwm-centered-window-width 80)
+;; (require 'smartparens-config)
 
 ;; beacon
-(with-eval-after-load 'beacon
-  (setq beacon-color (face-background 'secondary-selection)
-    beacon-size 60)
-  (add-to-list 'beacon-dont-blink-major-modes 'eshell-mode)
-  (add-to-list 'beacon-dont-blink-major-modes 'vterm-mode)
-  (add-to-list 'beacon-dont-blink-major-modes 'term-mode)
-  (add-to-list 'beacon-dont-blink-major-modes 'comint-mode))
-(beacon-mode 1)
+;; (with-eval-after-load 'beacon
+;;   (setq beacon-color (face-background 'face-subtle)
+;;         beacon-size 60)
+;;   (dolist (mode '(eshell-mode vterm-mode term-mode comint-mode eww-mode erc-mode
+;;                   ement-room-mode))
+;;     (add-to-list 'beacon-dont-blink-major-modes mode)))
+;; (beacon-mode 1)
 
+;; ein
 (with-eval-after-load 'ein
   (set-face-attribute 'ein:basecell-input-area-face nil
-    :extend t
-    :inherit 'face-block))
+                      :extend t
+                      :inherit 'face-block))
+
+;; folding
+;; (add-hook 'prog-mode-hook (lambda ()
+;;                             (hideshowvis-enable)
+;;                             (hideshowvis-symbols)
+;;                             (with-eval-after-load 'hideshowvis
+;;                               (set-face 'hideshowvis-hidden-region-face 'face-salient)
+;;                               (set-face-attribute 'hideshowvis-hidden-region-face nil
+;;                                                   :weight 'bold
+;;                                                   :height 80
+;;                                                   :box nil
+;;                                                   :inverse-video t))))
+
+;; (add-hook 'org-mode-hook (lambda () (hideshowvis-minor-mode -1)))
+
+;; (setq hs-set-up-overlay 'my/custom-fold-overlay)
+;; (defun my/custom-fold-overlay (ov)
+;;    (when (eq 'code (overlay-get ov 'hs))
+;;      (overlay-put ov 'display
+;;        (format "... / %d"
+;;          (count-lines (overlay-start ov)
+;;            (overlay-end ov))))))
+
+;; eaf
+;; (add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/")
+;; (require 'eaf)
+;; (require 'eaf-browser)
+;; (require 'eaf-image-viewer)
+;; (require 'eaf-jupyter)
+;; (require 'eaf-music-player)
+;; (require 'eaf-org-previewer)
+;; (require 'eaf-pdf-viewer)
+;; (require 'eaf-system-monitor)
+;; (require 'eaf-video-player)
+;; (require 'eaf-rss-reader)
+
+;; mam
+(require 'auth-source)
+(require 'request)
+(defun mam-get-user-info ()
+  (interactive)
+  (let ((buffer (get-buffer-create "*mam-stats*"))
+        (secret (nth 0 (auth-source-search :host "mam.cookie"))))
+    (make-process :name "mam"
+                  :buffer buffer
+                  :command `(,(executable-find "curl")
+                             "-X" "POST"
+                             "--cookie" ,(funcall (plist-get secret :secret))
+                             "--header" "Content-Type: application/json"
+                             "--data" ,(format "{\"id\": %s}" (plist-get secret :user))
+                             "https://www.myanonamouse.net/jsonLoad.php?snatch_summary=t&notifs=t")
+                  :filter (lambda (_proc output)
+                            (let ((data (json-parse-string output
+                                                           :object-type 'plist
+                                                           :false-object "no"
+                                                           :null-object nil))
+                                  (inhibit-read-only t))
+                              (with-current-buffer buffer
+                                (read-only-mode 1)
+                                (erase-buffer)
+                                (insert (format "Stats for: %s (uid: %s)\n  Bonus: %s | Connectable: %s\n"
+                                                (plist-get data :username)
+                                                (plist-get data :uid)
+                                                (plist-get data :seedbonus)
+                                                (plist-get data :connectable))
+                                        (format "Total
+ Up: %s | Total Down: %s | ratio: %s\n"
+                                                (plist-get data :uploaded)
+                                                (plist-get data :downloaded)
+                                                (plist-get data :ratio))
+                                        (format "Leeching: %s | Unsat: %s (%s seeding)\n"
+                                                (plist-get (plist-get data :leeching) :count)
+                                                (plist-get (plist-get data :unsat) :count)
+                                                (plist-get (plist-get data :seedUnsat) :count))
+                                        (format "Inactive H&R: %s | Inactive Unsat: %s | Inactive sat: %s\n"
+                                                (plist-get (plist-get data :inactHnr) :count)
+                                                (plist-get (plist-get data :inactUnsat) :count)
+                                                (plist-get (plist-get data :inactSat) :count))))))
+                  :sentinel (lambda (_proc _status)))
+    ;; (with-current-buffer buffer (insert "\n"))
+    (mam-get-torrent-info)
+    (pop-to-buffer buffer)))
+
+(defun mam-get-torrent-info ()
+  (let ((data-unsat nil)
+        (data-sat nil)
+        (inhibit-read-only t))
+    (with-temp-buffer
+      (let* ((secret (nth 0 (auth-source-search :host "mam.cookie")))
+             (proc (make-process :name "mam"
+                                 :buffer (current-buffer)
+                                 :command `(,(executable-find "curl")
+                                            "--cookie" ,(funcall (plist-get secret :secret))
+                                            "https://www.myanonamouse.net/json/loadUserDetailsTorrents.php?type=unsat&iteration=0")
+                                 :sentinel (lambda (_proc _status)))))
+        (while (process-live-p proc)
+          (accept-process-output proc))
+        (goto-char (point-min))
+        (setf data-unsat (json-parse-buffer :object-type 'plist
+                                            :false-object "no"
+                                            :null-object "no"
+                                            :array-type 'list))
+        (erase-buffer)
+        (let ((proc2 (make-process :name "mam"
+                                   :buffer (current-buffer)
+                                   :command `(,(executable-find "curl")
+                                              "--cookie" ,(funcall (plist-get secret :secret))
+                                              "https://www.myanonamouse.net/json/loadUserDetailsTorrents.php?type=sSsat&iteration=0")
+                                   :sentinel (lambda (_proc _status)))))
+          (while (process-live-p proc2)
+            (accept-process-output proc))
+          (goto-char (point-min))
+          (setf data-sat (json-parse-buffer :object-type 'plist
+                                            :false-object "no"
+                                            :null-object "no"
+                                            :array-type 'list)))))
+    (with-current-buffer (get-buffer-create "*mam-stats*")
+      (insert "\n")
+      (make-vtable :columns '((:name "Name" :width "500px")
+                              "Up" "Down" "Ratio" "Free?" "STG" "Seeding?")
+                   :objects (plist-get data-unsat :rows)
+                   :use-header-line nil
+                   :getter (lambda (obj col _tbl)
+                             (pcase col
+                               (0 (plist-get obj :title))
+                               (1 (plist-get obj :uploadPretty))
+                               (2 (plist-get obj :downloadPretty))
+                               (3 (plist-get obj :ratio))
+                               (4 (format "%s (%s)"
+                                          (plist-get obj :free)
+                                          (plist-get obj :personalFree)))
+                               (5 (plist-get obj :STG))
+                               (6 (plist-get obj :seeder)))))
+      (insert "\nSatisfied Seeding: \n")
+      (make-vtable :columns '((:name "Name" :width "500px")
+                              "Up" "Down" "Ratio" "Free?" "STG" "Seeding?")
+                   :objects (plist-get data-unsat :rows)
+                   :use-header-line nil
+                   :getter (lambda (obj col _tbl)
+                             (pcase col
+                               (0 (plist-get obj :title))
+                               (1 (plist-get obj :uploadPretty))
+                               (2 (plist-get obj :downloadPretty))
+                               (3 (plist-get obj :ratio))
+                               (4 (format "%s (%s)"
+                                          (plist-get obj :free)
+                                          (plist-get obj :personalFree)))
+                               (5 (plist-get obj :STG))
+                               (6 (plist-get obj :seeder))))))))
 
 ;; newsticker
 (require 'newsticker)
 (setq newsticker-url-list-defaults nil
-  newsticker-automatically-mark-visited-items-as-old t
-  newsticker-treeview-automatically-mark-displayed-items-as-old nil
-  newsticker-automatically-mark-items-as-old nil
-  newsticker-obsolete-item-max-age 259200 ;; 3 days
-  ;; newsticker-retrieval-interval 259200
-  newsticker-retrieval-interval 10800 ;; 3 hours
-  ;;  newsticker-retrieval-interval 1.0e+INF
-  newsticker-download-logos nil
-  newsticker-retrieval-method 'extern
-  newsticker-wget-name "curl"
-  newsticker-wget-arguments '("--silent" "--location" "--connect-timeout" "8"))
+      newsticker-automatically-mark-visited-items-as-old t
+      newsticker-treeview-automatically-mark-displayed-items-as-old nil
+      newsticker-automatically-mark-items-as-old nil
+      newsticker-obsolete-item-max-age 259200 ;; 3 days
+      ;; newsticker-retrieval-interval 259200
+      newsticker-retrieval-interval 10800 ;; 3 hours
+      ;;  newsticker-retrieval-interval 1.0e+INF
+      newsticker-download-logos nil
+      newsticker-retrieval-method 'extern
+      newsticker-wget-name "curl"
+      newsticker-wget-arguments '("--silent" "--location" "--connect-timeout" "8"))
 
+(defun my/newsticker-treeview-custom-quit ()
+  "quit without messing up groups"
+  (interactive)
+  (setq newsticker--sentinel-callback nil)
+  (bury-buffer "*Newsticker Tree*")
+  (bury-buffer "*Newsticker List*")
+  (bury-buffer "*Newsticker Item*")
+  (set-window-configuration newsticker--saved-window-config)
+  (when newsticker--frame
+    (if (frame-live-p newsticker--frame)
+        (delete-frame newsticker--frame))
+    (setq newsticker--frame nil)))
+;;(define-key newsticker-treeview-mode-map (kbd "q") 'my/newsticker-treeview-quit-and-stop)
+(with-eval-after-load 'newst-treeview
+  (substitute-key-definition 'newsticker-treeview-quit 'my/newsticker-treeview-custom-quit newsticker-treeview-mode-map))
 
-;; (defun my/newsticker-treeview-custom-quit ()
-;;   "quit without messing up groups"
-;;   (interactive)
-;;   (setq newsticker--sentinel-callback nil)
-;;   (bury-buffer "*Newsticker Tree*")
-;;   (bury-buffer "*Newsticker List*")
-;;   (bury-buffer "*Newsticker Item*")
-;;   (set-window-configuration newsticker--saved-window-config)
-;;   (when newsticker--frame
-;;     (if (frame-live-p newsticker--frame)
-;;       (delete-frame newsticker--frame))
-;;     (setq newsticker--frame nil)))
-;; ;;(define-key newsticker-treeview-mode-map (kbd "q") 'my/newsticker-treeview-quit-and-stop)
-;; (with-eval-after-load 'newst-treeview
-;;   (substitute-key-definition 'newsticker-treeview-quit 'my/newsticker-treeview-custom-quit newsticker-treeview-mode-map))
+(defun newsticker-unload ()
+  (interactive)
+  (unload-feature 'newst-backend t)
+  (unload-feature 'newst-reader t)
+  (unload-feature 'newst-treeview t)
+  (unload-feature 'newsticker t))
 
 (setq newsticker-url-list
-  '(("arXiv q-bio" "https://arxiv.org/rss/q-bio")
-     ("bioRxiv" "https://connect.biorxiv.org/biorxiv_xml.php?subject=all")
-     ("medRxiv" "https://connect.medrxiv.org/medrxiv_xml.php?subject=all")
-     ("arXiv math" "https://arxiv.org/rss/math")
-     ("Terence Tao" "https://terrytao.wordpress.com/feed/")
-     ("LessWrong" "https://www.lesswrong.com/feed.xml?view=community-rss&karmaThreshold=45")
-     ("Astral Codex Ten" "https://astralcodexten.substack.com/feed")
-     ("Scott Aaronson" "https://scottaaronson.blog/?feed=rss2")
-     ("Zvi" "https://thezvi.wordpress.com/feed")
-     ("Fantastic Anachronism" "https://fantasticanachronism.com/atom.xml")
-     ("Hands and Cities" "https://handsandcities.com/feed/")
-     ("Strange Loop Canon" "https://www.strangeloopcanon.com/feed")
-     ("Protesilaos Blog" "https://protesilaos.com/master.xml")
-     ("Gwern.net Newsletter" "https://gwern.substack.com/feed" nil 86400)
-     ("Suspended Reason" "https://suspendedreason.com/feed" nil 86400)
-     ("Melting Asphalt" "https://meltingasphalt.com/feed")
-     ("nearcyan" "https://nearcyan.com/feed")
-     ("For me, in full bloom" "https://formeinfullbloom.wordpress.com/feed/" nil 86400)
-     ("Therefore it is" "https://thereforeitis.wordpress.com/feed" nil 86400)
-     ("Wrong Every Time" "https://wrongeverytime.com/feed" nil 86400)
-     ("Sakuga Blog" "https://blog.sakugabooru.com/feed/")
-     ("ANN" "https://www.animenewsnetwork.com/all/rss.xml?ann-edition=us")
-     ("R Weekly" "https://rweekly.org/atom.xml" nil 86400)
-     ("GNOME Blogs" "https://blogs.gnome.org/feed/")
-     ("Drew Devault" "https://drewdevault.com/blog/index.xml" nil 86400)
-     ("Freedom To Tinker" "https://freedom-to-tinker.com/feed/rss/" nil 86400)
-     ("Lennart Poettering" "https://0pointer.net/blog/index.rss20")
-     ("SE - Hot" "https://stackexchange.com/feeds/questions")
-     ("SE - Linguistics" "https://linguistics.stackexchange.com/feeds/week")
-     ("SE - Psychology" "https://psychology.stackexchange.com/feeds/week")
-     ("SE - SciFi" "https://scifi.stackexchange.com/feeds/week")
-     ("SE - Stats" "https://stats.stackexchange.com/feeds/week")
-     ("SE - Music" "https://music.stackexchange.com/feeds/week")
-     ("SE - Unix" "https://unix.stackexchange.com/feeds/week")
-     ("SE - Animanga" "https://anime.stackexchange.com/feeds/week")
-     ("SE - Chinese Language" "https://chinese.stackexchange.com/feeds/week")
-     ("SE - Emacs" "https://emacs.stackexchange.com/feeds/week")
-     ("SE - Math" "https://mathoverflow.net/feeds/week")
-     ("SE - Skeptics" "https://skeptics.stackexchange.com/feeds/week")
-     ("SE - Bioinformatics" "https://bioinformatics.stackexchange.com/feeds/week")
-     ("SE - Biblical Hermeneutics" "https://hermeneutics.stackexchange.com/feeds/week")
-     ("XKCD" "https://xkcd.com/rss.xml")
-     ("Emacs commits" "https://github.com/emacs-mirror/emacs/commits.atom")
-     ("Zrythm commits" "https://github.com/zrythm/zrythm/commits.atom")
-     ("KOReader commits" "https://github.com/koreader/koreader/commits.atom")
-     ("Fedora Magazine" "https://fedoramagazine.org/feed")
-     ("Protesilaos" "https://invidious.kavin.rocks/feed/channel/UC0uTPqBCFIpZxlz_Lv1tk_g" nil 86400)
-     ("Cateen" "https://invidious.kavin.rocks/feed/channel/UC_QG8miwKHFNuWY9VpkrI8w" nil 86400)
-     ("Animenz" "https://invidious.kavin.rocks/feed/channel/UCyW-leqPXUunrXXxFjpZ7VA" nil 86400)
-     ("Marasy8" "https://invidious.kavin.rocks/feed/channel/UCcvLSRIWJIAGFDyWtzkbiHA" nil 86400)
-     ("Kyle Landry" "https://invidious.kavin.rocks/feed/channel/UCk0UErv9b4Hn5ucNNjqD1UQ" nil 86400)
-     ("Kayou" "https://invidious.kavin.rocks/feed/channel/UCk2g7q-RY455IuRWCIJ0bmw" nil 86400)
-     ("Halcyon" "https://invidious.kavin.rocks/feed/channel/UC8tyyA-UIbefEexcLatHmUQ" nil 86400)
-     ("SLS" "https://invidious.kavin.rocks/feed/channel/UCmKy7mz6tRLv7OFdSqbAkrg" nil 86400)
-     ("mdbg" "https://www.mdbg.net/chinese/feed?feed=hsk_1_h")))
+      '(
+        ;; ("arXiv q-bio" "https://arxiv.org/rss/q-bio")
+        ;; ("bioRxiv" "https://connect.biorxiv.org/biorxiv_xml.php?subject=all")
+        ;; ("medRxiv" "https://connect.medrxiv.org/medrxiv_xml.php?subject=all")
+        ;; ("arXiv math" "https://arxiv.org/rss/math")
+        ("Terence Tao" "https://terrytao.wordpress.com/feed/")
+        ("LessWrong" "https://www.lesswrong.com/feed.xml?view=community-rss&karmaThreshold=45")
+        ("Astral Codex Ten" "https://astralcodexten.substack.com/feed")
+        ("Scott Aaronson" "https://scottaaronson.blog/?feed=rss2")
+        ("Zvi" "https://thezvi.wordpress.com/feed")
+        ("Fantastic Anachronism" "https://fantasticanachronism.com/atom.xml")
+        ("Hands and Cities" "https://handsandcities.com/feed/")
+        ("Strange Loop Canon" "https://www.strangeloopcanon.com/feed")
+        ("Protesilaos Blog" "https://protesilaos.com/master.xml")
+        ("Gwern.net Newsletter" "https://gwern.substack.com/feed" nil 86400)
+        ("Suspended Reason" "https://suspendedreason.com/feed" nil 86400)
+        ("Melting Asphalt" "https://meltingasphalt.com/feed")
+        ("nearcyan" "https://nearcyan.com/feed")
+        ("For me, in full bloom" "https://formeinfullbloom.wordpress.com/feed/" nil 86400)
+        ("Therefore it is" "https://thereforeitis.wordpress.com/feed" nil 86400)
+        ("Wrong Every Time" "https://wrongeverytime.com/feed" nil 86400)
+        ("Sakuga Blog" "https://blog.sakugabooru.com/feed/")
+        ("ANN" "https://www.animenewsnetwork.com/all/rss.xml?ann-edition=us")
+        ;; ("R Weekly" "https://rweekly.org/atom.xml" nil 86400)
+        ;; ("GNOME Blogs" "https://blogs.gnome.org/feed/")
+        ("Drew Devault" "https://drewdevault.com/blog/index.xml" nil 86400)
+        ;; ("Freedom To Tinker" "https://freedom-to-tinker.com/feed/rss/" nil 86400)
+        ("Lennart Poettering" "https://0pointer.net/blog/index.rss20")
+        ;; ("LWN" "https://lwn.net/headlines/rss")
+        ("XKCD" "https://xkcd.com/rss.xml")
+        ;; ("Emacs commits" "https://github.com/emacs-mirror/emacs/commits.atom")
+        ("wingolog" "https://wingolog.org/feed/atom")
+        ;; ("Protesilaos" "https://invidious.kavin.rocks/feed/channel/UC0uTPqBCFIpZxlz_Lv1tk_g" nil 86400)
+        ;; ("Cateen" "https://invidious.kavin.rocks/feed/channel/UC_QG8miwKHFNuWY9VpkrI8w" nil 86400)
+        ;; ("Animenz" "https://invidious.kavin.rocks/feed/channel/UCyW-leqPXUunrXXxFjpZ7VA" nil 86400)
+        ;; ("Marasy8" "https://invidious.kavin.rocks/feed/channel/UCcvLSRIWJIAGFDyWtzkbiHA" nil 86400)
+        ;; ("Kyle Landry" "https://invidious.kavin.rocks/feed/channel/UCk0UErv9b4Hn5ucNNjqD1UQ" nil 86400)
+        ;; ("Kayou" "https://invidious.kavin.rocks/feed/channel/UCk2g7q-RY455IuRWCIJ0bmw" nil 86400)
+        ;; ("Halcyon" "https://invidious.kavin.rocks/feed/channel/UC8tyyA-UIbefEexcLatHmUQ" nil 86400)
+        ;; ("SLS" "https://invidious.kavin.rocks/feed/channel/UCmKy7mz6tRLv7OFdSqbAkrg" nil 86400)
+        ;; ("mdbg" "https://www.mdbg.net/chinese/feed?feed=hsk_1_h")))
+        ))
+
+(put 'list-timers 'disabled nil)
+(put 'scroll-left 'disabled nil)
 
 (provide 'custom-ops)
-(put 'list-timers 'disabled nil)
