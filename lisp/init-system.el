@@ -6,10 +6,18 @@
 (setq eval-expression-print-level nil
       eval-expression-print-length nil)
 
+(setq url-privacy-level 'paranoid
+      url-mime-accept-string "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8 "
+      url-mime-language-string "en-US,en;q=0.5")
+(url-setup-privacy-info)
+
+(setq password-cache t
+      password-cache-expiry 3600)
+
 ;; recentf
 (recentf-mode 1)
 (setq recentf-max-menu-items 20
-      recentf-max-saved-items 20)
+      recentf-max-saved-items 50)
 (run-at-time nil (* 5 60) (lambda ()
                             (let ((inhibit-message t))
                               (recentf-save-list))))
@@ -44,14 +52,14 @@
         dired-listing-switches "-Alh"
         dired-use-ls-dired t
         ;; dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\|\\`[.].*\\'"
-        dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.*\\.aria2\\'"
+        dired-omit-files "\\`[.]?#\\|\\`[.][.]?\\|\\`[.].*\\'\\|\\`.*.aria2\\'"
         dired-always-read-filesystem t
         dired-create-destination-dirs 'ask
         dired-hide-details-hide-symlink-targets nil
         dired-isearch-filenames 'dwim
         dired-free-space 'separate
         dired-mouse-drag-files t)
-  (define-key dired-mode-map (kbd "^") (lambda () (interactive) (find-alternate-file "..")))
+  ;; (define-key dired-mode-map (kbd "^") (lambda () (interactive) (find-alternate-file "..")))
   (set-face 'dired-header 'face-salient-cyan)
   (set-face-attribute 'dired-header nil :underline t)
   (set-face 'dired-broken-symlink 'face-critical)
@@ -61,7 +69,8 @@
 (add-hook 'dired-mode-hook 'dired-omit-mode)
 
 ;; tramp
-(setq tramp-default-method "ssh")
+(setq tramp-default-method "ssh"
+      enable-remote-dir-locals t)
 
 ;; gnus
 (setq gnus-init-file (expand-file-name ".gnus.el" user-emacs-directory))
@@ -70,17 +79,22 @@
 (setq doc-view-resolution 300)
 (setq doc-view-continuous t)
 
+;; set org agenda as initial buffer
+(setq initial-buffer-choice (lambda ()
+                              (let ((org-agenda-window-setup 'only-window))
+                                (org-agenda-list)
+                                org-agenda-buffer)))
+
 ;; ibuffer
 (require 'ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
-(setq initial-buffer-choice (lambda ()
-                              (let ((default-directory "~/")
-                                    (buffer (get-buffer "*Ibuffer*")))
-                                (if buffer
-                                    buffer
-                                  (progn
-                                    (ibuffer)
-                                    (get-buffer "*Ibuffer*"))))))
+;; (setq initial-buffer-choice (lambda ()
+;;                               (let ((default-directory "~/")
+;;                                     (buffer (get-buffer "*Ibuffer*")))
+;;                                 (if buffer
+;;                                     buffer
+;;                                   (ibuffer)
+;;                                   (get-buffer "*Ibuffer*")))))
 (setq ibuffer-expert t
       ibuffer-show-empty-filter-groups nil
       ibuffer-use-header-line t
@@ -128,15 +142,14 @@
 (defun my/human-readable-file-sizes-to-bytes (string)
   "Convert a human-readable file size into bytes."
   (interactive)
-  (cond
-   ((string-suffix-p "G" string t)
-    (* 1000000000 (string-to-number (substring string 0 (- (length string) 1)))))
-   ((string-suffix-p "M" string t)
-    (* 1000000 (string-to-number (substring string 0 (- (length string) 1)))))
-   ((string-suffix-p "K" string t)
-    (* 1000 (string-to-number (substring string 0 (- (length string) 1)))))
-   (t
-    (string-to-number (substring string 0 (- (length string) 1))))))
+  (cond ((string-suffix-p "G" string t)
+         (* 1000000000 (string-to-number (substring string 0 (- (length string) 1)))))
+        ((string-suffix-p "M" string t)
+         (* 1000000 (string-to-number (substring string 0 (- (length string) 1)))))
+        ((string-suffix-p "K" string t)
+         (* 1000 (string-to-number (substring string 0 (- (length string) 1)))))
+        (t
+         (string-to-number (substring string 0 (- (length string) 1))))))
 
 ;; ansi colors
 (with-eval-after-load 'ansi-color
@@ -146,7 +159,7 @@
 
 (with-eval-after-load 'comint
   (ansi-color-for-comint-mode-on)
-  (setq comint-terminfo-terminal "dumb"
+  (setq comint-terminfo-terminal "eterm-color"
         comint-prompt-read-only t
         comint-input-ignoredups t
         comint-completion-autolist t))
@@ -199,6 +212,13 @@
         eshell-prefer-lisp-functions t
         eshell-destroy-buffer-when-process-dies t)
 
+  ;; (add-hook 'eshell-prepare-command-hook
+  ;;           (lambda ()
+  ;;             (set-frame-name (concat
+  ;;                              eshell-last-command-name
+  ;;                              " | "
+  ;;                              (format-mode-line frame-title-format)))))
+
   (defun eshell/doas (&rest args)
     "Alias \"doas\" to call Tramp."
     (eshell-eval-using-options
@@ -225,18 +245,19 @@
                         (format "%s|doas:%s@%s:%s"
                                 (substring prefix 0 -1) user host dir)
                       (format "/doas:%s@%s:%s" user host dir))))
-              ;; (eshell-command (car args) (cdr args))
-              (eshell-command (mapconcat 'identity args " ") t))))))
+              (eshell-named-command (car args) (cdr args))
+              ;; (eshell-command (mapconcat 'identity args " ") t)
+              ))))
+  (put 'eshell/doas 'eshell-no-numeric-conversions t))
 
 (with-eval-after-load 'em-term
   (setq eshell-visual-subcommands '(("git" "log" "diff" "show")
-                                    ("sudo" "dnf" "upgrade")
-                                    ("doas" "dnf" "upgrade")
+                                    ("dnf" "upgrade" "install" "remove")
                                     ("systemctl" "status")
                                     ("cargo" "build")
                                     ("rustup" "upgrade")))
   (dolist (cmd '("mpv" "bluetoothctl" "powertop" "nvtop" "unison" "cmus"
-                 "wget" "curl" "aria2c"))
+                 "wget" "curl" "aria2c" "nmcli"))
     (add-to-list 'eshell-visual-commands cmd)))
 
 (with-eval-after-load 'em-ls
@@ -255,21 +276,40 @@
   (set-face 'eshell-ls-readonly 'face-salient-green)
   (set-face 'eshell-ls-special 'face-italic))
 
+(defun my/setup-eshell-external (&optional new)
+  ;; (with-current-buffer
+  ;; (prog1
+  (if new
+      (eshell 'U)
+    (cl-loop for buf being the buffers
+             if (and (eq (with-current-buffer buf major-mode) 'eshell-mode)
+                     (not (get-buffer-process buf)))
+             do (switch-to-buffer buf) and return nil
+             finally do (eshell t)))
+  (delete-other-windows)
+  (setq mode-line-format nil)
+  (set-frame-name nil))
+;; (add-hook 'kill-buffer-hook (lambda () (set-frame-name nil)) 0 t)
+;; (add-hook 'window-configuration-change-hook (lambda ()
+;; (unless (eq major-mode 'eshell-mode)
+;; (set-frame-name nil)))
+;; 0 t)))
+
 ;; newsticker
 (global-set-key (kbd "C-:") 'newsticker-show-news)
 (with-eval-after-load 'newst-treeview
   (setq newsticker-treeview-date-format "%b %d, %I:%M %p  "
         newsticker-date-format "%a %b %d, %I:%M %p")
   (set-face 'newsticker-treeview-face 'default)
-  (set-face 'newsticker-treeview-selection-face 'default)
-  (set-face 'newsticker-treeview-new-face 'default)
-  (set-face-attribute 'newsticker-treeview-selection-face nil
-                      :weight 'bold
-                      :background (face-background 'face-block)
-                      :inherit 'face-salient)
-  (set-face-attribute 'newsticker-treeview-new-face nil
-                      :weight 'bold
-                      :inherit 'default)
+  ;; (set-face 'newsticker-treeview-selection-face 'default)
+  ;; (set-face 'newsticker-treeview-new-face 'default)
+  (set-face 'newsticker-treeview-selection-face 'default
+            :weight 'bold
+            :background (face-background 'face-block)
+            :inherit 'face-salient)
+  (set-face 'newsticker-treeview-new-face 'default
+            :weight 'bold
+            :inherit 'default)
   (set-face-attribute 'newsticker-treeview-old-face nil
                       :weight 'light
                       :inherit 'face-faded)
@@ -297,11 +337,8 @@
         eww-header-line-format nil
         eww-use-external-browser-for-content-type "\\`\\(video/\\|audio/\\|application/ogg\\)")
   (set-face 'eww-form-text 'widget-field)
-  (set-face 'eww-form-select 'face-block)
-  (set-face-attribute 'eww-form-select nil :box 1)
-  (set-face 'eww-form-submit 'face-block)
-  (set-face-attribute 'eww-form-submit nil
-                      :box 1))
+  (set-face 'eww-form-select 'face-block :box 1)
+  (set-face 'eww-form-submit 'face-block :box 1))
 
 (defvar shr-sans-serif-cookie)
 (define-minor-mode shr-sans-serif

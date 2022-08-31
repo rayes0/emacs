@@ -5,14 +5,14 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
- '(canlock-password "bced4bd58b8ed6e6926cd99793d3f0c43af09e65")
  '(org-agenda-files
    '("/home/rayes/Notes/org/Exercise.org" "/home/rayes/Notes/org/Insights.org" "/home/rayes/Notes/org/Meta.org" "/home/rayes/Notes/org/Programming.org" "/home/rayes/Notes/org/anki.org" "/home/rayes/Notes/org/media-list.org" "/home/rayes/Notes/org/programs.org" "/home/rayes/Notes/org/tea.org" "/home/rayes/Notes/org/todo.org"))
  '(package-selected-packages
-   '(bencoding nnshimbun w3m nnchan lexic md4rd hierarchy code-review emojify uuidgen htmlize a nnreddit ement nnhackernews json-rpc lua-mode plz slime macrostep rustic fountain-mode taxy-magit-section taxy chika promise arbtt typit mmt ox-hugo csv-mode arietta forge magit magit-section transient vterm flycheck company biblio avy auctex org-appear dired-rsync math-delimiters sx yaml ghub treepy closql emacsql-sqlite emacsql rust-mode beacon iscroll tsc realgud test-simple loc-changes load-relative yascroll org-mime org-contrib semi flim apel pdf-tools valign tree-mode virtualenvwrapper cmus ein polymode deferred anaphora websocket smtpmail-multi lv ht spray git-commit with-editor avy-menu ytdious writeroom-mode writegood-mode which-key unicode-math-input speed-type rainbow-delimiters quelpa pyvenv pytest powerthesaurus persistent-scratch org-fragtog org-download org-bullets nov mediawiki math-symbols ligature langtool-ignore-fonts highlight-indent-guides haskell-mode gnuplot flyspell-correct flycheck-vale flycheck-languagetool fic-mode ess eshell-vterm empv elpher el-easydraw eglot company-quickhelp cdlatex bibtex-completion all-the-icons-ibuffer all-the-icons-dired all-the-icons-completion aggressive-indent))
+   '(ement taxy-magit-section bash-completion dired-rsync org-anki nyan-mode dirvish code-review emms torrent-info bencoding nnshimbun w3m nnchan lexic md4rd hierarchy emojify uuidgen htmlize a nnhackernews json-rpc lua-mode plz slime macrostep rustic fountain-mode taxy chika promise arbtt typit mmt ox-hugo csv-mode arietta transient vterm flycheck company biblio avy auctex org-appear math-delimiters sx yaml ghub treepy closql emacsql-sqlite emacsql rust-mode beacon iscroll tsc realgud test-simple loc-changes load-relative yascroll org-mime org-contrib semi flim apel pdf-tools valign tree-mode virtualenvwrapper cmus ein polymode deferred anaphora websocket smtpmail-multi lv ht spray git-commit with-editor avy-menu writeroom-mode writegood-mode which-key unicode-math-input speed-type rainbow-delimiters quelpa pyvenv pytest powerthesaurus persistent-scratch org-fragtog org-download org-bullets nov mediawiki math-symbols ligature langtool-ignore-fonts highlight-indent-guides haskell-mode gnuplot flyspell-correct flycheck-vale flycheck-languagetool fic-mode ess eshell-vterm elpher el-easydraw eglot company-quickhelp cdlatex bibtex-completion all-the-icons-ibuffer all-the-icons-completion aggressive-indent))
  '(pdf-view-resize-factor 1.01)
  '(safe-local-variable-values
-   '((eval add-to-list 'fountain-export-command-profiles
+   '((dired-omit-files . "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.*\\.aria2\\'\\|.*\\.torrent\\'\\|\\.dir-locals.el\\'")
+     (eval add-to-list 'fountain-export-command-profiles
            '("wrap-html" . "wrap html %b --out %B.html"))
      (org-babel-lilypond-gen-svg . t)
      (eval advice-add 'org-hugo--get-sanitized-title :override #'blog/org-hugo-title-with-markup)
@@ -103,7 +103,9 @@
         ("b" "Blog" entry (file+headline "~/Notes/org/todo.org" "Site")
          "* TODO [#A] %?")))
 
-(setq arietta-rpc-secret "aria2")
+
+(when (file-exists-p (expand-file-name "secrets.el" user-emacs-directory))
+  (load-file (expand-file-name "secrets.el" user-emacs-directory)))
 
 ;; org agenda files
 (setq org-directory "~/Notes/org"
@@ -130,6 +132,16 @@
 (with-eval-after-load 'em-term.el
   (add-to-list 'eshell-visual-commands "mtpsync.sh"))
 
+(with-eval-after-load 'em-cmpl
+  (require 'bash-completion)
+  (defun bash-completion-eshell-capf ()
+    (let ((bash-completion-nospace t))
+      (while (pcomplete-here
+              (nth 2 (bash-completion-dynamic-complete-nocomint
+                      (save-excursion (eshell-bol) (point))
+                      (point)))))))
+  (setq eshell-default-completion-function #'bash-completion-eshell-capf))
+
 ;; link opener
 (defun browse-url-choose (url &rest _args)
   (interactive)
@@ -151,7 +163,8 @@
 ;; mediawiki
 (require 'mediawiki)
 (setq mediawiki-site-alist
-      '(("Wikipedia" "https://en.wikipedia.org/w/" "Rayes0" "" nil "Main Page")
+      ;; '(("Wikipedia" "https://en.wikipedia.org/w/" "Rayes0" "" nil "Main Page")
+      '(("Wikipedia" "https://en.wikipedia.org/w/" "Rayes0" "" nil "User:Rayes0")
         ;; ("Mobileread" "https://wiki.mobileread.com/wiki/" "rayes" "" nil "Main Page")
         ("Fandom: Oregairu" "https://oregairu.fandom.com/" "" nil "OreGairu_Wiki")
         ("Fedora Wiki" "https://fedoraproject.org/wiki/" "rayes" nil "User:Rayes")))
@@ -417,17 +430,16 @@
   (set-face 'ytdious-video-length-face 'face-salient-cyan))
 
 ;; magit
+(with-eval-after-load 'magit-section
+  (set-face 'magit-section-heading 'face-salient-cyan :weight 'light)
+  (set-face-attribute 'magit-section-highlight nil
+                      :background (face-background 'face-block)))
 (with-eval-after-load 'magit
   (setq magit-process-find-password-functions '(magit-process-password-auth-source))
-  (set-face-attribute 'magit-section-highlight nil
-                      :background (face-background 'face-block))
   (set-face 'magit-branch-local 'face-pre)
-  (set-face 'magit-branch-remote 'face-identifier)
+  (set-face 'magit-branch-remote 'face-identifier :weight 'normal :slant 'italic)
   (set-face-attribute 'magit-branch-current nil :box nil :underline t)
-  (set-face-attribute 'magit-branch-remote nil :weight 'normal :slant 'italic)
   (set-face 'magit-tag 'face-popout)
-  (set-face 'magit-section-heading 'face-salient-cyan)
-  (set-face-attribute 'magit-section-heading nil :weight 'light)
 
   (set-face-attribute 'magit-diffstat-added nil :foreground "#839773")
   (set-face-attribute 'magit-diffstat-removed nil :foreground "#ce9c85")
@@ -438,25 +450,20 @@
 
   (require 'forge)
   (set-face 'forge-topic-merged 'face-faded)
-  (set-face 'forge-topic-closed 'face-faded)
-  (set-face-attribute 'forge-topic-closed nil :weight 'normal)
+  (set-face 'forge-topic-closed 'face-faded :weight 'normal)
   (set-face 'forge-topic-open 'face-strong)
-  (set-face 'forge-topic-unmerged 'face-salient-yellow)
-  (set-face-attribute 'forge-topic-unmerged nil :weight 'bold)
-  (set-face 'forge-topic-label 'face-strong)
-  (set-face-attribute 'forge-topic-label nil
-                      :box nil)
+  (set-face 'forge-topic-unmerged 'face-salient-yellow :weight 'bold)
+  (set-face 'forge-topic-label 'face-strong
+            :box nil)
   (set-face 'magit-dimmed 'face-faded)
 
-  (set-face 'magit-diff-hunk-heading 'face-strong)
-  (set-face-attribute 'magit-diff-hunk-heading nil
-                      :underline t
-                      :weight 'bold
-                      :extend t)
-  (set-face 'magit-diff-hunk-heading-highlight 'face-block)
-  (set-face-attribute 'magit-diff-hunk-heading-highlight nil
-                      :extend t
-                      :underline t))
+  (set-face 'magit-diff-hunk-heading 'face-strong
+            :underline t
+            :weight 'bold
+            :extend t)
+  (set-face 'magit-diff-hunk-heading-highlight 'face-block
+            :extend t
+            :underline t))
 
 (with-eval-after-load 'code-review
   (set-face-attribute 'code-review-timestamp-face nil
@@ -469,6 +476,8 @@
 
 ;; sx
 (require 'sx)
+;; (set-face 'sx-question-mode-title)
+
 (require 'sx-question-mode)
 (set-face-attribute 'sx-question-mode-content-face nil
                     :background (face-background 'default))
@@ -477,6 +486,8 @@
                     :foreground (face-foreground  'face-salient-yellow))
 (define-key sx-question-mode-map (kbd "G") 'sx-open-link)
 (define-key sx-question-mode-map (kbd "C-c w") 'center-window-mode)
+
+(add-hook 'sx-question-mode-hook #'my/sans-serif-font)
 
 ;; R markdown
 (defun rmd-activate ()
@@ -525,17 +536,32 @@
          (mode+ 16 16 :left :elide)  " "
          filename-and-process+)
         ))
-(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-(with-eval-after-load 'all-the-icons-dired
-  (set-face-attribute 'all-the-icons-dired-dir-face nil :foreground "#6c605a"))
+;; (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+;; (with-eval-after-load 'all-the-icons-dired
+;; (set-face-attribute 'all-the-icons-dired-dir-face nil :foreground "#6c605a"))
 
 (all-the-icons-completion-mode 1)
+
+;; dirvish
+(dirvish-override-dired-mode 1)
+(with-eval-after-load 'dirvish
+  (require 'dirvish-collapse)
+  (set-face 'dirvish-hl-line 'face-block :extend t)
+  ;; (set-face 'dirvish-file-size 'face-faded)
+  (set-face 'dirvish-collapse-dir-face 'face-italic-faded)
+
+  (setq dirvish-attributes '(all-the-icons collapse subtree-state)
+        dirvish-reuse-session t
+        dirvish-mode-line-format mode-line-format)
+
+  (define-key dirvish-mode-map (kbd "<tab>") #'dirvish-subtree-toggle))
 
 ;; dired async
 (dired-async-mode 1)
 
 ;; dired rsync
 (define-key dired-mode-map (kbd "C-c C-r") 'dired-rsync)
+(setq dired-rsync-options "-azr --info=progress2 --partial")
 
 ;; ibuffer custom buffers
 (setq ibuffer-saved-filter-groups
@@ -569,7 +595,8 @@
                ("code" (or (derived-mode . prog-mode)
                            (mode . ess-mode)
                            (filename . "/projects/")))
-               ("dired" (mode . dired-mode))
+               ("dired" (or (mode . dired-mode)
+                            (mode . dirvish-mode)))
                ("chat" (or (mode . ement-room-list-mode)
                            (mode . ement-room-mode)
                            (mode . erc-mode)))
@@ -651,7 +678,7 @@
       ;; ement-room-message-format-spec "%B%r%R%t"
       ement-room-message-format-spec "%t%L%B%r"
       ;; ement-room-left-margin-width 0
-      ement-room-left-margin-width 7
+      ement-room-left-margin-width 6
       ;; ement-room-right-margin-width 7
       ement-room-right-margin-width 0
       ement-room-sender-in-headers nil
@@ -672,39 +699,36 @@
                       :inherit 'face-salient-yellow))
 
 (add-hook 'ement-room-mode-hook (lambda () (setq-local mode-line-format nil)))
-(set-face 'ement-room-message-text 'variable-pitch)
-(set-face-attribute 'ement-room-message-text nil
-                    :family "Cantarell"
-                    :height 120)
+(set-face 'ement-room-message-text 'variable-pitch
+          :family "Cantarell"
+          :height 120)
 (set-face-attribute 'ement-room-fully-read-marker nil
                     :inherit 'face-block)
 (set-face-attribute 'ement-room-user nil
                     :family "Cantarell")
-(set-face 'ement-room-mention 'face-block)
+(set-face 'ement-room-mention 'face-block
+          :family "Cantarell"
+          :extend t)
 (set-face-attribute 'ement-room-membership nil
                     :family "Cantarell"
                     :height 0.8)
-(set-face-attribute 'ement-room-mention nil
-                    :family "Cantarell"
-                    :extend t)
 (set-face-attribute 'ement-room-timestamp nil
                     :slant 'normal
                     :height 0.9
                     :family "Cantarell"
                     :weight 'normal)
-(set-face 'ement-room-timestamp-header 'face-strong)
-(set-face-attribute 'ement-room-timestamp-header nil
-                    :family "Cantarell"
-                    :weight 'bold
-                    :overline t
-                    :height 1.1)
+(set-face 'ement-room-timestamp-header 'face-strong
+          :family "Cantarell"
+          :weight 'bold
+          :overline t
+          :height 1.1)
 (set-face-attribute 'ement-room-reactions nil
                     :family "Cantarell"
                     :height 1.0)
 (set-face-attribute 'ement-room-reactions-key nil
                     :height 1.1)
-;; (with-eval-after-load 'ement-room
-;; (defalias 'ement-room-list 'ement-taxy-room-list))
+(set-face-attribute 'ement-room-wrap-prefix nil
+                    :background (face-foreground 'face-faded))
 
 (defun run-pantalaimon ()
   (interactive)
@@ -712,14 +736,75 @@
                 :buffer "*pantalaimon*"
                 :command '("pantalaimon")))
 
-;; empv
+;; media
 (require 'cmus)
-(require 'empv)
-(setq empv-mpv-args '("--ytdl-format=best" "--no-terminal" "--idle" "--input-ipc-server=/tmp/empv-socket")
-      empv-invidious-instance "https://invidious.snopyta.org/api/v2"
-      empv-base-directory "/home/rayes/media/"
-      empv-video-dir "/home/rayes/media/anime")
-(global-set-key (kbd "H-p") 'empv-toggle)
+(require 'emms-setup)
+(emms-all)
+(setq emms-player-list '(emms-player-mpv)
+      emms-source-file-directory-tree-function #'emms-source-file-directory-tree-find
+      emms-source-file-default-directory "~/Music/"
+      emms-player-mpv-parameters '("--quiet" "--really-quiet" "--no-audio-display" "--force-window=no" "--vo=null")
+      emms-browser-covers #'emms-browser-cache-thumbnail-async
+      emms-browser-thumbnail-filter (lambda (dir)
+                                      (when (file-directory-p dir)
+                                        (if-let ((initial (my/emms-search-cover-directory dir)))
+                                            initial
+                                          (if-let* ((parent (file-name-directory (directory-file-name dir)))
+                                                    (back (my/emms-search-cover-directory parent)))
+                                              back
+                                            (if-let ((art (directory-files dir t "[Aa]rtwork\\|[Aa]rt" t)))
+                                                (cl-loop for d in art
+                                                         if (file-directory-p d) return (my/emms-search-cover-directory d)))))))
+      emms-seek-seconds 2
+      emms-info-asynchronously nil
+      emms-info-functions '(emms-info-metaflac emms-info-native)
+      emms-playing-time-style 'time
+      emms-playing-time-display-format (propertize "%s" 'face '(:weight bold :inherit (variable-pitch-text face-salient-yellow)))
+      emms-mode-line-icon-color (face-foreground 'default)
+      emms-mode-line-mode-line-function (lambda ()
+                                          (propertize
+                                           (format " %s  %s "
+                                                   (emms-propertize "NP:" 'display
+			                                                              (emms-mode-line-icon-generate
+				                                                             emms-mode-line-icon-color))
+                                                   (emms-track-description
+				                                            (emms-playlist-current-selected-track)))
+                                           'face '(:weight bold :inherit (variable-pitch-text face-salient-yellow)))))
+
+(defun my/emms-search-cover-directory (dir)
+  (if-let ((cur (directory-files dir t "\\([Ff]ront\\|[Cc]over\\|[Ff]older\\).*\\.\\(jpg\\|jpeg\\|png\\|gif\\)" t)))
+      cur
+    (if-let ((other (directory-files dir t ".*\\.\\(jpg\\|jpeg\\|png\\|gif\\)" t)))
+        other)))
+
+(defun my/sans-serif-font ()
+  (face-remap-add-relative 'default :family "Cantarell"))
+
+(add-hook 'emms-playlist-mode-hook #'my/sans-serif-font)
+(add-hook 'emms-browser-mode-hook #'my/sans-serif-font)
+
+(set-face 'emms-browser-album-face 'face-identifier)
+(set-face-attribute 'emms-browser-album-face nil :height 1.3)
+(set-face 'emms-browser-track-face 'default)
+(set-face 'emms-playlist-track-face 'default)
+(set-face 'emms-playlist-selected-face 'highlight)
+(set-face-attribute 'emms-playlist-selected-face nil :weight 'bold)
+(set-face 'emms-browser-artist-face 'face-salient-cyan)
+(set-face-attribute 'emms-browser-artist-face nil :height 1.3 :weight 'bold)
+(set-face 'emms-browser-year/genre-face 'face-salient-green)
+(set-face-attribute 'emms-browser-year/genre-face nil :height 1.1 :weight 'bold)
+
+(defvar emms-browser-info-album-format "%i%cS  %A")
+(defvar emms-browser-info-title-format "%T.%i %t (%a)")
+(defvar emms-browser-playlist-info-title-format "[ %A ] %T.%i %t (%a)")
+(defvar emms-browser-playlist-info-album-format "\n%i%cM\n[%y]  %A ")
+
+;; (require 'empv)
+;; (setq empv-mpv-args '("--ytdl-format=best" "--no-terminal" "--idle" "--input-ipc-server=/tmp/empv-socket")
+;;       empv-invidious-instance "https://invidious.snopyta.org/api/v2"
+;;       empv-base-directory "/home/rayes/media/"
+;;       empv-video-dir "/home/rayes/media/anime")
+;; (global-set-key (kbd "H-p") 'empv-toggle)
 
 (global-set-key (kbd "<XF86AudioPlay>") 'my/handle-play-pause)
 (global-set-key (kbd "<XF86AudioNext>") 'my/handle-play-next)
@@ -727,16 +812,21 @@
 
 (defun my/handle-play-pause ()
   (interactive)
-  (cond ((empv--running?) (empv-toggle))
-        ((cmus-running-p) (cmus-play-pause))))
+  (cond ;; ((empv--running?) (empv-toggle))
+        ((cmus-running-p) (cmus-play-pause))
+        (t (emms-pause))))
+
 (defun my/handle-play-next ()
   (interactive)
-  (cond ((empv--running?) (empv-playlist-next))
-        ((cmus-running-p) (cmus-next))))
+  (cond ;; ((empv--running?) (empv-playlist-next))
+        ((cmus-running-p) (cmus-next))
+        (t (emms-next))))
+
 (defun my/handle-play-prev ()
   (interactive)
-  (cond ((empv--running?) (empv-playlist-prev))
-        ((cmus-running-p) (cmus-previous))))
+  (cond ;; ((empv--running?) (empv-playlist-prev))
+        ((cmus-running-p) (cmus-previous))
+        (t (emms-previous))))
 
 ;; writeroom mode
 (with-eval-after-load 'writeroom-mode
@@ -765,21 +855,23 @@
 (global-set-key (kbd "C-c w") 'center-window-mode)
 
 (define-globalized-minor-mode global-center-window-mode
-    center-window-mode (lambda () (center-window-mode 1)))
+  center-window-mode (lambda () (center-window-mode 1)))
 
-(require 'writeroom-mode)
 (defun move-window-center-maybe ()
   (interactive)
-  (if (and (<= (- (count-windows) 1) 1)
-           ;; (< (/ (x-display-pixel-width) 2) (window-pixel-width))
-           (< 990 (window-pixel-width))
-           (< 540 (window-pixel-height))
-           (not (or (minibufferp)
-                    (eq (current-buffer) org-agenda-buffer)
-                    (eq (current-buffer) (get-buffer "*Ement Taxy*")))))
-      ;; (< (/ (x-display-pixel-height) 2) (window-pixel-height)))
-      (writeroom-mode 1)
-    (writeroom-mode -1)))
+  (let ((writeroom-mode-line t)
+        (writeroom-header-line t)
+        (writeroom-global-effects nil))
+    (if (and (<= (count-windows) 2)
+             ;; (< (/ (x-display-pixel-width) 2) (window-pixel-width))
+             (< 990 (window-pixel-width))
+             (< 540 (window-pixel-height))
+             (not (or (minibufferp)
+                      (eq (current-buffer) org-agenda-buffer)
+                      (eq (current-buffer) (get-buffer "*Ement Taxy*")))))
+        ;; (< (/ (x-display-pixel-height) 2) (window-pixel-height)))
+        (writeroom-mode 1)
+      (writeroom-mode -1))))
 
 (with-eval-after-load 'eww
   (define-key eww-mode-map (kbd "C-c h") #'eww-header-line-toggle)
@@ -823,7 +915,7 @@
                      "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
                      "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
                      "\\\\" "://"))
-                      (variable-ligset '("fl" "fi" "ffi" "ffl")))
+      (variable-ligset '("fl" "fi" "ffi" "ffl")))
   (ligature-set-ligatures 't '("www"))
   (dolist (mode '(eww-mode))
     (ligature-set-ligatures mode variable-ligset))
@@ -831,11 +923,12 @@
   (ligature-set-ligatures 'org-mode mono-ligset) ;; for codeblocks
   (global-ligature-mode t))
 
+
 ;; flycheck
 (require 'flycheck)
 (global-flycheck-mode 1)
 (setq flycheck-emacs-lisp-load-path 'inherit
-      flycheck-global-modes '(not org-mode))
+      flycheck-global-modes '(not org-mode org-agenda-mode erc-mode))
 (set-face-attribute 'flycheck-info nil
                     :underline nil)
 (set-face-attribute 'flycheck-warning nil
@@ -937,6 +1030,23 @@
 ;; (require 'eaf-system-monitor)
 ;; (require 'eaf-video-player)
 ;; (require 'eaf-rss-reader)
+
+(with-eval-after-load 'arietta
+  (set-face 'arietta-active 'face-salient-yellow))
+
+;; hide cursor for some modes
+(defvar-local hide-cursor--original nil)
+(define-minor-mode hide-cursor-mode
+  "Hide or show the cursor."
+  :global nil
+  (if hide-cursor-mode
+      (progn
+        (scroll-lock-mode 1)
+        (setq-local hide-cursor--original cursor-type
+                    cursor-type nil))
+    (scroll-lock-mode -1)
+    (setq-local cursor-type (or hide-cursor--original
+                                t))))
 
 ;; mam
 (require 'auth-source)
@@ -1051,6 +1161,8 @@
                                           (plist-get obj :personalFree)))
                                (5 (plist-get obj :STG))
                                (6 (plist-get obj :seeder))))))))
+
+(setq w3m-init-file (expand-file-name ".w3m.el" user-emacs-directory))
 
 ;; newsticker
 (require 'newsticker)

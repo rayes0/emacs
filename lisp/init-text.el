@@ -1,6 +1,7 @@
-;; -*- lexical-binding: t; -*-
+;; Text editing features -*- lexical-binding: t; -*-
 (require 'general)
 
+(global-so-long-mode 1)
 (add-hook 'text-mode-hook 'flyspell-mode)
 ;; (add-hook 'text-mode-hook 'variable-pitch-mode)
 (add-hook 'text-mode-hook 'visual-line-mode)
@@ -52,8 +53,7 @@
                                               (?\( . ?\))
                                               (?\[ . ?\])
                                               (?\" . ?\")
-                                              (?\$ . ?\$)
-                                              ))
+                                              (?\$ . ?\$)))
             (electric-pair-local-mode 1)))
 
 ;; occur
@@ -90,5 +90,10 @@
 
 ;; navigate subwords
 (global-subword-mode 1)
+
+;; dwim
+(substitute-key-definition 'upcase-word 'upcase-dwim (current-global-map))
+(substitute-key-definition 'downcase-word 'downcase-dwim (current-global-map))
+(substitute-key-definition 'capitalize-word 'capitalize-dwim (current-global-map))
 
 (provide 'init-text)

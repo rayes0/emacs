@@ -23,7 +23,8 @@
                            ;; (electric-indent-local-mode -1)
                            (face-remap-add-relative 'font-lock-comment-face
                                                     :family "Cantarell"
-                                                    :weight 'light
+                                                    :height 1.1
+                                                    :weight 'normal
                                                     :slant 'normal)))
 
 (with-eval-after-load 'org
@@ -56,6 +57,7 @@
         org-habit-today-glyph 9702
         org-habit-preceding-days 7
         org-habit-show-done-always-green t)
+
   (set-face-attribute 'org-habit-clear-future-face nil
                       :background (face-background 'face-block))
   (set-face-attribute 'org-habit-clear-face nil
@@ -89,106 +91,81 @@
                           '(("^ *\\([-]\\) "
                              (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-  (set-face 'org-archived                                 'face-faded)
+  (set-face 'org-archived 'face-faded)
   ;;(set-face 'org-checkbox                                 'face-faded)
   (set-face 'org-checkbox-statistics-done                 'face-faded)
   ;;(set-face 'org-checkbox-statistics-todo                 'face-strong)
-  (set-face 'org-clock-overlay                            'face-faded)
-  (set-face 'org-code                                     'face-faded)
-  (set-face 'org-column                                   'face-faded)
-  (set-face 'org-column-title                             'face-faded)
-  (set-face 'org-date                                     'face-faded)
-  (set-face-attribute 'org-date nil
-                      :inherit '(face-faded fixed-pitch))
-  (set-face 'org-date-selected                            'face-faded)
-  (set-face 'org-default                                  'face-faded)
-  (set-face 'org-dispatcher-highlight                    'face-subtle)
-  (set-face 'org-document-info                            'face-faded)
-  (set-face 'org-document-info-keyword                    'face-faded)
-  (set-face 'org-document-title                          'face-strong)
-  (set-face 'org-done 'org-todo)
-  (set-face-attribute 'org-done nil
-                      :foreground (face-foreground 'face-faded)
-                      :underline nil
-                      :inherit 'org-todo)
-  (set-face 'org-drawer                                   'face-faded)
-  (set-face-attribute 'org-drawer nil
-                      :weight 'bold
-                      :inherit '(face-faded fixed-pitch))
-  (set-face 'org-ellipsis                                 'face-faded)
-  (set-face 'org-footnote 'face-faded)
-  (set-face-attribute 'org-footnote nil
-                      :height 0.95)
-  (set-face 'org-formula                                  'face-faded)
-  (set-face 'org-headline-done                            'face-faded)
-  (set-face 'org-latex-and-related                        'face-faded)
-  (set-face-attribute 'org-latex-and-related nil
-                      :background (face-background 'default)
-                      :inherit '(face-salient fixed-pitch))
-  (set-face 'org-link                                   'face-salient)
-  (set-face 'org-list-dt 'face-light)
-  (set-face-attribute 'org-list-dt nil
-                      :slant 'italic)
-  (set-face 'org-macro                                    'face-salient-yellow)
-  (set-face 'org-meta-line                                'face-faded)
-  (set-face 'org-mode-line-clock                          'face-faded)
-  (set-face 'org-mode-line-clock-overrun                  'face-faded)
-  ;;(set-face 'org-priority                                 'face-faded)
+  (set-face 'org-clock-overlay 'face-faded)
+  (set-face 'org-code '(face-faded fixed-pitch))
+  (set-face 'org-column 'face-faded)
+  (set-face 'org-column-title 'face-faded)
+  (set-face 'org-date '(face-faded fixed-pitch))
+  (set-face 'org-date-selected 'face-faded)
+  (set-face 'org-default 'face-faded)
+  (set-face 'org-dispatcher-highlight 'face-subtle)
+  (set-face 'org-document-info '(face-faded fixed-pitch))
+  (set-face 'org-document-info-keyword 'face-faded)
+  (set-face 'org-document-info-keyword 'fixed-pitch)
+  (set-face 'org-document-title 'face-strong :slant 'italic :height 170)
+  (set-face 'org-drawer '(face-faded fixed-pitch) :weight 'bold)
+  (set-face 'org-ellipsis 'face-faded)
+  (set-face 'org-footnote 'face-faded :height 0.95)
+  (set-face 'org-formula 'face-faded)
+  (set-face 'org-headline-done 'face-faded)
+  (set-face 'org-latex-and-related '(face-salient fixed-pitch)
+            :background (face-background 'default))
+  (set-face 'org-link 'face-salient)
+  (set-face 'org-list-dt 'face-light :slant 'italic)
+  (set-face 'org-macro 'face-salient-yellow)
+  (set-face 'org-meta-line '(face-faded fixed-pitch) :weight 'normal)
+  (set-face 'org-mode-line-clock 'face-faded)
+  (set-face 'org-mode-line-clock-overrun 'face-faded)
   (set-face 'org-property-value 'unspecified)
-  (set-face-attribute 'org-property-value nil
-                      :inherit '(face-faded fixed-pitch))
-  (set-face 'org-quote                                    'face-faded)
-  (set-face 'org-scheduled                                'face-faded)
+  (set-face-attribute 'org-property-value nil :inherit '(face-faded fixed-pitch))
+  (set-face 'org-quote 'face-faded :slant 'italic)
+  (set-face 'org-scheduled 'face-faded)
   (set-face 'org-scheduled-previously 'face-salient-green)
   (set-face 'org-scheduled-today 'face-salient-yellow)
-  (set-face 'org-sexp-date                                'face-faded)
-  (set-face 'org-special-keyword                          'face-faded)
-  (set-face-attribute 'org-special-keyword nil
-                      :inherit '(face-salient fixed-pitch))
-  (set-face 'org-table                                       'default)
-  (set-face 'org-tag-group                                'face-faded)
-  (set-face 'org-target                                   'face-faded)
-  (set-face 'org-time-grid                                'face-faded)
-  (set-face 'org-todo                                    'face-popout)
-  (set-face-attribute 'org-todo nil
-                      :weight 'bold
-                      :underline t
-                      :height 1.0
-                      :inherit '(face-popout fixed-pitch))
-  (set-face 'org-upcoming-deadline                        'face-faded)
-  (set-face 'org-verbatim                                 'face-faded)
-  (set-face 'org-verse                                    'face-faded)
-  (set-face 'org-warning                                 'face-popout)
-  (set-face 'org-level-1                                 'face-strong)
-  (set-face 'org-level-2                                 'face-strong)
-  (set-face 'org-level-3                                 'face-strong)
-  (set-face 'org-level-4                                 'face-strong)
-  (set-face 'org-level-5                                 'face-strong)
-  (set-face 'org-level-6                                 'face-strong)
-  (set-face 'org-level-7                                 'face-strong)
-  (set-face 'org-level-8                                 'face-strong)
+  (set-face 'org-sexp-date 'face-faded)
+  (set-face 'org-special-keyword '(face-salient fixed-pitch))
+  (set-face 'org-table 'default)
+  (set-face 'org-tag-group 'face-faded)
+  (set-face 'org-target 'face-faded)
+  (set-face 'org-time-grid 'face-faded)
+  (set-face 'org-todo '(face-identifier fixed-pitch)
+            :weight 'bold
+            :height 0.9
+            :box `(:color ,(face-foreground 'face-identifier) :line-width ,(cons 8 (- 3)))
+            :inverse-video t)
+  (set-face 'org-done '(org-todo face-block)
+            :background (face-background 'face-block)
+            :box `(:color ,(face-background 'face-block) :line-width ,(cons 8 (- 3)))
+            :foreground (face-foreground 'face-salient-yellow)
+            :inverse-video nil)
+  (set-face 'org-upcoming-deadline 'face-faded)
+  (set-face 'org-verbatim 'face-faded)
+  (set-face 'org-verse 'face-faded)
+  (set-face 'org-warning 'face-popout)
+  (set-face 'org-level-1 'face-strong)
+  (set-face 'org-level-2 'face-strong)
+  (set-face 'org-level-3 'face-strong)
+  (set-face 'org-level-4 'face-strong)
+  (set-face 'org-level-5 'face-strong)
+  (set-face 'org-level-6 'face-strong)
+  (set-face 'org-level-7 'face-strong)
+  (set-face 'org-level-8 'face-strong)
 
-  (set-face-attribute 'org-block            nil :inherit '(face-block fixed-pitch))
+  (set-face 'org-block '(face-block fixed-pitch))
   ;; (set-face-attribute 'tex-math nil :inherit 'face-salient)
-  (set-face-attribute 'org-block-begin-line nil :inherit '(face-faded face-block fixed-pitch))
-  (set-face-attribute 'org-block-end-line   nil :inherit '(face-faded face-block fixed-pitch))
-  (set-face-attribute 'org-quote            nil :slant 'italic)
+  (set-face 'org-block-begin-line '(face-faded face-block fixed-pitch))
+  (set-face 'org-block-end-line '(face-faded face-block fixed-pitch))
   ;; (set-face-attribute 'org-table            nil :inherit 'fixed-pitch)
 
-  (set-face-attribute 'org-checkbox nil :inherit '(face-salient fixed-pitch)
-                      :weight 'bold)
-  (set-face-attribute 'org-checkbox-statistics-todo nil :inherit '(face-faded fixed-pitch)
-                      :weight 'bold)
-  (set-face-attribute 'org-checkbox-statistics-done nil :inherit '(face-faded fixed-pitch))
-  (set-face-attribute 'org-priority nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-hide nil     :inherit 'fixed-pitch)
-
-  (set-face-attribute 'org-code                   nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-document-info-keyword  nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-document-info          nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-document-title         nil :slant 'italic :height 170)
-  (set-face-attribute 'org-meta-line              nil :inherit '(face-faded fixed-pitch)
-                      :weight 'normal)
+  (set-face 'org-checkbox '(face-salient fixed-pitch) :weight 'bold)
+  (set-face 'org-checkbox-statistics-todo '(face-faded fixed-pitch) :weight 'bold)
+  (set-face 'org-checkbox-statistics-done '(face-faded fixed-pitch))
+  (set-face 'org-priority 'fixed-pitch)
+  (set-face 'org-hide 'fixed-pitch :foreground (face-background 'default))
 
   (set-face-attribute 'org-level-1 nil :weight 'bold :height 130)
   (set-face-attribute 'org-level-2 nil :weight 'bold :height 125)
@@ -198,7 +175,7 @@
   (set-face-attribute 'org-level-6 nil :weight 'bold :height 113)
   (set-face-attribute 'org-level-7 nil :weight 'bold :height 113)
   (set-face-attribute 'org-level-8 nil :weight 'bold :height 113)
-  (set-face-attribute 'org-tag nil :weight 'bold :inherit '(face-faded fixed-pitch)))
+  (set-face 'org-tag '(face-faded fixed-pitch) :weight 'bold))
 
 (require 'ox)
 (setq org-export-async-init-file (expand-file-name "./async-init.el" user-emacs-directory)
@@ -271,31 +248,28 @@
 ;; org-agenda
 (global-set-key "\C-ca" 'org-agenda)
 (with-eval-after-load 'org-agenda
-  (set-face 'org-agenda-calendar-event                    'default)
-  (set-face 'org-agenda-calendar-sexp                     'face-faded)
-  (set-face 'org-agenda-clocking                          'face-faded)
-  (set-face 'org-agenda-column-dateline                   'face-faded)
-  (set-face 'org-agenda-current-time                      'face-faded)
-  (set-face 'org-agenda-date                            'face-salient)
-  (set-face-attribute 'org-agenda-date nil :underline t)
-  (set-face 'org-agenda-date-today                      'face-salient)
-  (set-face-attribute 'org-agenda-date-today nil
-                      :weight 'bold
-                      :underline t)
-  (set-face 'org-agenda-date-weekend                      'face-faded)
-  (set-face-attribute 'org-agenda-date-weekend nil
-                      :weight 'bold
-                      :underline t)
-  (set-face 'org-agenda-diary                             'face-faded)
-  (set-face 'org-agenda-dimmed-todo-face                  'face-faded)
-  (set-face 'org-agenda-done                              'face-faded)
-  (set-face 'org-agenda-filter-category                   'face-faded)
-  (set-face 'org-agenda-filter-effort                     'face-faded)
-  (set-face 'org-agenda-filter-regexp                     'face-faded)
-  (set-face 'org-agenda-filter-tags                       'face-faded)
-  (set-face 'org-agenda-restriction-lock                  'face-faded)
-  (set-face 'org-agenda-structure                         'face-faded)
-  
+  (set-face 'org-agenda-calendar-event 'default)
+  (set-face 'org-agenda-calendar-sexp 'face-faded)
+  (set-face 'org-agenda-clocking 'face-faded)
+  (set-face 'org-agenda-column-dateline 'face-faded)
+  (set-face 'org-agenda-current-time 'face-faded)
+  (set-face 'org-agenda-date 'face-light
+            :weight 'bold)
+  ;; :box `(:color ,(face-background 'default) :line-width 2))
+  ;; :family "Cantarell"
+  ;; :height 120)
+  (set-face 'org-agenda-date-today 'face-identifier :weight 'bold)
+  (set-face 'org-agenda-date-weekend 'face-faded :weight 'bold)
+  (set-face 'org-agenda-diary 'face-faded)
+  (set-face 'org-agenda-dimmed-todo-face 'face-faded)
+  (set-face 'org-agenda-done 'face-faded)
+  (set-face 'org-agenda-filter-category 'face-faded)
+  (set-face 'org-agenda-filter-effort 'face-faded)
+  (set-face 'org-agenda-filter-regexp 'face-faded)
+  (set-face 'org-agenda-filter-tags 'face-faded)
+  (set-face 'org-agenda-restriction-lock 'face-faded)
+  (set-face 'org-agenda-structure 'face-faded)
+
   (setq org-agenda-use-time-grid t
         org-agenda-timegrid-use-ampm t
         org-agenda-current-time-string "now ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -309,7 +283,13 @@
         org-agenda-sorting-strategy '((agenda habit-down time-up priority-down category-keep)
                                       (todo priority-down ts-up category-keep)
                                       (tags priority-down category-keep)
-                                      (search category-keep)))
+                                      (search category-keep))
+        org-agenda-format-date (lambda (date)
+                                 (require 'cal-iso)
+                                 (format "%s, %s %s"
+                                         (calendar-day-name date 'abbrev)
+                                         (calendar-month-name (car date) 'abbrev)
+                                         (cadr date))))
   (setcar (nthcdr 3 org-agenda-time-grid) "───────────────")
 
   (setq org-agenda-block-separator 9552))

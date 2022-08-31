@@ -1,34 +1,93 @@
-;; Colors
+;; core colors and faces  -*- lexical-binding: t; -*-
 
-(defun set-modeline-faces ()
-  (set-face 'mode-line 'default)
-  (set-face 'mode-line-inactive 'face-faded)
-  (set-face-attribute 'mode-line nil
-                      ;; :overline (face-foreground 'face-faded)
-                      ;; :underline (face-foreground 'face-faded)
-                      :background (face-background 'face-block)
-                      :box `(:line-width 6 :color ,(face-background 'face-block))
-                      :inherit '(fixed-pitch face-block))
-  (set-face-attribute 'mode-line-inactive nil
-                      ;; :overline (face-foreground 'face-faded)
-                      ;; :underline (face-foreground 'face-faded)
-                      :box `(:line-width 6 :color ,(face-background 'face-block))
-                      :background (face-background 'face-block)
-                      :weight 'light
-                      :inherit '(fixed-pitch face-block))
-  (set-face 'header-line 'face-faded)
-  (set-face-attribute 'header-line nil
-                      :overline (face-foreground 'face-faded)
-                      :weight 'light
-                      :background (face-background 'face-block)
-                      :box `(:line-width 6 :color ,(face-background 'face-block))
-                      :inherit 'fixed-pitch)
-  (set-face-attribute 'window-divider nil
-                      :foreground (face-background 'mode-line))
-  (set-face-attribute 'window-divider-first-pixel nil
-                      :foreground (face-background 'default))
-  (set-face-attribute 'window-divider-last-pixel nil
-                      :foreground (face-background 'default)))
+(defun set-face (face style &rest extra)
+  "Make a FACE inherit STYLE, with EXTRA attributes if provided."
+  (when style
+    (set-face-attribute face nil
+                        :foreground 'unspecified :background 'unspecified
+                        :family     'unspecified :slant      'unspecified
+                        :weight     'unspecified :height     'unspecified
+                        :underline  'unspecified :overline   'unspecified
+                        :box        'unspecified :inverse-video 'unspecified
+                        :extend     'unspecified :inherit style))
+  (when extra
+    (apply #'set-face-attribute face nil extra)))
+
+(defgroup blossom nil
+  "Faces for the blossom theme"
+  :prefix "face-")
+
+(setq custom-unlispify-remove-prefixes t)
+
+(defface face-critical nil
+  "Face requiring immmediate attention"
+  :group 'blossom)
+
+(defface face-popout nil
+  "Attention grabbing face"
+  :group 'blossom)
+
+(defface face-strong nil
+  "Bold face, titles, keywords, etc."
+  :group 'blossom)
+
+(defface face-salient nil
+  "Important face, with a different hue"
+  :group 'blossom)
+
+(defface face-salient-green nil
+  "Alternative to `face-salient' with different hue"
+  :group 'blossom)
+
+(defface face-salient-cyan nil
+  "Alternative to `face-salient' with different hue"
+  :group 'blossom)
+
+(defface face-salient-yellow nil
+  "Alternative to `face-salient' with different hue"
+  :group 'blossom)
+
+(defface face-faded nil
+  "Less important face"
+  :group 'blossom)
+
+(defface face-italic-faded nil
+  "faded italic version"
+  :group 'blossom)
+
+(defface face-italic nil
+  "normal italic face"
+  :group 'blossom)
+
+(defface face-subtle nil
+  "background face for suggesting physical areas"
+  :group 'blossom)
+
+(defface face-subtle-purple nil
+  "purple face for certain physical areas"
+  :group 'blossom)
+
+(defface face-block nil
+  "face with background tint for block"
+  :group 'blossom)
+
+;; Code faces
+
+(defface face-identifier nil
+  "Code face for identifiers such as function names"
+  :group 'blossom)
+
+(defface face-keyword nil
+  "Code face for keywords, if, else, let, fn, etc."
+  :group 'blossom)
+
+(defface face-pre nil
+  "Code face for other special things like preprocessors"
+  :group 'blossom)
+
+(defface face-light nil
+  "Code face for demphasized things, but not as light as face-faded"
+  :group 'blossom)
 
 (defun blossom ()
   (setq frame-background-mode 'light)
@@ -37,7 +96,6 @@
   (set-face-attribute 'default nil
                       :foreground (face-foreground 'default)
                       :background (face-background 'default))
-  (set-face-background 'cursor "#6c605a")
   (set-face-attribute 'face-critical nil :foreground "#6c605a" :background "#fccec1")
   (set-face-attribute 'face-popout nil :foreground "#9e552f")
   (set-face-attribute 'face-strong nil :foreground "#574b45")
@@ -65,12 +123,8 @@
   (set-face-attribute 'face-pre nil :foreground "#407680"
                       :weight 'normal
                       :slant 'italic)
-  (set-face-attribute 'face-light nil :foreground "#82756f")
+  (set-face-attribute 'face-light nil :foreground "#82756f"))
 
-  (set-face-attribute 'show-paren-match nil :background "#dad3d0"
-                      :weight 'bold)
-
-  (set-modeline-faces))
 ;; (with-eval-after-load 'cus-edit (set-button-faces)))
 
 ;; Term
@@ -164,8 +218,8 @@
   (set-face-attribute 'show-paren-match nil :background "#3a3a3a"
                       :weight 'bold)
   
-  (set-modeline-faces)
-  (with-eval-after-load 'cus-edit (set-button-faces)))
+  ;; (with-eval-after-load 'cus-edit (set-button-faces))
+  )
 
 (defun theme-toggle ()
   "Toggle between light and dark theme"

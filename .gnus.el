@@ -9,10 +9,12 @@
       user-mail-address "")
 
 (setq message-confirm-send t
-      gnus-user-agent "gnus")
+      gnus-user-agent "gnus"
+      canlock-password (funcall (plist-get (nth 0 (auth-source-search :host "canlock.pass")) :secret)))
 
 (setq gnus-select-method '(nnnil "")
-      gnus-secondary-select-methods '((nnreddit "")
+      gnus-secondary-select-methods '(
+                                      ;; (nnreddit "")
                                       (nnhackernews "")
                                       (nnimap "personal"
                                               (nnimap-address "localhost")
@@ -37,11 +39,11 @@
                                             ;; (nntp-port-number 119)
                                             ;; (nntp-port-number 563)
                                             (nntp-open-connection-function nntp-open-network-stream))
-                                      (nntp "eternal-september"
+                                      (nntp "eternal-sep"
                                             (nntp-address "news.eternal-september.org")
                                             (nntp-port-number 563)
                                             (nntp-open-connection-function nntp-open-tls-stream))
-                                      (nnchan "")
+                                      ;; (nnchan "")
                                       )
       gnus-posting-styles '(((message-mail-p)
                              (name full-name))
@@ -104,16 +106,19 @@
       ;;                               ((gnus-seconds-year) . "%b %d")
       ;;                               (t . "%b %d %Y"))
       gnus-user-date-format-alist '((t . "%D"))
-      gnus-group-uncollapsed-levels 2
-      gnus-group-line-format "%M%S%p%P%~(pad-left 3)y%*│%B%(%c%)\n"
+      gnus-article-date-headers '(combined-local-lapsed)
+      gnus-group-uncollapsed-levels 1
+      ;; gnus-group-line-format "%M%S%p%P%~(pad-left 2)y%*│%B%(%c%)\n"
+      gnus-group-line-format "%M%B%P%~(pad-left 2)y%*│%B%(%c%)\n"
       gnus-topic-line-format "%i%([%{ %n ] %~(ignore 0)A%}%v%)\n"
+      gnus-topic-indent-level 1
       gnus-summary-display-arrow t
       ;; gnus-summary-gather-subject-limit 'fuzzy
       ;; gnus-simplify-subject-fuzzy-regexp "Re: "
       gnus-simplify-subject-functions '(gnus-simplify-subject-re
                                         gnus-simplify-subject-fuzzy
                                         gnus-simplify-whitespace)
-      gnus-summary-display-while-building t
+      gnus-summary-display-while-building nil
       gnus-asynchronous t
       gnus-use-article-prefetch 15
       ;; gnus-fetch-old-headers 'some
@@ -126,7 +131,8 @@
       gnus-treat-display-smileys nil
       gnus-treat-display-x-face 'head
       gnus-large-newsgroup 50
-      gnus-large-ephemeral-newsgroup 50)
+      gnus-large-ephemeral-newsgroup 50
+      gnus-completing-read-function #'gnus-ido-completing-read)
 
 (add-hook 'gnus-summary-exit-hook #'gnus-summary-bubble-group)
 
@@ -140,8 +146,14 @@
 (setq gnus-global-groups (gnus-groups-from-server "nnreddit:"))
 
 (gnus-add-configuration '(article (horizontal 1.0
-                                              (summary 0.5 point)
-                                              (article 1.0))))
+                                              (group 38)
+                                              (vertical 1.0
+                                                        (summary 8 point)
+                                                        (article 1.0)))))
+
+(gnus-add-configuration '(summary (horizontal 1.0
+                                              (group 38)
+                                              (summary 1.0 point))))
 
 ;; rss
 (with-eval-after-load 'nnrss
@@ -150,12 +162,16 @@
                  (gnus-summary-line-format "%U%R%z% │ %d │ %*%s\n")
                  (gnus-show-threads nil))))
 (add-to-list 'gnus-parameters
-             '("news.gwene.org"
+             '("^news.gwene.org"
                (gnus-summary-line-format "%U%R%z% │ %d │ %*%s\n")
                (gnus-show-threads nil)))
 
-(defun gnus-user-format-function-V (header)
-  "Score formatter function for nnreddit."
+(add-to-list 'gnus-parameters
+             '("^nnreddit"
+               (gnus-summary-line-format "%R%uS%i% │ %d │ %*%s\n")))
+
+(defun gnus-user-format-function-S (header)
+  ;; (debug header)
   (alist-get 'X-Reddit-Score (mail-header-extra header)))
 
 ;; (defun nnreddit-sort-by-reddit-score (t1 t2)
@@ -236,25 +252,23 @@
 (set-face 'gnus-summary-normal-ancient 'face-faded)
 (set-face 'gnus-summary-normal-read 'face-faded)
 (set-face 'gnus-summary-normal-unread 'face-strong)
-(set-face 'gnus-summary-cancelled 'face-light)
-(set-face-attribute 'gnus-summary-cancelled nil :strike-through t)
+(set-face 'gnus-summary-cancelled 'face-light :strike-through t)
 (set-face 'gnus-summary-normal-ticked 'face-popout)
 
 ;; headers
-(set-face-attribute 'gnus-header nil
-                    :inherit 'fixed-pitch)
-(set-face 'gnus-header-name 'message-header-name)
+(set-face-attribute 'gnus-header nil :inherit 'variable-pitch-text)
+(set-face 'gnus-header-name '(message-header-name variable-pitch-text)
+          :background (face-background 'face-block)
+          :height 0.9
+          :weight 'semibold
+          :box `(:color ,(face-background 'face-block) :line-width (7 . -3)))
 (set-face 'gnus-header-from 'face-strong)
 (set-face 'gnus-header-subject 'message-header-subject)
-(set-face 'gnus-header-content 'face-light)
-(set-face-attribute 'gnus-header-content nil
-                    :family "Cascadia Code")
-(set-face-attribute 'gnus-header-from nil
-                    :family "Cascadia Code")
-(set-face 'gnus-header-newsgroups 'face-salient-yellow)
-(set-face-attribute 'gnus-header-newsgroups nil
-                    :family "Cascadia Code"
-                    :slant 'normal)
+(set-face 'gnus-header-content '(face-light variable-pitch-text))
+(set-face 'gnus-header-from '(face-strong variable-pitch-text))
+(set-face 'gnus-header-newsgroups 'face-salient-yellow
+          :family "Cascadia Code"
+          :slant 'normal)
 
 ;; article
 (with-eval-after-load 'gnus-cite
@@ -311,6 +325,19 @@
                                                (eq (car (gnus-find-method-for-group gnus-newsgroup-name)) 'nnhackernews))
                                            (face-remap-add-relative 'gnus-cite-1 :family "ETBembo"))
                                           (t (face-remap-add-relative 'default
-                                                                      :family "Go Mono")))))
+                                                                      :family "Go Mono"))
+                                          )))
 
 (autoload 'gnus-group-make-shimbun-group "nnshimbun" nil t)
+(setq shimbun-rss-hash-group-path-alist '(("sakugabooru" "https://blog.sakugabooru.com/feed" t)
+                                          ;; ("jsomers" "http://jsomers.net/blog/feed" t)
+                                          ("Drew Devault" "https://drewdevault.com/blog/index.xml" t)
+                                          ("mobileread" "https://www.mobileread.com/feeds/front.xml" t)
+                                          ("The Scholars Stage" "https://scholars-stage.org/feed" t))
+      shimbun-atom-hash-group-path-alist '(("emersion" "https://emersion.fr/blog/atom.xml" t)
+                                           ("xkcd" "https://xkcd.com/atom.xml" t)
+                                           ("Lennart Poettering" "https://0pointer.net/blog/index.atom" t)
+                                           ("wingolog" "https://wingolog.org/feed/atom" t)
+                                           ("Edward Feser" "https://edwardfeser.blogspot.com/feeds/posts/default" t))
+      shimbun-rss-blogs-group-url-regexp '(("ANN" "https://www.animenewsnetwork.com/news/rss.xml?ann-edition=us"
+                                            "<div class=\"meat\">" "<div id=\"social-bookmarks\">")))

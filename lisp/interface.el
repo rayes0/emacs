@@ -7,21 +7,23 @@
       confirm-kill-emacs
       (lambda (&optional _)
         (yes-or-no-p
+         ;; prompt stolen from doom
          (concat (propertize "I-it's not like I'll miss you or anything, b-baka! "
                              'face 'face-italic-faded)
                  (propertize "Really quit emacs?"
                              'face 'face-salient))))
-      custom-raised-buttons nil)
-;; (set-face-attribute 'custom-button nil
-;; :background )
+      custom-raised-buttons nil
+      echo-keystrokes 0.15)
 
-;; enable ido-everywhere
-;;(ido-mode 1)
-;;(ido-everywhere 1)
-;;(setq ido-enable-flex-matching t
-;;  ido-file-extensions-order '(".org")
-;;  ido-use-virtual-buffers 'auto)
-;;  show-help-function nil)
+(tooltip-mode t)
+(setq tooltip-delay 0
+      tooltip-resize-echo-area t
+      tooltip-frame-parameters `((name . "tooltip")
+                                 (background-color . ,(face-background 'face-block))
+                                 (internal-border-width . 6)
+                                 (border-width . 2)
+                                 (border-color . ,(face-foreground 'face-salient-yellow))
+                                 (no-special-glyphs . t)))
 
 ;; minibuffer and completion buffer tweaks
 (setq completion-auto-help t
@@ -48,6 +50,30 @@
 
 (fido-mode 1)
 (fido-vertical-mode 1)
+(ido-mode 1)
+(ido-everywhere 1)
+(setq ido-enable-flex-matching t
+      ido-file-extensions-order '(".org")
+      ido-use-virtual-buffers t
+      ido-use-filename-at-point nil
+      ido-use-url-at-point nil
+      ido-auto-merge-work-directories-length -1
+      ;; ido-auto-merge-delay-time 0.2
+      ido-decorations `("\n" "\n" "\n" " | ..."
+                        ,(propertize "(" 'face 'face-faded) ,(propertize ")" 'face 'face-faded)
+                        ,(propertize " (No matches)" 'face 'face-faded)
+                        " [Matched]" " [Not readable]" " [Too big]" " [Confirm]" "\n" "")
+      ido-default-file-method 'maybe-frame
+      ido-default-buffer-method 'maybe-frame
+      ido-enter-matching-directory 'first)
+
+(add-hook 'ido-setup-hook (lambda ()
+                            (define-key ido-completion-map (kbd "C-n") #'ido-next-match)
+                            (define-key ido-completion-map (kbd "C-p") #'ido-prev-match)))
+
+(set-face 'ido-first-match 'highlight)
+(set-face 'ido-only-match 'face-salient)
+(set-face 'ido-subdir 'default :weight 'bold)
 
 (global-prettify-symbols-mode 1)
 (windmove-default-keybindings)
@@ -90,8 +116,8 @@
 (set-fontset-font "fontset-default" 'kana (font-spec :size 16 :name "Noto Serif CJK JP") nil 'prepend)
 (set-fontset-font "fontset-default" 'cjk-misc (font-spec :size 16 :name "Noto Serif CJK JP") nil 'prepend)
 
-(setq-default line-spacing 0.15)
-(setq-default indent-tabs-mode nil
+(setq-default line-spacing 0.15
+              indent-tabs-mode nil
               tab-stop-list ()
               tab-width 2
               widget-image-enable nil)
@@ -108,52 +134,65 @@
 (size-indication-mode -1)
 
 (define-key mode-line-major-mode-keymap [header-line]
-  (lookup-key mode-line-major-mode-keymap [mode-line]))
+            (lookup-key mode-line-major-mode-keymap [mode-line]))
 
-(defun mode-line-render (left right)
-  (let* ((current-left-margin (or (car (window-margins)) 0))
-         (current-right-margin (or (cdr (window-margins)) 0))
-         (available-width (- (window-width)
-                             (+ (- (length (format-mode-line left)) current-left-margin)
-                                (- (length (format-mode-line right)) current-right-margin)))))
-    (append left
-            (list (format (format "%%%ds" available-width) ""))
-            right)))
+(defun mode-line-render (left-text right-text)
+  (let* ((siding 10)
+         (available (- (- (window-pixel-width)
+                          (+ (string-pixel-width (format-mode-line left-text))
+                             (string-pixel-width (format-mode-line right-text))))
+                       (* 2 siding)))
+         (mid-pad (propertize "-" 'display `(space :width (,available))))
+         (side-pad (propertize "-" 'display `(space :width (,siding)))))
+    (list side-pad left-text mid-pad right-text side-pad)))
+
+(defvar my/ml-window nil)
+(add-function :before pre-redisplay-function
+              (lambda (_wins) (setq my/ml-window (selected-window))))
 
 (with-eval-after-load 'custom-ops
   (if (featurep 'all-the-icons)
       (setq-default mode-line-format
-                    '((:eval (mode-line-render
-                              '(" %I "
-                                mode-line-position
-                                mode-line-misc-info
-                                (vc-mode vc-mode)
-                                (:eval (if (bound-and-true-p vc-mode) "  "))
-                                (:eval (custom-modeline-pyvenv-check))
-                                (:eval (if (bound-and-true-p pyvenv-virtual-env-name) "  "))
-                                (:eval (custom-modeline-flycheck-status))
-                                mode-line-process)
-                              '((:eval (propertize "%b" 'face `(:slant italic)))
-                                (:eval (if (and buffer-file-name (buffer-modified-p))
-                                           (propertize "*" 'face `(:inherit face-faded))))
-                                (:eval (if (buffer-narrowed-p)
-                                           (propertize "-" 'face `(:inherit face-faded))))
-                                " "
-                                (:eval (custom-modeline-mode-icon))
-                                ;; (:eval mode-name)
-                                "   ")))))
+                    '((:eval (let ((space-xs (propertize "-" 'display '(space :width (8))))
+                                   (space-s (propertize "-" 'display '(space :width (12))))
+                                   (space (propertize "-" 'display '(space :width (24)))))
+                               (mode-line-render
+                                `("%I"
+                                  ,space-s
+                                  mode-line-position
+                                  ;; (:eval (nyan-create))
+                                  mode-line-misc-info
+                                  (vc-mode (:eval (propertize vc-mode 'face '(:weight bold :inherit face-faded))))
+                                  ,space-s
+                                  (:eval (custom-modeline-pyvenv-check))
+                                  ;; (:eval (if (bound-and-true-p pyvenv-virtual-env-name) "  "))
+                                  mode-line-process)
+                                `((:eval (custom-modeline-flycheck-status))
+                                  ,space
+                                  (:eval (propertize (format "[ %s ]" (format-mode-line mode-name)) 'face '(:inherit face-faded :height 0.9)))
+                                  ,space-s
+                                  (:eval (propertize "%b" 'face '(:slant italic)))
+                                  (:eval (if (and buffer-file-name (buffer-modified-p))
+                                             (propertize "*" 'face '(:inherit face-faded))))
+                                  (:eval (if (buffer-narrowed-p)
+                                             (propertize "-" 'face '(:inherit face-faded))))
+                                  ,space-xs
+                                  (:eval (if (eq my/ml-window (selected-window)) "●" "○"))
+                                  "  "))))))
     (setq-default mode-line-format
                   '((:eval (mode-line-render
-                            '(" %I "
+                            '("%I "
                               mode-line-position
                               mode-line-misc-info
                               (vc-mode vc-mode))
-                            '((:eval (propertize "%b" 'face `(:slant italic)))
+                            '((:eval (propertize "%b" 'face '(:slant italic)))
                               (:eval (if (and buffer-file-name (buffer-modified-p))
-                                         (propertize "*" 'face `(:inherit face-faded))))
+                                         (propertize "*" 'face '(:inherit face-faded))))
                               (:eval (if (buffer-narrowed-p)
-                                         (propertize "-" 'face `(:inherit face-faded))))
-                              (:eval (propertize " (%m)  " 'face `(:inherit face-faded))))))))))
+                                         (propertize "-" 'face '(:inherit face-faded))))
+                              (:eval (propertize (format " (%s) " (format-mode-line mode-name)) 'face `(:inherit face-faded)))
+                              (:eval (if (eq my/ml-window (selected-window)) "●" "○"))
+                              "  ")))))))
 
 ;; (defun custom-modeline-mode-icon ()
 ;;   (format "%s" (all-the-icons-icon-for-mode major-mode :height 0.8 :v-adjust 0.01)))
@@ -161,26 +200,26 @@
 (defun custom-modeline-flycheck-status ()
   (when (and (featurep 'flycheck) flycheck-mode)
     (let* ((text (pcase flycheck-last-status-change
-                   (`finished (if flycheck-current-errors
+                   ('finished (if flycheck-current-errors
                                   (let ((count (let-alist (flycheck-count-errors flycheck-current-errors)
                                                  (+ (or .warning 0) (or .error 0)))))
-                                    (format "✖ Err: %s" count))
+                                    (format "✖%s%s" (propertize "-" 'display '(space :width (4))) count))
                                 "✔"))
-                   (`running     "⟲")
-                   (`no-checker  "⚠ No Checker")
-                   (`not-checked "")
-                   (`errored     "⚠ Error")
-                   (`interrupted "⛔ Interrupted")
-                   (`suspicious  ""))))
+                   ('running     "⟲")
+                   ('no-checker  "⚠ No Checker")
+                   ('not-checked "")
+                   ('errored     "⚠ err")
+                   ('interrupted "⛔ stop")
+                   ('suspicious  "⚠ sus"))))
       (propertize text
-                  'help-echo "Show Flycheck Errors"
-                  'mouse-face '(:weight 'bold)
+                  'help-echo "Flycheck errors"
+                  'mouse-face '(:weight bold)
                   'local-map (make-mode-line-mouse-map
                               'mouse-1 (lambda () (interactive) (flycheck-list-errors)))))))
 
 (defun custom-modeline-pyvenv-check ()
   (when (and (featurep 'pyvenv) pyvenv-virtual-env-name)
-    (format "[%s venv: %s]"
+    (format "(%s venv: %s)"
             (all-the-icons-icon-for-mode 'python-mode :height 0.9 :v-adjust 0.01)
             pyvenv-virtual-env-name)))
 

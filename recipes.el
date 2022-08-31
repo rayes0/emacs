@@ -67,7 +67,8 @@
 ;; (quelpa '(beacon                  :fetcher github :repo "Malabarba/beacon"))
 (quelpa '(beacon                  :fetcher github :repo "chep/beacon"))
 (quelpa '(rainbow-mode            :fetcher git    :url "https://git.savannah.gnu.org/git/emacs/elpa.git"
-          :branch "externals/rainbow-mode"))
+                                  :branch "externals/rainbow-mode"))
+(quelpa '(nyan-mode               :fetcher github :repo "TeMPOraL/nyan-mode"))
 
 ;; flycheck
 (quelpa '(flycheck              :fetcher github :repo "flycheck/flycheck"))
@@ -121,27 +122,31 @@
 (quelpa '(which-key                :fetcher github :repo "justbur/emacs-which-key"))
 (quelpa '(persistent-scratch       :fetcher github :repo "Fanael/persistent-scratch"))
 (quelpa '(all-the-icons            :fetcher github :repo "domtronn/all-the-icons.el"))
-(quelpa '(all-the-icons-dired      :fetcher github :repo "wyuenho/all-the-icons-dired"))
+;; (quelpa '(all-the-icons-dired      :fetcher github :repo "wyuenho/all-the-icons-dired"))
 (quelpa '(all-the-icons-ibuffer    :fetcher github :repo "seagle0128/all-the-icons-ibuffer"))
 (quelpa '(all-the-icons-completion :fetcher github :repo "iyefrat/all-the-icons-completion"))
+(quelpa '(dirvish :fetcher github :repo "alexluigit/dirvish"
+                  :files (:defaults "extensions/*.el")))
+;; (quelpa '(diredfl :fetcher github :repo "purcell/diredfl"))
 ;; (quelpa '(good-scroll              :fetcher github :repo "io12/good-scroll.el"))
 (quelpa '(iscroll                  :fetcher github :repo "casouri/iscroll"))
 ;; (quelpa '(sublimity                :fetcher github :repo "zk-phi/sublimity"))
 (quelpa '(yascroll                 :fetcher github :repo "emacsorphanage/yascroll"))
 (quelpa '(texfrag                  :fetcher github :repo "TobiasZawada/texfrag"))
+(quelpa '(bash-completion          :fetcher github :repo "szermatt/emacs-bash-completion"))
 
 ;; network
 (quelpa '(magit :fetcher github :repo "magit/magit"
-          :files ("lisp/magit" "lisp/magit*.el" "lisp/git-rebase.el" "docs/magit.texi"
-                  (:exclude "lisp/magit-libgit.el" "lisp/magit-libgit-pkg.el"
-                   "lisp/magit-section.el" "lisp/magit-section-pkg.el"
-                   "Documentation/magit.texi" "Documentation/AUTHORS.md"))))
+                :files ("lisp/magit" "lisp/magit*.el" "lisp/git-rebase.el" "docs/magit.texi"
+                        (:exclude "lisp/magit-libgit.el" "lisp/magit-libgit-pkg.el"
+                                  "lisp/magit-section.el" "lisp/magit-section-pkg.el"
+                                  "Documentation/magit.texi" "Documentation/AUTHORS.md"))))
 (quelpa '(forge :fetcher github :repo "magit/forge" :files ("lisp/*.el" "docs/forge.texi")))
 ;; (quelpa '(github-review :repo "charignon/github-review" :fetcher github))
 (quelpa '(code-review :fetcher github :repo "wandersoncferreira/code-review"))
 (quelpa '(ytdious         :fetcher github :repo "spiderbit/ytdious"))
 (quelpa '(elpher          :fetcher git    :url "https://thelambdalab.xyz/git/elpher.git"))
-(quelpa '(empv            :fetcher github :repo "isamert/empv.el"))
+;; (quelpa '(empv            :fetcher github :repo "isamert/empv.el"))
 (quelpa '(plz             :fetcher github :repo "alphapapa/plz.el" :branch "wip/queue"))
 (quelpa '(taxy            :fetcher github :repo "alphapapa/taxy.el"))
 ;; (quelpa '(taxy-magit-section :fetcher git :url "https://git.savannah.gnu.org/git/emacs/elpa.git"
@@ -154,23 +159,29 @@
 (quelpa '(sx              :fetcher github :repo "vermiculus/sx.el"))
 ;; (quelpa '(nnreddit        :fetcher github :repo "dickmao/nnreddit"
 ;;                           :files ("lisp/*.el" "setup.py" "requirements.txt" "nnreddit")))
-(quelpa '(nnreddit :fetcher file :path "~/projects/nnreddit/"
-                   :files ("lisp/*.el" "setup.py" "requirements.txt" "nnreddit")))
+;; (quelpa '(nnreddit :fetcher file :path "~/projects/nnreddit/"
+;; :files ("lisp/*.el" "setup.py" "requirements.txt" "nnreddit")))
+(quelpa '(nnreddit :fetcher github :repo " rprospero/nnreddit" :branch "oauth"))
 (quelpa '(md4rd :fetcher github :repo "ahungry/md4rd"))
+;; (quelpa '(q4 :fetcher github :repo "palikar/q4"
+;;              :files ("q4.el")))
 (quelpa '(nnhackernews    :fetcher github :repo "dickmao/nnhackernews"))
 ;; (quelpa '(org-anki :fetcher github :repo "eyeinsky/org-anki" :branch "import-deck"))
-;; (quelpa '(org-anki :fetcher github :repo "eyeinsky/org-anki"))
+(quelpa '(org-anki :fetcher github :repo "eyeinsky/org-anki"))
 (quelpa '(w3m :fetcher github :repo "emacs-w3m/emacs-w3m"
               :files (:defaults "icons" (:exclude "octet.el" "mew-w3m.el" "w3m-xmas.el"))))
 (quelpa '(nnshimbun :fetcher github :repo "emacs-w3m/emacs-w3m"
                     :files ("shimbun/*.el" (:exclude "mew-shimbun.el"))))
 
 ;; Other
+;; (quelpa '(bongo  :fetcher github :repo "dbrock/bongo" :files ("*.el" "*.texi" "images" "*.rb")))
+;; (quelpa '(volume :fetcher github :repo "dbrock/volume.el"))
+(quelpa '(emms :fetcher git :url "https://git.savannah.gnu.org/git/emms.git"
+               :files (:defaults (:exclude "doc/fdl.texi" "doc/gpl.texi"))))
 (quelpa '(speed-type      :fetcher github :repo "parkouss/speed-type"))
 (quelpa '(typit           :fetcher github :repo "mrkkrp/typit" :files (:defaults "dict")))
 (quelpa '(spray           :fetcher git    :url "https://git.sr.ht/~iank/spray"))
 (quelpa '(centered-window :fetcher github :repo "anler/centered-window-mode"))
 (quelpa '(smtpmail-multi  :fetcher github :repo "vapniks/smtpmail-multi"))
 (quelpa '(bencoding       :fetcher github :repo "xuchunyang/bencoding.el"))
-;; (quelpa '(emms            :fetcher git :url "https://git.savannah.gnu.org/git/emms.git"
-;; :files ("*.el" "*.in" "doc")))
+

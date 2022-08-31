@@ -1,8 +1,6 @@
 ;; -*- lexical-binding: t; -*-
 (setq gc-cons-threshold most-positive-fixnum)
 
-(global-so-long-mode 1)
-
 (add-to-list 'load-path (expand-file-name "./lisp" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "./theme" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "./data" user-emacs-directory))
@@ -16,14 +14,13 @@
                          ("gnu" . "https://elpa.gnu.org/packages/")))
 
 (defun my/require-all ()
-  (dolist (file '("./lisp/interface.el" "./theme/colors.el" 
-                  "./theme/general.el" "./lisp/init-text.el"
-                  "./lisp/init-system.el"))
-    (load-file (expand-file-name file user-emacs-directory)))
-
-  ;; Theme
+  (require 'colors)
   ;; (sayo)
-  (blossom))
+  (blossom)
+  (require 'general)
+  (require 'interface)
+  (require 'init-text)
+  (require 'init-system))
 
 (load-file (expand-file-name "./data/splash.el" user-emacs-directory))
 (show-splash)
@@ -59,12 +56,6 @@
   (my/require-all)
   (my/post-load))
 
-(defadvice en/disable-command (around put-in-custom-file activate)
-  "Put declarations in `custom-file'."
-  (let ((user-init-file custom-file))
-    ad-do-it))
-
-;; backup files and prevent autosave littering file tree
 (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
       backup-directory-alist '(("." . "~/.emacs_backups"))
       backup-by-copying t
@@ -75,17 +66,20 @@
 
 ;; takes too long to start, so just run this after 10 sec
 (run-with-timer 10 nil (lambda ()
-                         (require 'midnight)
-                         (midnight-delay-set 'midnight-delay "3:00am")
-                         (midnight-mode 1)
-                         (setq clean-buffer-list-delay-general 1)))
+                         (let ((inhibit-message t))
+                           (require 'midnight)
+                           (midnight-delay-set 'midnight-delay "3:00am")
+                           (midnight-mode 1)
+                           (setq clean-buffer-list-delay-general 1))))
 
 (run-with-timer 3 nil
-                (lambda () (load-file (expand-file-name "macros.el" user-emacs-directory))))
+                (lambda ()
+                  (let ((inhibit-message t))
+                    (load-file (expand-file-name "macros.el" user-emacs-directory)))))
 
-(setq gc-cons-threshold 1600000)
+;; (setq gc-cons-threshold 1600000)
+(setq gc-cons-threshold 4000000)
 
 ;; don't garbage collect when in minibuffer
 ;; (add-hook 'minibuffer-setup-hook (lambda () (setq gc-cons-threshold most-positive-fixnum)))
 ;; (add-hook 'minibuffer-exit-hook (lambda () (setq gc-cons-threshold 1600000)))
-
