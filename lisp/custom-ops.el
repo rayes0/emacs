@@ -6,12 +6,19 @@
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
  '(org-agenda-files
-   '("/home/rayes/Notes/org/Exercise.org" "/home/rayes/Notes/org/Insights.org" "/home/rayes/Notes/org/Meta.org" "/home/rayes/Notes/org/Programming.org" "/home/rayes/Notes/org/anki.org" "/home/rayes/Notes/org/media-list.org" "/home/rayes/Notes/org/programs.org" "/home/rayes/Notes/org/tea.org" "/home/rayes/Notes/org/todo.org"))
+   '("/home/rayes/Notes/org/Exercise.org" "/home/rayes/Notes/org/Insights.org" "/home/rayes/Notes/org/Meta.org" "/home/rayes/Notes/org/Programming.org" "/home/rayes/Notes/org/anki.org" "/home/rayes/Notes/org/astro.org" "/home/rayes/Notes/org/media-list.org" "/home/rayes/Notes/org/programs.org" "/home/rayes/Notes/org/tea.org" "/home/rayes/Notes/org/todo.org"))
  '(package-selected-packages
-   '(ement taxy-magit-section bash-completion dired-rsync org-anki nyan-mode dirvish code-review emms torrent-info bencoding nnshimbun w3m nnchan lexic md4rd hierarchy emojify uuidgen htmlize a nnhackernews json-rpc lua-mode plz slime macrostep rustic fountain-mode taxy chika promise arbtt typit mmt ox-hugo csv-mode arietta transient vterm flycheck company biblio avy auctex org-appear math-delimiters sx yaml ghub treepy closql emacsql-sqlite emacsql rust-mode beacon iscroll tsc realgud test-simple loc-changes load-relative yascroll org-mime org-contrib semi flim apel pdf-tools valign tree-mode virtualenvwrapper cmus ein polymode deferred anaphora websocket smtpmail-multi lv ht spray git-commit with-editor avy-menu writeroom-mode writegood-mode which-key unicode-math-input speed-type rainbow-delimiters quelpa pyvenv pytest powerthesaurus persistent-scratch org-fragtog org-download org-bullets nov mediawiki math-symbols ligature langtool-ignore-fonts highlight-indent-guides haskell-mode gnuplot flyspell-correct flycheck-vale flycheck-languagetool fic-mode ess eshell-vterm elpher el-easydraw eglot company-quickhelp cdlatex bibtex-completion all-the-icons-ibuffer all-the-icons-completion aggressive-indent))
+   '(mastodon-alt mastodon unicode-fonts geiser-chicken org-upcoming-modeline org-ql ov org-super-agenda ts navigel libmpdel libmpdee guix geiser-guile edit-indirect magit-popup bui geiser ess chess emacs-calfw ankiorg sqlite3 anki-editor mini-modeline ement dired-du mio transmission mentor taxy-magit-section code-review forge magit magit-section bash-completion dired-rsync org-anki nyan-mode emms torrent-info bencoding nnshimbun w3m nnchan lexic md4rd hierarchy emojify uuidgen htmlize a nnhackernews json-rpc lua-mode plz slime macrostep rustic taxy chika promise arbtt typit mmt ox-hugo csv-mode arietta transient vterm flycheck company biblio avy auctex org-appear math-delimiters sx yaml ghub treepy closql emacsql-sqlite emacsql rust-mode beacon iscroll tsc realgud test-simple loc-changes load-relative yascroll org-mime org-contrib semi flim apel pdf-tools valign tree-mode virtualenvwrapper cmus ein polymode deferred anaphora websocket smtpmail-multi lv ht spray git-commit with-editor avy-menu writeroom-mode writegood-mode which-key unicode-math-input speed-type rainbow-delimiters quelpa pyvenv pytest powerthesaurus persistent-scratch org-fragtog org-download org-bullets nov mediawiki math-symbols ligature langtool-ignore-fonts highlight-indent-guides haskell-mode gnuplot flyspell-correct flycheck-vale flycheck-languagetool fic-mode eshell-vterm elpher el-easydraw eglot company-quickhelp cdlatex bibtex-completion all-the-icons-ibuffer all-the-icons-completion aggressive-indent))
  '(pdf-view-resize-factor 1.01)
  '(safe-local-variable-values
-   '((dired-omit-files . "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.*\\.aria2\\'\\|.*\\.torrent\\'\\|\\.dir-locals.el\\'")
+   '((org-use-property-inheritance . t)
+     (vc-prepare-patches-separately)
+     (ankiorg-media-directory . "./anki-media/")
+     (ankiorg-media-directory . "./anki-media")
+     (ankiorg-media-directory . \./anki-media)
+     (diff-add-log-use-relative-names . t)
+     (vc-git-annotate-switches . "-w")
+     (dired-omit-files . "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`.*\\.aria2\\'\\|.*\\.torrent\\'\\|\\.dir-locals.el\\'")
      (eval add-to-list 'fountain-export-command-profiles
            '("wrap-html" . "wrap html %b --out %B.html"))
      (org-babel-lilypond-gen-svg . t)
@@ -95,23 +102,61 @@
  )
 
 ;; org capture
-(setq org-capture-templates
-      '(("t" "Task" entry (file+headline "~/Notes/org/todo.org" "Misc")
-         "* TODO %?\n%T")
-        ("u" "Uni Task" entry (file+headline "~/Notes/org/todo.org" "Uni")
-         "* UNI %?\n%T")
-        ("b" "Blog" entry (file+headline "~/Notes/org/todo.org" "Site")
-         "* TODO [#A] %?")))
+(with-eval-after-load 'org
+  (setq org-capture-templates
+        '(("t" "Task" entry (file+headline "~/Notes/org/todo.org" "Misc")
+           "* TODO %?\n%T")
+          ("u" "Uni Task" entry (file+headline "~/Notes/org/todo.org" "Coursework")
+           "* UNI %?\n%T")
+          ("b" "Blog" entry (file+headline "~/Notes/org/todo.org" "Site")
+           "* TODO [#A] %?")
+          ("e" "Event" entry (file+headline "~/Notes/org/todo.org" "Misc")
+           "* EVENT %?")))
 
+  ;; org agenda files
+  (setq org-directory "~/Notes/org"
+        org-agenda-files (list org-directory))
+
+  (add-hook 'org-mode-hook #'valign-mode)
+
+  (setq org-format-latex-options
+        '(:foreground default
+                      :background "Transparent"
+                      :scale 0.8
+                      :html-foreground "Black"
+                      :html-background "Transparent"
+                      :html-scale 1.0
+                      :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
+  (add-to-list 'org-file-apps '("\\.pdf\\'" . "zathura --synctex-forward :: %s > /dev/null")))
+
+;; calendar
+(with-eval-after-load 'calfw
+  (setq cfw:fchar-junction ?╋
+        cfw:fchar-vertical-line ?┃
+        cfw:fchar-horizontal-line ?━
+        cfw:fchar-left-junction ?┣
+        cfw:fchar-right-junction ?┫
+        cfw:fchar-top-junction ?┯
+        cfw:fchar-top-left-corner ?┏
+        cfw:fchar-top-right-corner ?┓
+        cfw:render-line-breaker #'cfw:render-line-breaker-wordwrap))
+;; (set-face 'cfw:face-header 'face-faded :family "Cantarell")
 
 (when (file-exists-p (expand-file-name "secrets.el" user-emacs-directory))
   (load-file (expand-file-name "secrets.el" user-emacs-directory)))
 
-;; org agenda files
-(setq org-directory "~/Notes/org"
-      org-agenda-files (list org-directory))
+(with-eval-after-load 'transmission
+  (setq transmission-refresh-modes '(transmission-mode
+                                     tranmission-files-mode
+                                     transmission-info-mode
+                                     transmission-peers-mode)
+        transmission-refresh-interval 1.5))
 
-(add-hook 'org-mode-hook #'valign-mode)
+(defun setup-chicken()
+  "set some things for chicken scheme"
+  (interactive)
+  (require 'scheme)
+  (setq scheme-program-name "csi -:c"))
 
 (setq org-format-latex-options
       '(:foreground default
@@ -238,8 +283,8 @@
 (with-eval-after-load 'bug-mode
   (setq bug-default-instance 'bugzilla
         bug-instance-plist '(:bugzilla (:url "https://bugzilla.redhat.com/"
-                                        ;; :authinfo "~/.authinfo.gpg"
-                                        :type bz-rpc))))
+                                             ;; :authinfo "~/.authinfo.gpg"
+                                             :type bz-rpc))))
 
 ;; highlight indent guides
 (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
@@ -322,9 +367,11 @@
 (add-hook 'org-mode-hook 'org-appear-mode)
 
 (add-hook 'org-mode-hook 'org-cdlatex-mode)
-(setq cdlatex-simplify-sub-super-scripts nil
+(setq cdlatex-simplify-sub-super-scripts t
       cdlatex-auto-help-delay 1
-      cdlatex-math-symbol-alist '((i ("\\in" "\\imath" "\\int"))))
+      cdlatex-math-symbol-alist '((?I "\\subset" "\\Im" ""))
+      cdlatex-math-modify-alist '((?Q "\\sqrt" nil t nil nil))
+      )
 
 ;; (advice-add 'cdlatex-math-symbol :around (lambda (f)
 ;;                                            (interactive "P")))
@@ -349,6 +396,9 @@
 ;; (setq alert-default-style 'libnotify
 ;;   org-alert-interval 3600)
 ;; (org-alert-enable)
+
+;; org upcoming modeline
+(org-upcoming-modeline-mode 1)
 
 ;; bibtex and org-cite setup
 (setq bibtex-field-delimiters 'double-quotes
@@ -388,7 +438,14 @@
         (org-export-create-backend
          :parent 'html
          :filters
-         '((:filter-paragraph . filter-out-p)))))
+         '((:filter-paragraph . filter-out-p))))
+  (add-hook 'anki-editor-mode-hook
+            (lambda ()
+              (require 'ankiorg)
+              (local-set-key (kbd "C-c SPC n") #'anki-editor-insert-note)
+              (local-set-key (kbd "C-c SPC p") #'anki-editor-push-notes)
+              (local-set-key (kbd "C-c SPC f") #'ankiorg-pull-notes)
+              (local-set-key (kbd "C-c SPC f") #'ankiorg-buffer-get-media-files))))
 
 ;; activity watch mode
 ;;(global-activity-watch-mode)
@@ -476,18 +533,41 @@
 
 ;; sx
 (require 'sx)
-;; (set-face 'sx-question-mode-title)
-
-(require 'sx-question-mode)
-(set-face-attribute 'sx-question-mode-content-face nil
-                    :background (face-background 'default))
-(set-face 'sx-custom-button 'custom-button)
-(set-face-attribute 'sx-question-mode-accepted nil
-                    :foreground (face-foreground  'face-salient-yellow))
-(define-key sx-question-mode-map (kbd "G") 'sx-open-link)
-(define-key sx-question-mode-map (kbd "C-c w") 'center-window-mode)
-
 (add-hook 'sx-question-mode-hook #'my/sans-serif-font)
+
+(with-eval-after-load 'sx-question-mode
+  (set-face-attribute 'sx-question-mode-content-face nil
+                      :background (face-background 'default))
+  (set-face 'sx-custom-button 'custom-button)
+  (set-face-attribute 'sx-question-mode-accepted nil
+                      :foreground (face-foreground  'face-salient-yellow))
+  (define-key sx-question-mode-map (kbd "G") 'sx-open-link)
+  (define-key sx-question-mode-map (kbd "C-c w") 'center-window-mode))
+
+(with-eval-after-load 'sx-question-list
+  (set-face 'sx-question-list-unread-question 'variable-pitch-text
+            :weight 'bold)
+  (set-face 'sx-question-list-read-question 'variable-pitch-text
+            :foreground (face-foreground 'face-faded)
+            :weight 'bold)
+  (set-face 'sx-question-list-date 'variable-pitch-text
+            :foreground (face-foreground 'face-faded)
+            :weight 'light))
+
+(with-eval-after-load 'sx-user
+  (set-face 'sx-user-reputation 'face-salient-yellow
+            :weight 'light)
+  (set-face 'sx-user-name 'face-light
+            :weight 'light)
+  (set-face 'sx-tag 'face-salient-cyan
+            :weight 'light)
+  (set-face 'sx-question-list-answers 'face-salient-yellow
+            :family "SFMono")
+  (set-face 'sx-question-list-score 'face-light
+            :family "SFMono")
+
+  (set-face 'sx-question-list-answers-accepted 'sx-question-list-answers
+            :box 1))
 
 ;; R markdown
 (defun rmd-activate ()
@@ -520,6 +600,36 @@
                  (buffer-file-name)
                  (concat "--page=" (number-to-string (pdf-view-current-page)))))
 
+(defvar better-scroll-mode-map
+  (let ((keys (make-sparse-keymap)))
+    (define-key keys [remap scroll-other-window] #'my/scroll-other-window)
+    (define-key keys [remap scroll-other-window-down] #'my/scroll-other-window-down)
+    keys))
+
+(define-minor-mode better-scroll-mode "" nil nil nil :global t)
+
+(defun my/scroll-other-window ()
+  (interactive)
+  (let* ((wind (other-window-for-scrolling))
+         (mode (with-selected-window wind major-mode)))
+    (if (eq mode 'pdf-view-mode)
+        (with-selected-window wind
+          (pdf-view-next-line-or-next-page 40))
+      (scroll-other-window))))
+
+(defun my/scroll-other-window-down ()
+  (interactive)
+  (let* ((wind (other-window-for-scrolling))
+         (mode (with-selected-window wind major-mode)))
+    (if (eq mode 'pdf-view-mode)
+        (with-selected-window wind
+          (progn
+            (pdf-view-previous-line-or-previous-page 40)
+            (other-window 1)))
+      (scroll-other-window-down))))
+
+(better-scroll-mode 1)
+
 ;; all-the-icons
 (require 'all-the-icons)
 (setq all-the-icons-default-adjust 0.5)
@@ -540,7 +650,28 @@
 ;; (with-eval-after-load 'all-the-icons-dired
 ;; (set-face-attribute 'all-the-icons-dired-dir-face nil :foreground "#6c605a"))
 
-(all-the-icons-completion-mode 1)
+;; (all-the-icons-completion-mode 1)
+(all-the-icons-completion-mode -1)
+
+;; dirvish
+(dirvish-override-dired-mode 1)
+(with-eval-after-load 'dirvish
+  (require 'dirvish-collapse)
+  (set-face 'dirvish-hl-line 'face-block :extend t)
+  ;; (set-face 'dirvish-file-size 'face-faded)
+  (set-face 'dirvish-collapse-dir-face 'face-italic-faded)
+
+  (setq dirvish-attributes '(all-the-icons collapse subtree-state file-size)
+        dirvish-reuse-session 'resume
+        dirvish-mode-line-format nil
+        dirvish-use-mode-line nil)
+  (setq dirvish-open-with-programs '((("ape" "stm" "s3m" "ra" "rm" "ram" "wma" "wax" "m3u" "med" "669" "mtm" "m15" "uni" "ult" "mka" "flac" "axa" "kar" "midi" "mid" "s1m" "smp" "smp3" "rip" "multitrack" "ecelp9600" "ecelp7470" "ecelp4800" "vbk" "pya" "lvp" "plj" "dtshd" "dts" "mlp" "eol" "uvva" "uva" "koz" "xhe" "loas" "sofa" "smv" "qcp" "psid" "sid" "spx" "opus" "ogg" "oga" "mp1" "mpga" "m4a" "mxmf" "mhas" "l16" "lbc" "evw" "enw" "evb" "evc" "dls" "omg" "aa3" "at3" "atx" "aal" "acn" "awb" "amr" "ac3" "ass" "aac" "adts" "726" "abs" "aif" "aifc" "aiff" "au" "mp2" "mp3" "mp2a" "mpa" "mpa2" "mpega" "snd" "vox" "wav")
+                                      #1="/usr/bin/mpv" "--profile=builtin-pseudo-gui" "%f")
+                                     (("f4v" "rmvb" "wvx" "wmx" "wmv" "wm" "asx" "mk3d" "mkv" "fxm" "flv" "axv" "webm" "viv" "yt" "s1q" "smo" "smov" "ssw" "sswf" "s14" "s11" "smpg" "smk" "bk2" "bik" "nim" "pyv" "m4u" "mxu" "fvt" "dvb" "uvvv" "uvv" "uvvs" "uvs" "uvvp" "uvp" "uvvu" "uvu" "uvvm" "uvm" "uvvh" "uvh" "ogv" "m2v" "m1v" "m4v" "mpg4" "mp4" "mjp2" "mj2" "m4s" "3gpp2" "3g2" "3gpp" "3gp" "avi" "mov" "movie" "mpe" "mpeg" "mpegv" "mpg" "mpv" "qt" "vbs")
+                                      #1# "%f")
+                                     (("pdf" "epub" "cbz" "cbr") #1="/usr/bin/zathura" "%f"))))
+
+(keymap-set dirvish-mode-map "TAB" #'dirvish-subtree-toggle)
 
 ;; dirvish
 (dirvish-override-dired-mode 1)
@@ -562,6 +693,12 @@
 ;; dired rsync
 (define-key dired-mode-map (kbd "C-c C-r") 'dired-rsync)
 (setq dired-rsync-options "-azr --info=progress2 --partial")
+
+;; dired-du
+(with-eval-after-load 'dired-du
+  (setq dired-du-size-format t
+        dired-du-on-find-dired-ok t
+        dired-du-update-headers t))
 
 ;; ibuffer custom buffers
 (setq ibuffer-saved-filter-groups
@@ -613,6 +750,51 @@
 
 (setq diary-file "~/Notes/diary")
 
+;; unicode fonts
+(unicode-fonts-setup)
+(set-fontset-font "fontset-default" 'han (font-spec :size 12 :name "Noto Serif CJK JP") nil 'prepend)
+(set-fontset-font "fontset-default" 'kana (font-spec :size 12 :name "Noto Serif CJK JP") nil 'prepend)
+(set-fontset-font "fontset-default" 'cjk-misc (font-spec :size 12 :name "Noto Serif CJK JP") nil 'prepend)
+
+;; ;; mini-modeline
+(require 'mini-modeline)
+(set-face 'mini-modeline-mode-line 'mode-line :background "#938680" :height 0.1 :box nil)
+(set-face 'mini-modeline-mode-line-inactive 'mode-line-inactive :height 0.1 :box nil)
+;; (set-face 'mode-line 'mini-modeline-mode-line)
+;; (set-face 'mode-line-inactive 'mini-modeline-mode-line-inactive)
+
+(setq mini-modeline-enhance-visual nil
+      mini-modeline-display-gui-line t
+      mini-modeline-update-interval 1.0)
+(mini-modeline-mode 1)
+(let ((space-xs (propertize "-" 'display '(space :width (8))))
+      (space-s (propertize "-" 'display '(space :width (12))))
+      (space (propertize "-" 'display '(space :width (24)))))
+  (setq mini-modeline-l-format `("%I"
+                                 ,space-s
+                                 mode-line-position
+                                 ;; (:eval (nyan-create))
+                                 mode-line-misc-info
+                                 (vc-mode (:eval (propertize vc-mode 'face '(:weight bold :inherit face-faded))))
+                                 ,space-s
+                                 (:eval (custom-modeline-pyvenv-check))
+                                 ;; (:eval (if (bound-and-true-p pyvenv-virtual-env-name) "  "))
+                                 mode-line-process)
+        mini-modeline-r-format `((:eval (custom-modeline-flycheck-status))
+                                 ,space
+                                 (:eval (propertize (format "[ %s ]" (format-mode-line mode-name)) 'face '(:inherit face-faded :height 0.9)))
+                                 ,space-s
+                                 (:eval (propertize "%b" 'face '(:slant italic :family "Fira Code iScript")))
+                                 (:eval (if (and buffer-file-name (buffer-modified-p))
+                                            (propertize "*" 'face '(:inherit face-faded))))
+                                 (:eval (if (buffer-narrowed-p)
+                                            (propertize "-" 'face '(:inherit face-faded))))
+                                 ;; ,space-xs
+                                 ;; (:eval (if (eq my/ml-window (selected-window)) "●" "○"))
+                                 )
+        ;; mini-modeline-face-attr '(:background "#e8ddd8")
+        ))
+
 ;; presistent scratch
 (persistent-scratch-setup-default)
 
@@ -640,7 +822,7 @@
 ;; (set-face 'avy-lead-face-2 'face-)
 ;; (set-face 'avy)
 (dolist (avy-face '(avy-lead-face avy-lead-face-0
-                    avy-lead-face-1 avy-lead-face-2))
+                                  avy-lead-face-1 avy-lead-face-2))
   (set-face-attribute avy-face nil :height 0.85
                       :weight 'bold))
 (set-face 'avy-background-face 'face-light)
@@ -660,33 +842,46 @@
 ;; ement
 (require 'ement)
 ;; (require 'ement-room-list)
-(global-set-key (kbd "M-g M-l") 'ement-taxy-room-list)
-(add-hook 'ibuffer-mode-hook (lambda () (local-unset-key (kbd "M-g"))))
+;; (global-set-key (kbd "m-g m-l") 'ement-taxy-room-list)
+(add-hook 'ibuffer-mode-hook (lambda () (local-unset-key (kbd "m-g"))))
 (add-hook 'ement-room-mode-hook (lambda ()
                                   (face-remap-add-relative 'shr-text
-                                                           :family "Cantarell"
+                                                           :family "cantarell"
                                                            :inherit 'ement-room-message-text)
                                   (face-remap-add-relative 'header-line
-                                                           :family "Cantarell")))
-(setq ement-room-retro-messages-number 100
+                                                           :family "cantarell")))
+(setq ement-room-retro-messages-number 120
       ement-save-sessions t
       ement-room-send-typing nil
       ement-room-send-read-receipts nil
-      ement-room-prism nil
-      ;;    ement-room-send-message-filter 'ement-room-send-org-filter
+      ement-room-prism t
+      ement-room-prism-minimum-contrast 0
+      ement-room-prism-message-lightening 100
+      ement-room-prism-message-desaturation 30
+      ;; ement-room-prism-color-adjustment 0
+      ;; ement-room-send-message-filter 'ement-room-send-org-filter
       ement-room-mark-rooms-read nil
-      ;; ement-room-message-format-spec "%B%r%R%t"
-      ement-room-message-format-spec "%t%L%B%r"
+      ;; ement-room-message-format-spec "%b%r%r%t"
+      ement-room-message-format-spec "%t%L%b%r"
+      ement-room-timestamp-format "%I:%M:%S %p"
       ;; ement-room-left-margin-width 0
-      ement-room-left-margin-width 6
+      ement-room-left-margin-width 9
       ;; ement-room-right-margin-width 7
       ement-room-right-margin-width 0
-      ement-room-sender-in-headers nil
+      ement-room-sender-in-headers t
       ement-room-sender-headers t
       ement-taxy-auto-update t
+      ement-room-avatar-max-height 48
+      ement-room-avatar-max-width 48
+      ement-room-event-separator-display-property '(space :height 1.4)
       ement-notify-notification-predicates '(ement-notify--event-mentions-session-user-p
-                                             ement-notify--event-mentions-room-p
-                                             ement-notify--room-unread-p))
+                                             ement-notify--event-mentions-room-p)
+      ;; ement-notify--room-unread-p)
+      ement-room-shr-use-fonts t
+      ement-room-username-display-property `(raise ,(- 0.5))
+      ement-room-image-initial-height 0.3
+      ement-room-timestamp-header-delta 216000
+      ement-room-wrap-prefix (propertize " " 'face 'ement-room-wrap-prefix))
 
 (with-eval-after-load 'ement-taxy
   (set-face-attribute 'ement-room-list-name nil
@@ -730,20 +925,25 @@
 (set-face-attribute 'ement-room-wrap-prefix nil
                     :background (face-foreground 'face-faded))
 
-(defun run-pantalaimon ()
-  (interactive)
-  (make-process :name "pantalaimon"
-                :buffer "*pantalaimon*"
-                :command '("pantalaimon")))
+;; (defun run-pantalaimon ()
+;;   (interactive)
+;;   (make-process :name "pantalaimon"
+;;                 :buffer "*pantalaimon*"
+;;                 :command '("pantalaimon")))
 
 ;; media
 (require 'cmus)
 (require 'emms-setup)
 (emms-all)
-(setq emms-player-list '(emms-player-mpv)
+;; (emms-minimalistic)
+(require 'emms-browser)
+(setq emms-player-list '(emms-player-mpd emms-player-mpv)
+      emms-player-mpd-music-directory "~/media/torrents/music"
+      emms-volume-change-function #'emms-volume-mpd-change
       emms-source-file-directory-tree-function #'emms-source-file-directory-tree-find
-      emms-source-file-default-directory "~/Music/"
-      emms-player-mpv-parameters '("--quiet" "--really-quiet" "--no-audio-display" "--force-window=no" "--vo=null")
+      emms-source-file-default-directory "~/media/torrents/music"
+      emms-player-mpv-parameters '("--quiet" "--really-quiet" "--no-audio-display"
+                                   "--force-window=no" "--vo=null" "--no-terminal")
       emms-browser-covers #'emms-browser-cache-thumbnail-async
       emms-browser-thumbnail-filter (lambda (dir)
                                       (when (file-directory-p dir)
@@ -756,7 +956,7 @@
                                                 (cl-loop for d in art
                                                          if (file-directory-p d) return (my/emms-search-cover-directory d)))))))
       emms-seek-seconds 2
-      emms-info-asynchronously nil
+      emms-info-asynchronously t
       emms-info-functions '(emms-info-metaflac emms-info-native)
       emms-playing-time-style 'time
       emms-playing-time-display-format (propertize "%s" 'face '(:weight bold :inherit (variable-pitch-text face-salient-yellow)))
@@ -769,7 +969,83 @@
 				                                                             emms-mode-line-icon-color))
                                                    (emms-track-description
 				                                            (emms-playlist-current-selected-track)))
-                                           'face '(:weight bold :inherit (variable-pitch-text face-salient-yellow)))))
+                                           'face '(:weight bold :inherit face-salient-yellow)))
+      emms-source-playlist-default-format 'm3u
+      emms-show-format "Currently playing: %s"
+      ;; (concat (emms-propertize "NP:" 'display
+			;;                          (emms-mode-line-icon-generate
+			;; 	                        emms-mode-line-icon-color))
+      ;;         "  "
+      ;;         (propertize
+      ;;          (format "[%s/%s]"
+      ;;                  (format-seconds "%m:%s" emms-playing-time)
+      ;;                  (format-seconds "%m:%s" (emms-track-get
+      ;;                                           (emms-playlist-current-selected-track)
+      ;;                                           'info-playing-time)))
+      ;;          'face 'face-faded)
+      ;;         " "
+      ;;         (propertize (emms-track-get
+      ;;                      (emms-playlist-current-selected-track)
+      ;;                      'info-title)
+      ;;                     'face 'face-identifier)
+      ;;         " "
+      ;;         (propertize (emms-track-get
+      ;;                      (emms-playlist-current-selected-track)
+      ;;                      'info-artist)
+      ;;                     'face 'face-salient-yellow)
+      ;;         ;; (propertize "  ~~  " 'face 'face-faded)
+      ;;         ;; emms-playing-time-string
+      ;;         )
+      emms-track-description-function #'emms-info-track-description
+      ;; (lambda (track)
+      ;;   (let ((emms-playing-time-display-mode t))
+      ;;     (prog1
+      ;;         (emms-info-track-description track)
+      ;;       (emms-playing-time-display))))
+      )
+
+;; (defun my/emms-indicate-seek (&optional _sec)
+;;   (interactive)
+;;   (let* ((total-playing-time (emms-track-get
+;;                               (emms-playlist-current-selected-track)
+;;                               'info-playing-time))
+;;          (elapsed/total (/ (* 100 emms-playing-time) total-playing-time)))
+;;     (with-temp-message (format "[%-100s] %2d%%"
+;;                                (make-string elapsed/total ?=)
+;;                                elapsed/total)
+;;       (sit-for 2))))
+
+;; (add-hook 'emms-player-seeked-functions #'chunyang-emms-indicate-seek 'append)
+
+
+;; (emms-mark-mode)
+(emms-mode-line-mode -1)
+(emms-playing-time-display-mode -1)
+
+;; (emms-librefm-scrobbler-enable)
+;; custom scrobbling to librefm and listenbrainz
+;; (defun my/emms-scrobble-enable ()
+;;   (add-hook 'emms-player-started-hook
+;; 	          'emms-librefm-scrobbler-start-hook t)
+;;   (add-hook 'emms-player-stopped-hook 'my/emms-scrobbler-stop-hook)
+;;   (add-hook 'emms-player-finished-hook 'my/emms-scrobbler-stop-hook))
+;; (defun my/emms-scrobble-disable ()
+;;   (remove-hook 'emms-player-started-hook
+;; 	             'emms-librefm-scrobbler-start-hook t)
+;;   (remove-hook 'emms-player-stopped-hook 'my/emms-scrobbler-stop-hook)
+;;   (remove-hook 'emms-player-finished-hook 'my/emms-scrobbler-stop-hook))
+;; (defun my/emms-scrobbler-stop-hook ()
+;;   (emms-librefm-scrobbler-handshake)
+;;   (emms-librefm-scrobbler-stop-hook)
+;;   (let* ((data (nth 0 (auth-source-search :host "listenbrainz")))
+;;          (emms-librefm-scrobbler-username (plist-get data :user))
+;;          (emms-librefm-scrobbler-password (funcall (plist-get data :secret)))
+;;          (emms-librefm-scrobbler-submission-url "api.listenbrainz.org"))
+;;     (emms-librefm-scrobbler-handshake)
+;;     (emms-librefm-scrobbler-stop-hook)))
+
+;; (emms-history-load)
+
 
 (defun my/emms-search-cover-directory (dir)
   (if-let ((cur (directory-files dir t "\\([Ff]ront\\|[Cc]over\\|[Ff]older\\).*\\.\\(jpg\\|jpeg\\|png\\|gif\\)" t)))
@@ -794,6 +1070,9 @@
 (set-face 'emms-browser-year/genre-face 'face-salient-green)
 (set-face-attribute 'emms-browser-year/genre-face nil :height 1.1 :weight 'bold)
 
+(set-face 'emms-metaplaylist-mode-current-face 'face-subtle-purple :weight 'bold)
+(set-face 'emms-metaplaylist-mode-face 'face-salient :weight 'normal)
+
 (defvar emms-browser-info-album-format "%i%cS  %A")
 (defvar emms-browser-info-title-format "%T.%i %t (%a)")
 (defvar emms-browser-playlist-info-title-format "[ %A ] %T.%i %t (%a)")
@@ -810,23 +1089,26 @@
 (global-set-key (kbd "<XF86AudioNext>") 'my/handle-play-next)
 (global-set-key (kbd "<XF86AudioPrev>") 'my/handle-play-prev)
 
+(define-key emms-playlist-mode-map "=" #'emms-volume-raise)
+(define-key emms-browser-mode-map "=" #'emms-volume-raise)
+
 (defun my/handle-play-pause ()
   (interactive)
   (cond ;; ((empv--running?) (empv-toggle))
-        ((cmus-running-p) (cmus-play-pause))
-        (t (emms-pause))))
+   ((cmus-running-p) (cmus-play-pause))
+   (t (emms-pause))))
 
 (defun my/handle-play-next ()
   (interactive)
   (cond ;; ((empv--running?) (empv-playlist-next))
-        ((cmus-running-p) (cmus-next))
-        (t (emms-next))))
+   ((cmus-running-p) (cmus-next))
+   (t (emms-next))))
 
 (defun my/handle-play-prev ()
   (interactive)
   (cond ;; ((empv--running?) (empv-playlist-prev))
-        ((cmus-running-p) (cmus-previous))
-        (t (emms-previous))))
+   ((cmus-running-p) (cmus-previous))
+   (t (emms-previous))))
 
 ;; writeroom mode
 (with-eval-after-load 'writeroom-mode
@@ -928,7 +1210,7 @@
 (require 'flycheck)
 (global-flycheck-mode 1)
 (setq flycheck-emacs-lisp-load-path 'inherit
-      flycheck-global-modes '(not org-mode org-agenda-mode erc-mode))
+      flycheck-global-modes '(not org-mode org-agenda-mode erc-mode latex-mode))
 (set-face-attribute 'flycheck-info nil
                     :underline nil)
 (set-face-attribute 'flycheck-warning nil
@@ -946,7 +1228,7 @@
 (require 'langtool-ignore-fonts)
 (langtool-ignore-fonts-add 'org-mode
                            '(org-meta-line org-table org-indent '(org-block font-latex-math-face)
-                             org-level-1))
+                                           org-level-1))
 
 ;; pyvenv
 (pyvenv-mode -1)
@@ -971,12 +1253,24 @@
 (global-fic-mode 1)
 (add-hook 'org-mode 'fic-mode)
 
-(set-face 'fic-face 'secondary-selection)
+(set-face 'fic-face 'secondary-selection
+          :family "SFMono" :weight 'bold)
 (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "HOMEWORK")
       fic-activated-faces '(font-lock-doc-face font-lock-comment-face))
 
 ;; lexic
 (add-hook 'lexic-mode-hook #'variable-pitch-mode)
+
+;; geiser
+(with-eval-after-load 'geiser-guile
+  (setq geiser-guile-binary "guile2.2"))
+
+(with-eval-after-load 'geiser 
+  (set-face 'geiser-font-lock-repl-output 'face-faded :weight 'normal)
+  (set-face 'geiser-font-lock-repl-prompt 'face-identifier)
+
+  (set-face 'geiser-font-lock-autodoc-identifier 'font-lock-function-name-face)
+  (set-face 'geiser-font-lock-autodoc-current-arg 'face-salient :weight 'normal))
 
 ;; smartparens
 ;; (require 'smartparens-config)
@@ -1201,50 +1495,6 @@
   (unload-feature 'newst-reader t)
   (unload-feature 'newst-treeview t)
   (unload-feature 'newsticker t))
-
-(setq newsticker-url-list
-      '(
-        ;; ("arXiv q-bio" "https://arxiv.org/rss/q-bio")
-        ;; ("bioRxiv" "https://connect.biorxiv.org/biorxiv_xml.php?subject=all")
-        ;; ("medRxiv" "https://connect.medrxiv.org/medrxiv_xml.php?subject=all")
-        ;; ("arXiv math" "https://arxiv.org/rss/math")
-        ("Terence Tao" "https://terrytao.wordpress.com/feed/")
-        ("LessWrong" "https://www.lesswrong.com/feed.xml?view=community-rss&karmaThreshold=45")
-        ("Astral Codex Ten" "https://astralcodexten.substack.com/feed")
-        ("Scott Aaronson" "https://scottaaronson.blog/?feed=rss2")
-        ("Zvi" "https://thezvi.wordpress.com/feed")
-        ("Fantastic Anachronism" "https://fantasticanachronism.com/atom.xml")
-        ("Hands and Cities" "https://handsandcities.com/feed/")
-        ("Strange Loop Canon" "https://www.strangeloopcanon.com/feed")
-        ("Protesilaos Blog" "https://protesilaos.com/master.xml")
-        ("Gwern.net Newsletter" "https://gwern.substack.com/feed" nil 86400)
-        ("Suspended Reason" "https://suspendedreason.com/feed" nil 86400)
-        ("Melting Asphalt" "https://meltingasphalt.com/feed")
-        ("nearcyan" "https://nearcyan.com/feed")
-        ("For me, in full bloom" "https://formeinfullbloom.wordpress.com/feed/" nil 86400)
-        ("Therefore it is" "https://thereforeitis.wordpress.com/feed" nil 86400)
-        ("Wrong Every Time" "https://wrongeverytime.com/feed" nil 86400)
-        ("Sakuga Blog" "https://blog.sakugabooru.com/feed/")
-        ("ANN" "https://www.animenewsnetwork.com/all/rss.xml?ann-edition=us")
-        ;; ("R Weekly" "https://rweekly.org/atom.xml" nil 86400)
-        ;; ("GNOME Blogs" "https://blogs.gnome.org/feed/")
-        ("Drew Devault" "https://drewdevault.com/blog/index.xml" nil 86400)
-        ;; ("Freedom To Tinker" "https://freedom-to-tinker.com/feed/rss/" nil 86400)
-        ("Lennart Poettering" "https://0pointer.net/blog/index.rss20")
-        ;; ("LWN" "https://lwn.net/headlines/rss")
-        ("XKCD" "https://xkcd.com/rss.xml")
-        ;; ("Emacs commits" "https://github.com/emacs-mirror/emacs/commits.atom")
-        ("wingolog" "https://wingolog.org/feed/atom")
-        ;; ("Protesilaos" "https://invidious.kavin.rocks/feed/channel/UC0uTPqBCFIpZxlz_Lv1tk_g" nil 86400)
-        ;; ("Cateen" "https://invidious.kavin.rocks/feed/channel/UC_QG8miwKHFNuWY9VpkrI8w" nil 86400)
-        ;; ("Animenz" "https://invidious.kavin.rocks/feed/channel/UCyW-leqPXUunrXXxFjpZ7VA" nil 86400)
-        ;; ("Marasy8" "https://invidious.kavin.rocks/feed/channel/UCcvLSRIWJIAGFDyWtzkbiHA" nil 86400)
-        ;; ("Kyle Landry" "https://invidious.kavin.rocks/feed/channel/UCk0UErv9b4Hn5ucNNjqD1UQ" nil 86400)
-        ;; ("Kayou" "https://invidious.kavin.rocks/feed/channel/UCk2g7q-RY455IuRWCIJ0bmw" nil 86400)
-        ;; ("Halcyon" "https://invidious.kavin.rocks/feed/channel/UC8tyyA-UIbefEexcLatHmUQ" nil 86400)
-        ;; ("SLS" "https://invidious.kavin.rocks/feed/channel/UCmKy7mz6tRLv7OFdSqbAkrg" nil 86400)
-        ;; ("mdbg" "https://www.mdbg.net/chinese/feed?feed=hsk_1_h")))
-        ))
 
 (put 'list-timers 'disabled nil)
 (put 'scroll-left 'disabled nil)

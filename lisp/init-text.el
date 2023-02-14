@@ -46,16 +46,6 @@
                             (?\[ . ?\])
                             (?\" . ?\")))
 
-(add-hook 'org-mode-hook
-          (lambda ()
-            (flyspell-mode 1)
-            (setq-local electric-pair-pairs '((?\{ . ?\})
-                                              (?\( . ?\))
-                                              (?\[ . ?\])
-                                              (?\" . ?\")
-                                              (?\$ . ?\$)))
-            (electric-pair-local-mode 1)))
-
 ;; occur
 (defun my/occur-run-or-raise ()
   (interactive)

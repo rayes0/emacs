@@ -106,6 +106,11 @@
 (quelpa '(org-appear   :fetcher github :repo "awth13/org-appear"))
 (quelpa '(cdlatex      :fetcher github :repo "cdominik/cdlatex"))
 (quelpa '(el-easydraw  :fetcher github :repo "misohena/el-easydraw"))
+(quelpa '(org-upcoming-modeline :fetcher github :repo "unhammer/org-upcoming-modeline"))
+
+(quelpa '(emacs-calfw :fetcher github :repo "kiwanami/emacs-calfw"))
+
+(quelpa '(geiser-chicken :fetcher gitlab :repo "emacs-geiser/chicken"))
 
 (quelpa '(geiser-chicken :fetcher gitlab :repo "emacs-geiser/chicken"))
 
@@ -113,9 +118,12 @@
 (quelpa '(vterm                    :fetcher github :repo "akermu/emacs-libvterm"
           :files ("*" (:exclude ".dir-locals.el" ".gitignore" ".clang-format" ".travis.yml"))))
 (quelpa '(pdf-tools                :fetcher github :repo "vedang/pdf-tools"
-          :files ("lisp/*.el" "README" ("build" "Makefile") ("build" "server")
-                  (:exclude "lisp/tablist.el" "lisp/tablist-filter.el"))))
+                                   :files ("lisp/*.el" "README" ("build" "Makefile") ("build" "server")
+                                           (:exclude "lisp/tablist.el" "lisp/tablist-filter.el"))))
+;; (quelpa '(scroll-other-window :fetcher url
+;; :url "https://gist.githubusercontent.com/politza/3f46785742e6e12ba0d1a849f853d0b9/raw/1f9d002130054354c608aa2c72503add25836b9d/scroll-other-window.el"))
 (quelpa '(dired-rsync              :fetcher github :repo "stsquad/dired-rsync"))
+(quelpa '(dired-du                 :fetcher github :repo "calancha/dired-du"))
 (quelpa '(eshell-vterm             :fetcher github :repo "iostapyshyn/eshell-vterm"))
 (quelpa '(native-complete :fetcher github :repo "CeleritasCelery/emacs-native-shell-complete" :files ("native-complete.el")))
 (quelpa '(nov                      :fetcher git    :url "https://depp.brause.cc/nov.el.git"))
@@ -127,6 +135,7 @@
 (quelpa '(all-the-icons-completion :fetcher github :repo "iyefrat/all-the-icons-completion"))
 (quelpa '(dirvish :fetcher github :repo "alexluigit/dirvish"
                   :files (:defaults "extensions/*.el")))
+(quelpa '(dired-du :fetcher github :repo "calancha/dired-du" :files ("dired-du.el")))
 ;; (quelpa '(diredfl :fetcher github :repo "purcell/diredfl"))
 ;; (quelpa '(good-scroll              :fetcher github :repo "io12/good-scroll.el"))
 (quelpa '(iscroll                  :fetcher github :repo "casouri/iscroll"))
@@ -167,21 +176,46 @@
 ;;              :files ("q4.el")))
 (quelpa '(nnhackernews    :fetcher github :repo "dickmao/nnhackernews"))
 ;; (quelpa '(org-anki :fetcher github :repo "eyeinsky/org-anki" :branch "import-deck"))
-(quelpa '(org-anki :fetcher github :repo "eyeinsky/org-anki"))
+;; (quelpa '(org-anki :fetcher github :repo "eyeinsky/org-anki"))
+(quelpa '(anki-editor :fetcher github :repo "orgtre/anki-editor"))
+(quelpa '(ankiorg :fetcher github :repo "orgtre/ankiorg"))
+(quelpa '(sqlite3 :fetcher github :repo "pekingduck/emacs-sqlite3-api"))
 (quelpa '(w3m :fetcher github :repo "emacs-w3m/emacs-w3m"
               :files (:defaults "icons" (:exclude "octet.el" "mew-w3m.el" "w3m-xmas.el"))))
 (quelpa '(nnshimbun :fetcher github :repo "emacs-w3m/emacs-w3m"
                     :files ("shimbun/*.el" (:exclude "mew-shimbun.el"))))
+(quelpa '(transmission :fetcher github :repo "holomorph/transmission"
+                       :files ("transmission.el")))
+(quelpa '(mastodon :fetcher git :url "https://codeberg.org/martianh/mastodon.el.git"))
+(quelpa '(mastodon-alt :fetcher github :repo "rougier/mastodon-alt"))
+
+(quelpa '(geiser-guile :fetcher gitlab
+                       :repo "emacs-geiser/guile"
+                       :files (:defaults ("src" "src/*"))))
+(quelpa '(geiser-chicken
+          :fetcher gitlab
+          :repo "emacs-geiser/chicken"
+          :files (:defaults ("src" "src/*"))))
+
+(quelpa '(guix :fetcher github :repo "alezost/guix.el" :files ("elisp/*.el" "doc/*.texi"
+                                                               ("images" "images/*.svg")
+                                                               ("scheme" "scheme/*")
+                                                               (:exclude "scheme/Makefile.am"))))
 
 ;; Other
 ;; (quelpa '(bongo  :fetcher github :repo "dbrock/bongo" :files ("*.el" "*.texi" "images" "*.rb")))
 ;; (quelpa '(volume :fetcher github :repo "dbrock/volume.el"))
 (quelpa '(emms :fetcher git :url "https://git.savannah.gnu.org/git/emms.git"
                :files (:defaults (:exclude "doc/fdl.texi" "doc/gpl.texi"))))
+;; (quelpa '(mingus :repo "pft/mingus" :fetcher github))
+;; (quelpa '(simple-mpc :fetcher github :repo "jorenvo/simple-mpc"))
+(quelpa '(mpdel :fetcher github :repo "mpdel/mpdel"))
 (quelpa '(speed-type      :fetcher github :repo "parkouss/speed-type"))
 (quelpa '(typit           :fetcher github :repo "mrkkrp/typit" :files (:defaults "dict")))
 (quelpa '(spray           :fetcher git    :url "https://git.sr.ht/~iank/spray"))
 (quelpa '(centered-window :fetcher github :repo "anler/centered-window-mode"))
 (quelpa '(smtpmail-multi  :fetcher github :repo "vapniks/smtpmail-multi"))
 (quelpa '(bencoding       :fetcher github :repo "xuchunyang/bencoding.el"))
+
+(quelpa '(mini-modeline :repo "kiennq/emacs-mini-modeline" :fetcher github))
 

@@ -402,4 +402,11 @@
                                                          (describe-package (intern (file-name-base url)))))))
 
 
+;; holidays
+;; holidays
+(with-eval-after-load 'holidays
+  (setq holiday-bahai-holidays nil
+        holiday-islamic-holidays nil
+        holiday-hebrew-holidays nil))
+
 (provide 'init-system)

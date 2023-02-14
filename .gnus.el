@@ -16,16 +16,16 @@
       gnus-secondary-select-methods '(
                                       ;; (nnreddit "")
                                       (nnhackernews "")
-                                      (nnimap "personal"
-                                              (nnimap-address "localhost")
-                                              (nnimap-server-port 1143)
-                                              (nnimap-record-commands t)
-                                              (nnimap-fetch-partial-articles t)
-                                              (nnimap-stream plain))
-                                      (nnimap "work"
-	                                            (nnimap-address "outlook.office365.com")
-	                                            (nnimap-server-port "imaps")
-	                                            (nnimap-stream ssl))
+                                      ;; (nnimap "personal"
+                                      ;;         (nnimap-address "localhost")
+                                      ;;         (nnimap-server-port 1143)
+                                      ;;         (nnimap-record-commands t)
+                                      ;;         (nnimap-fetch-partial-articles t)
+                                      ;;         (nnimap-stream plain))
+                                      ;; (nnimap "work"
+	                                    ;;         (nnimap-address "outlook.office365.com")
+	                                    ;;         (nnimap-server-port "imaps")
+	                                    ;;         (nnimap-stream ssl))
                                       ;; (nntp "kernel"
                                       ;;       (nntp-address "nntp.lore.kernel.org")
                                       ;;       (nntp-open-connection-function nntp-open-tls-stream))
@@ -329,15 +329,4 @@
                                           )))
 
 (autoload 'gnus-group-make-shimbun-group "nnshimbun" nil t)
-(setq shimbun-rss-hash-group-path-alist '(("sakugabooru" "https://blog.sakugabooru.com/feed" t)
-                                          ;; ("jsomers" "http://jsomers.net/blog/feed" t)
-                                          ("Drew Devault" "https://drewdevault.com/blog/index.xml" t)
-                                          ("mobileread" "https://www.mobileread.com/feeds/front.xml" t)
-                                          ("The Scholars Stage" "https://scholars-stage.org/feed" t))
-      shimbun-atom-hash-group-path-alist '(("emersion" "https://emersion.fr/blog/atom.xml" t)
-                                           ("xkcd" "https://xkcd.com/atom.xml" t)
-                                           ("Lennart Poettering" "https://0pointer.net/blog/index.atom" t)
-                                           ("wingolog" "https://wingolog.org/feed/atom" t)
-                                           ("Edward Feser" "https://edwardfeser.blogspot.com/feeds/posts/default" t))
-      shimbun-rss-blogs-group-url-regexp '(("ANN" "https://www.animenewsnetwork.com/news/rss.xml?ann-edition=us"
-                                            "<div class=\"meat\">" "<div id=\"social-bookmarks\">")))
+

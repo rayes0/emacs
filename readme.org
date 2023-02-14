@@ -1,12 +1,11 @@
-* Emacs Configuration
 Note: Screenshots are probably outdated.
 
 [[file:previews/preview1.png]]
 [[file:previews/preview2.png]]
 
-A fairly minimal, vanilla configuration for emacs. It originally started as a fork of [[https://github.com/rougier/elegant-emacs][elegant-emacs]], though by now most of it is written from scratch.
+A heavily customized configuration for vanilla emacs. It originally started as a fork of [[https://github.com/rougier/elegant-emacs][elegant-emacs]], though by now most of it is written from scratch.
 
-** Dependencies
+** Deps
 - Emacs built from master branch. Older versions are not guaranteed to work. If you have an emacs version < 27, this config definitely won't work. Given the various enhancements, I don't think you should be running a version less than 27 anyways.
 - Fonts (optional):
   - Fixed pitch: Cascadia code
@@ -15,8 +14,8 @@ A fairly minimal, vanilla configuration for emacs. It originally started as a fo
   - Variable pitch sans serif: Cantarell
   - CJK: Noto Serif CJK JP
 
-** Recommended Usage
-Make sure to check the =lisp/custom-ops.el= before you use the config. These contain system specific options that you will need to change to match your system. In fact, if you want you can remove the contents of the entire file, leaving only ~(provide 'custom-ops)~. I recommend you put all your custom system-specific configuration in this one file, so it's all in one place. This is also the file which stores your options set with ~M-x customize~.
+** Tips
+Make sure to check the =lisp/custom-ops.el= before you use the config. These contain system specific options that you will need to change to match your system. In fact, if you want you can remove the contents of the entire file, leaving only ~(provide 'custom-ops)~. I recommend you put all your custom system-specific or package-specific configuration in this one file, so it's all in one place. This is also the file which stores your options set with ~M-x customize~.
 
 If you want to use the same packages I do, just do ~M-x package-install-selected-packages~ after running ~M-x package-refresh-contents~.
 
@@ -48,9 +47,9 @@ This config is created with the intent to replace most system interaction with e
 
   (setq org-cite-global-bibliography bibtex-completion-bibliography)
   #+end_src
-- Shell commands :: 90% of shell commands can be run through emacs using the ~(shell-command)~ (M-S-!)and ~(async-shell-command)~ (M-S-&) functions. In the case you need an interactive shell, I recommend the built-in ~eshell~, some usability customizations of it are included in this config. In the case you need a full terminal emulator, I recommend the ~vterm~ package.
+- Shell commands :: Most of my shell interaction is through emacs using the ~(shell-command)~ (M-S-!)and ~(async-shell-command)~ (M-S-&) functions. In the case you need an interactive shell, I recommend the built-in ~eshell~, some usability customizations of it are included in this config. In the case you need a full terminal emulator, I recommend the ~vterm~ package.
 - Dired :: This config includes configuration for ~dired~. Before you use it, I would very strongly recommend you install and enable the ~dired-async~ package. Otherwise, if you move a large file that takes some time, it will block emacs until the operation is finished.
-- RSS/atom feed reader :: This config includes configuration for the built-in ~newsticker~. If you have ~curl~ installed, I strongly recommend you to use that instead of emacs built-in ~(url-retrieve)~, which is often the root source of a lot of complaints of this package being slower and worse than elfeed (which uses curl by default).
+- RSS/atom feed reader :: This config includes configuration for the built-in ~newsticker~. If you have ~curl~ installed, I strongly recommend you to use that instead of emacs built-in ~(url-retrieve)~:
   #+begin_src elisp
   (setq newsticker-retrieval-method 'extern
         newsticker-wget-name "curl"
@@ -82,50 +81,6 @@ This config is created with the intent to replace most system interaction with e
     (ligature-set-ligatures 'org-mode mono-ligset) ;; for codeblocks
     (global-ligature-mode t))
   #+end_src
-- Buffer management :: This config comes with configuration for ibuffer. You can set your own rules for filter groups. For example, I have:
-  #+begin_src elisp
-  (setq ibuffer-saved-filter-groups
-        '(("main"
-           ("MODIFIED" (and (modified . t)
-                            (visiting-file . t)))
-           ("term" (or (mode . vterm-mode)
-                       (mode . eshell-mode)
-                       (mode . term-mode)
-                       (mode . shell-mode)))
-           ("planning" (or (name . "^\\*Calendar\\*$")
-                           (name . "^diary$")
-                           (mode . org-agenda-mode)))
-           ("blog" (filename . "/sites/personal-site/"))
-           ("browser" (mode . xwidget-webkit-mode))
-           ("notes" (and (filename . "/Notes/")
-                         (or (mode . org-mode)
-                             (mode . markdown-mode))))
-           ("org" (mode . org-mode))
-           ("books" (filename . "/Books/"))
-           ("docs" (or (mode . pdf-view-mode)
-                       (mode . doc-view-mode)))
-           ("img" (mode . image-mode))
-           ("elisp" (or (filename . "/.emacs.d/")
-                        (filename . "/.config/emacs/")
-                        (mode . Custom-mode)))
-           ("config" (or (filename . "/.config/")
-                         (filename . "/.themes/")))
-           ("code" (or (derived-mode . prog-mode)
-                       (mode . ess-mode)
-                       (filename . "/projects/")))
-           ("dired" (mode . dired-mode))
-           ("chat" (or (mode . ement-room-list-mode)
-                       (mode . ement-room-mode)))
-           ("help" (or (name . "\*Help\*")
-                       (name . "\*Apropos\*")
-                       (name . "\*info\*")
-                       (mode . help-mode)))
-           ("internal" (name . "^\*.*$"))
-           ("other" (name . "^.*$")))))
-  (add-hook 'ibuffer-mode-hook
-            (lambda ()
-              (ibuffer-auto-mode 1)
-              (ibuffer-switch-to-saved-filter-groups "main")))
-  #+end_src
+- Buffer management :: This config comes with configuration for ibuffer. You can set your own rules for filter groups. Check [[https://github.com/rayes0/emacs/blob/71343782b7cb6712235f88ed915cb5ae3f9d2e95/lisp/custom-ops.el#L566][here]] for examples.
 - Scratch buffer :: The scratch buffer is very useful for storing temporary information and testing code. This config is set up with Org-mode in the scratch buffer with three headings and a code block for testing. I highly recommend using [[https://github.com/Fanael/persistent-scratch][persistent-scratch]] to save the scratch buffer across sessions.
 - Scrolling enhancements :: This config comes with reasonable defaults for keyboard and mouse wheel scrolling. If you would like smooth scrolling, I recommend using the new built-in ~pixel-scroll-precision-mode~. Make sure to build with ~--with-xinput2~ flag if you want it to work well.

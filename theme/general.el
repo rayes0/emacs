@@ -59,7 +59,6 @@
 ;; (set-face 'bold-italic                                   'face-strong)
 (set-face 'highlight 'face-subtle)
 (set-face 'fixed-pitch 'default)
-(set-face-attribute 'fixed-pitch nil :family "Cascaida Code")
 (set-face 'fixed-pitch-serif 'default)
 ;;(set-face 'variable-pitch 'default)
 (set-face 'cursor 'default)

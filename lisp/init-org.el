@@ -5,6 +5,7 @@
 (require 'org-agenda)
 (require 'org-habit)
 (require 'general)
+(require 'tex-mode)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 
 (setq org-format-latex-options '(:foreground
@@ -20,12 +21,26 @@
                            (visual-line-mode t)
                            (variable-pitch-mode t)
                            (flyspell-mode t)
+                           (setq-local electric-pair-inhibit-predicate
+                                       (lambda (c)
+                                         (if (char-equal c ?\<)
+                                             t
+                                           (electric-pair-default-inhibit c))))
                            ;; (electric-indent-local-mode -1)
+                           (setq-local electric-pair-pairs '((?\$ . ?\$))
+                                       electric-pair-text-pairs '())
+                           (electric-pair-local-mode 1)
                            (face-remap-add-relative 'font-lock-comment-face
                                                     :family "Cantarell"
                                                     :height 1.1
                                                     :weight 'normal
                                                     :slant 'normal)))
+
+;; (defun my/org-number-at-point ()
+;;   "Add numbering at point."
+;;   (interactive)
+;;   (when (org-at-item-p)
+;;     (org-)))
 
 (with-eval-after-load 'org
   (setq org-src-fontify-natively t
@@ -123,7 +138,7 @@
   (set-face 'org-property-value 'unspecified)
   (set-face-attribute 'org-property-value nil :inherit '(face-faded fixed-pitch))
   (set-face 'org-quote 'face-faded :slant 'italic)
-  (set-face 'org-scheduled 'face-faded)
+  (set-face 'org-scheduled 'face-salient-yellow :weight 'bold)
   (set-face 'org-scheduled-previously 'face-salient-green)
   (set-face 'org-scheduled-today 'face-salient-yellow)
   (set-face 'org-sexp-date 'face-faded)
@@ -252,7 +267,7 @@
   (set-face 'org-agenda-calendar-sexp 'face-faded)
   (set-face 'org-agenda-clocking 'face-faded)
   (set-face 'org-agenda-column-dateline 'face-faded)
-  (set-face 'org-agenda-current-time 'face-faded)
+  (set-face 'org-agenda-current-time 'face-faded :weight 'bold)
   (set-face 'org-agenda-date 'face-light
             :weight 'bold)
   ;; :box `(:color ,(face-background 'default) :line-width 2))
@@ -270,9 +285,9 @@
   (set-face 'org-agenda-restriction-lock 'face-faded)
   (set-face 'org-agenda-structure 'face-faded)
 
+  (require 'cal-iso)
   (setq org-agenda-use-time-grid t
         org-agenda-timegrid-use-ampm t
-        org-agenda-current-time-string "now ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         org-agenda-todo-keyword-format "%-s"
         org-agenda-confirm-kill t
         org-agenda-restore-windows-after-quit t
@@ -280,19 +295,22 @@
                                    (todo . " %i %-12:c")
                                    (tags . " %i %-12:c")
                                    (search . " %i %-12:c"))
+        ;; org-agenda-remove-tags 'prefix
+        org-agenda-remove-tags nil
         org-agenda-sorting-strategy '((agenda habit-down time-up priority-down category-keep)
                                       (todo priority-down ts-up category-keep)
                                       (tags priority-down category-keep)
                                       (search category-keep))
         org-agenda-format-date (lambda (date)
-                                 (require 'cal-iso)
                                  (format "%s, %s %s"
                                          (calendar-day-name date 'abbrev)
                                          (calendar-month-name (car date) 'abbrev)
-                                         (cadr date))))
-  (setcar (nthcdr 3 org-agenda-time-grid) "───────────────")
-
-  (setq org-agenda-block-separator 9552))
+                                         (cadr date)))
+        org-agenda-include-diary t
+        org-agenda-time-grid '((daily weekly today require-timed remove-match)
+                               (800 1000 1200 1400 1600 1800 2000)
+                               " ┄┄┄┄┄┄┄" "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+        org-agenda-block-separator 9552))
 
 ;; org babel load languages on demand
 ;; https://emacs.stackexchange.com/questions/20577/org-babel-load-all-languages-on-demand
@@ -300,8 +318,30 @@
   "Load language if needed"
   (let ((language (org-element-property :language (org-element-at-point))))
     (unless (cdr (assoc (intern language) org-babel-load-languages))
-      (add-to-list 'org-babel-load-languages (cons (intern language) t))
+      (add-to-list 'org-babel-load-languages (cons (intern language) t))q
       (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
     ad-do-it))
+
+;; graphicsmagick for tikz previews to work
+(add-to-list 'org-preview-latex-process-alist '(graphicsmagick :programs ("latex" "gm")
+                                                               :description "pdf > png"
+                                                               :message "you need to install the programs: latex and graphicsmagick"
+                                                               :use-xcolor t
+                                                               :image-input-type "pdf"
+                                                               :image-output-type "png"
+                                                               :image-size-adjust (1.0 . 1.0)
+                                                               :latex-compiler ("pdflatex -interaction nonstopmode -output-directory %o %f")
+                                                               :image-converter ("gm convert -density %D -trim -antialias -quality 100 -transparent white %f %O")))
+(setq org-preview-latex-default-process 'graphicsmagick)
+
+(require 'tex)
+(set-face 'font-latex-warning-face 'face-popout)
+(add-to-list 'TeX-view-program-list '("zathura"
+                                      ("zathura %o"
+                                       (mode-io-correlate
+                                        " --synctex-forward %n:0:%b -x \"emacsclient +%{line} %{input}\""))
+                                      "zathura"))
+(setcdr (assq 'output-pdf TeX-view-program-selection) '("zathura"))
+(setq TeX-engine 'xetex)
 
 (provide 'init-org)

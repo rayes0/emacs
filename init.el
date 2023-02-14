@@ -80,6 +80,7 @@
 ;; (setq gc-cons-threshold 1600000)
 (setq gc-cons-threshold 4000000)
 
-;; don't garbage collect when in minibuffer
-;; (add-hook 'minibuffer-setup-hook (lambda () (setq gc-cons-threshold most-positive-fixnum)))
-;; (add-hook 'minibuffer-exit-hook (lambda () (setq gc-cons-threshold 1600000)))
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-language-environment "UTF-8")
+(set-selection-coding-system 'utf-8)

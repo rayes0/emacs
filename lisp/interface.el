@@ -39,6 +39,7 @@
       minibuffer-eldef-shorten-default t
       minibuffer-follows-selected-frame 'hybrid
       minibuffer-prompt-properties '(read-only t cursor-intangible t face minibuffer-prompt)
+      max-mini-window-height 0.5
       icomplete-compute-delay 0.05
       icomplete-max-delay-chars 2)
 
@@ -112,9 +113,9 @@
                     :height 120)
 (add-to-list 'face-font-rescale-alist '("ETBembo" . 1.2))
 ;; (add-to-list 'face-font-rescale-alist '("Cantarell" . 1.2))
-(set-fontset-font "fontset-default" 'han (font-spec :size 16 :name "Noto Serif CJK JP") nil 'prepend)
-(set-fontset-font "fontset-default" 'kana (font-spec :size 16 :name "Noto Serif CJK JP") nil 'prepend)
-(set-fontset-font "fontset-default" 'cjk-misc (font-spec :size 16 :name "Noto Serif CJK JP") nil 'prepend)
+(set-fontset-font "fontset-default" 'han (font-spec :size 12 :name "Noto Serif CJK JP") nil 'prepend)
+(set-fontset-font "fontset-default" 'kana (font-spec :size 12 :name "Noto Serif CJK JP") nil 'prepend)
+(set-fontset-font "fontset-default" 'cjk-misc (font-spec :size 12 :name "Noto Serif CJK JP") nil 'prepend)
 
 (setq-default line-spacing 0.15
               indent-tabs-mode nil
@@ -169,9 +170,9 @@
                                   mode-line-process)
                                 `((:eval (custom-modeline-flycheck-status))
                                   ,space
-                                  (:eval (propertize (format "[ %s ]" (format-mode-line mode-name)) 'face '(:inherit face-faded :height 0.9)))
+                                  (:eval (propertize (format "[ %s ]" (format-mode-line mode-name)) 'face '(:inherit face-faded :height 0.9 :slant italic :family "Fira Code iScript")))
                                   ,space-s
-                                  (:eval (propertize "%b" 'face '(:slant italic)))
+                                  (:eval (propertize "%b" 'face '(:family "Fira Code iScript" :slant italic)))
                                   (:eval (if (and buffer-file-name (buffer-modified-p))
                                              (propertize "*" 'face '(:inherit face-faded))))
                                   (:eval (if (buffer-narrowed-p)
@@ -203,7 +204,9 @@
                    ('finished (if flycheck-current-errors
                                   (let ((count (let-alist (flycheck-count-errors flycheck-current-errors)
                                                  (+ (or .warning 0) (or .error 0)))))
-                                    (format "✖%s%s" (propertize "-" 'display '(space :width (4))) count))
+                                    (format "✖%s%s"
+                                            (propertize "-" 'display '(space :width (4)))
+                                            count))
                                 "✔"))
                    ('running     "⟲")
                    ('no-checker  "⚠ No Checker")
@@ -224,8 +227,8 @@
             pyvenv-virtual-env-name)))
 
 ;; use only the header line
-;;(setq-default header-line-format mode-line-format)
-;;(setq-default mode-line-format nil)
+;; (setq-default header-line-format mode-line-format)
+;; (setq-default mode-line-format nil)
 
 ;; Vertical window divider
 (setq window-divider-default-right-width 3
