@@ -2,6 +2,15 @@
 
 (require 'colors)
 
+(set-face-attribute 'default nil :font "Cascadia Code"
+                    :height (pcase (window-system)
+                              ('winit 140)
+                              (_ 110)))
+(set-face-attribute 'fixed-pitch nil :family "Cascadia Code")
+(set-face-attribute 'variable-pitch nil :family "ETBembo" :inherit 'unspecified)
+(set-face-attribute 'variable-pitch-text nil
+                    :family "Cantarell"
+                    :height 120)
 (set-face 'mode-line 'default
           :background "#e8ddd8"
           :box `(:line-width 6 :color "#e8ddd8")
@@ -62,6 +71,9 @@
 (set-face 'fixed-pitch-serif 'default)
 ;;(set-face 'variable-pitch 'default)
 (set-face 'cursor 'default)
+
+(with-eval-after-load 'hl-line
+  (set-face 'hl-line 'face-block :extend t))
 
 (set-face 'region 'face-subtle-purple)
 (set-face-attribute 'secondary-selection nil    :background "#fbf1be")

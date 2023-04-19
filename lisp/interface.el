@@ -4,14 +4,13 @@
 (require 'general)
 
 (setq use-short-answers t
-      confirm-kill-emacs
-      (lambda (&optional _)
-        (yes-or-no-p
-         ;; prompt stolen from doom
-         (concat (propertize "I-it's not like I'll miss you or anything, b-baka! "
-                             'face 'face-italic-faded)
-                 (propertize "Really quit emacs?"
-                             'face 'face-salient))))
+      confirm-kill-emacs (lambda (&optional _)
+                           (yes-or-no-p
+                            ;; prompt stolen from doom
+                            (concat (propertize "I-it's not like I'll miss you or anything, b-baka! "
+                                                'face 'face-italic-faded)
+                                    (propertize "Really quit emacs?"
+                                                'face 'face-salient))))
       custom-raised-buttons nil
       echo-keystrokes 0.15)
 
@@ -104,15 +103,11 @@
 (setq eldoc-idle-delay 0.1)
 
 ;; fonts
-(add-to-list 'default-frame-alist '(font . "Cascadia Code 11"))
-(set-face-attribute 'default nil :font "Cascadia Code 11")
-(set-face-attribute 'fixed-pitch nil :family "Cascadia Code")
-(set-face-attribute 'variable-pitch nil :family "ETBembo" :inherit 'unspecified)
-(set-face-attribute 'variable-pitch-text nil
-                    :family "Cantarell"
-                    :height 120)
+(add-to-list 'default-frame-alist `(font . ,(pcase (window-system)
+                                              ('winit "Cascadia Code 14")
+                                              (_ "Cascadia Code 11"))))
 (add-to-list 'face-font-rescale-alist '("ETBembo" . 1.2))
-;; (add-to-list 'face-font-rescale-alist '("Cantarell" . 1.2))
+(add-to-list 'face-font-rescale-alist '("Cantarell" . 1.1))
 (set-fontset-font "fontset-default" 'han (font-spec :size 12 :name "Noto Serif CJK JP") nil 'prepend)
 (set-fontset-font "fontset-default" 'kana (font-spec :size 12 :name "Noto Serif CJK JP") nil 'prepend)
 (set-fontset-font "fontset-default" 'cjk-misc (font-spec :size 12 :name "Noto Serif CJK JP") nil 'prepend)

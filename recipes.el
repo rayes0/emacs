@@ -59,6 +59,7 @@
 (quelpa '(ligature                :fetcher github :repo "mickeynp/ligature.el"))
 (quelpa '(company                 :fetcher github :repo "company-mode/company-mode" :files (:defaults "icons")))
 (quelpa '(company-quickhelp       :fetcher github :repo "company-mode/company-quickhelp"))
+(quelpa '(codeium                 :fetcher github :repo "Exafunction/codeium.el"))
 (quelpa '(aggressive-indent       :fetcher github :repo "Malabarba/aggressive-indent-mode"))
 ;; (quelpa '(smart-tab               :fetcher git    :url "https://git.genehack.net/genehack/smart-tab.git"))
 (quelpa '(highlight-indent-guides :fetcher github :repo "DarthFennec/highlight-indent-guides"))
@@ -107,6 +108,7 @@
 (quelpa '(cdlatex      :fetcher github :repo "cdominik/cdlatex"))
 (quelpa '(el-easydraw  :fetcher github :repo "misohena/el-easydraw"))
 (quelpa '(org-upcoming-modeline :fetcher github :repo "unhammer/org-upcoming-modeline"))
+;; (quelpa '(nano-agenda :fetcher github :repo "rougier/nano-agenda"))
 
 (quelpa '(emacs-calfw :fetcher github :repo "kiwanami/emacs-calfw"))
 
@@ -166,6 +168,9 @@
 (quelpa '(ement           :fetcher github :repo "alphapapa/ement.el"))
 (quelpa '(htmlize         :fetcher github :repo "hniksic/emacs-htmlize"))
 (quelpa '(sx              :fetcher github :repo "vermiculus/sx.el"))
+(quelpa '(rcirc-menu :fetcher git :url "https://git.savannah.gnu.org/emacs/elpa.git"
+                     :branch "externals/rcirc-menu"))
+(quelpa '(rcirc-styles :fetcher github :repo "aaron-em/rcirc-styles.el"))
 ;; (quelpa '(nnreddit        :fetcher github :repo "dickmao/nnreddit"
 ;;                           :files ("lisp/*.el" "setup.py" "requirements.txt" "nnreddit")))
 ;; (quelpa '(nnreddit :fetcher file :path "~/projects/nnreddit/"
@@ -188,6 +193,7 @@
                        :files ("transmission.el")))
 (quelpa '(mastodon :fetcher git :url "https://codeberg.org/martianh/mastodon.el.git"))
 (quelpa '(mastodon-alt :fetcher github :repo "rougier/mastodon-alt"))
+(quelpa '(znc :fetcher github :repo "sshirokov/ZNC.el"))
 
 (quelpa '(geiser-guile :fetcher gitlab
                        :repo "emacs-geiser/guile"
@@ -202,12 +208,14 @@
                                                                ("scheme" "scheme/*")
                                                                (:exclude "scheme/Makefile.am"))))
 
+(quelpa '(leetcode :fetcher github :repo "kaiwk/leetcode.el"))
+
 ;; Other
 ;; (quelpa '(bongo  :fetcher github :repo "dbrock/bongo" :files ("*.el" "*.texi" "images" "*.rb")))
 ;; (quelpa '(volume :fetcher github :repo "dbrock/volume.el"))
 (quelpa '(emms :fetcher git :url "https://git.savannah.gnu.org/git/emms.git"
                :files (:defaults (:exclude "doc/fdl.texi" "doc/gpl.texi"))))
-;; (quelpa '(mingus :repo "pft/mingus" :fetcher github))
+(quelpa '(mingus :repo "pft/mingus" :fetcher github))
 ;; (quelpa '(simple-mpc :fetcher github :repo "jorenvo/simple-mpc"))
 (quelpa '(mpdel :fetcher github :repo "mpdel/mpdel"))
 (quelpa '(speed-type      :fetcher github :repo "parkouss/speed-type"))

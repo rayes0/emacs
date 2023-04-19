@@ -6,8 +6,8 @@
 (with-eval-after-load 'ox-latex
   (setq org-latex-compiler "xelatex")
   (add-to-list 'org-latex-classes
-    '("tufte-book"
-       "\\documentclass{tufte-book}
+               '("tufte-book"
+                 "\\documentclass{tufte-book}
 \\usepackage{ifluatex, ifxetex}
 %Next block avoids bug, from  http://tex.stackexchange.com/a/200725/1913 
 \\ifx\\ifxetex\\ifluatex\\else % if lua- or xelatex http://tex.stackexchange.com/a/140164/1913
@@ -20,13 +20,13 @@
   \\renewcommand{\\smallcaps}[1]{\\smallcapsspacing{\\scshape\\MakeTextLowercase{#1}}}
   \\renewcommand{\\textsc}[1]{\\smallcapsspacing{\\textsmallcaps{#1}}}
 \\fi "
-       ("\\section{%s}" . "\\section*{%s}")
-       ("\\subsection{%s}" . "\\subsection*{%s}")
-       ("\\paragraph{%s}" . "\\paragraph*{%s}")
-       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
   (add-to-list 'org-latex-classes
-    '("tufte-handout"
-       "\\documentclass{tufte-handout}
+               '("tufte-handout"
+                 "\\documentclass{tufte-handout}
 \\usepackage{ifluatex, ifxetex}
 %Next block avoids bug, from  http://tex.stackexchange.com/a/200725/1913 
 \\ifx\\ifxetex\\ifluatex\\else % if lua- or xelatex http://tex.stackexchange.com/a/140164/1913
@@ -39,7 +39,7 @@
   \\renewcommand{\\smallcaps}[1]{\\smallcapsspacing{\\scshape\\MakeTextLowercase{#1}}}
   \\renewcommand{\\textsc}[1]{\\smallcapsspacing{\\textsmallcaps{#1}}}
 \\fi "
-       ("\\section{%s}" . "\\section*{%s}")
-       ("\\subsection{%s}" . "\\subsection*{%s}")
-       ("\\paragraph{%s}" . "\\paragraph*{%s}")
-       ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))

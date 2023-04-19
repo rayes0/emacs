@@ -5,13 +5,95 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
+ '(connection-local-criteria-alist
+   '(((:application eshell)
+      eshell-connection-default-profile)
+     ((:application tramp)
+      tramp-connection-local-default-system-profile tramp-connection-local-default-shell-profile)))
+ '(connection-local-profile-alist
+   '((eshell-connection-default-profile
+      (eshell-path-env-list))
+     (tramp-connection-local-darwin-ps-profile
+      (tramp-process-attributes-ps-args "-acxww" "-o" "pid,uid,user,gid,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" "-o" "state=abcde" "-o" "ppid,pgid,sess,tty,tpgid,minflt,majflt,time,pri,nice,vsz,rss,etime,pcpu,pmem,args")
+      (tramp-process-attributes-ps-format
+       (pid . number)
+       (euid . number)
+       (user . string)
+       (egid . number)
+       (comm . 52)
+       (state . 5)
+       (ppid . number)
+       (pgrp . number)
+       (sess . number)
+       (ttname . string)
+       (tpgid . number)
+       (minflt . number)
+       (majflt . number)
+       (time . tramp-ps-time)
+       (pri . number)
+       (nice . number)
+       (vsize . number)
+       (rss . number)
+       (etime . tramp-ps-time)
+       (pcpu . number)
+       (pmem . number)
+       (args)))
+     (tramp-connection-local-busybox-ps-profile
+      (tramp-process-attributes-ps-args "-o" "pid,user,group,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" "-o" "stat=abcde" "-o" "ppid,pgid,tty,time,nice,etime,args")
+      (tramp-process-attributes-ps-format
+       (pid . number)
+       (user . string)
+       (group . string)
+       (comm . 52)
+       (state . 5)
+       (ppid . number)
+       (pgrp . number)
+       (ttname . string)
+       (time . tramp-ps-time)
+       (nice . number)
+       (etime . tramp-ps-time)
+       (args)))
+     (tramp-connection-local-bsd-ps-profile
+      (tramp-process-attributes-ps-args "-acxww" "-o" "pid,euid,user,egid,egroup,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" "-o" "state,ppid,pgid,sid,tty,tpgid,minflt,majflt,time,pri,nice,vsz,rss,etimes,pcpu,pmem,args")
+      (tramp-process-attributes-ps-format
+       (pid . number)
+       (euid . number)
+       (user . string)
+       (egid . number)
+       (group . string)
+       (comm . 52)
+       (state . string)
+       (ppid . number)
+       (pgrp . number)
+       (sess . number)
+       (ttname . string)
+       (tpgid . number)
+       (minflt . number)
+       (majflt . number)
+       (time . tramp-ps-time)
+       (pri . number)
+       (nice . number)
+       (vsize . number)
+       (rss . number)
+       (etime . number)
+       (pcpu . number)
+       (pmem . number)
+       (args)))
+     (tramp-connection-local-default-shell-profile
+      (shell-file-name . "/bin/sh")
+      (shell-command-switch . "-c"))
+     (tramp-connection-local-default-system-profile
+      (path-separator . ":")
+      (null-device . "/dev/null"))))
  '(org-agenda-files
-   '("/home/rayes/Notes/org/Exercise.org" "/home/rayes/Notes/org/Insights.org" "/home/rayes/Notes/org/Meta.org" "/home/rayes/Notes/org/Programming.org" "/home/rayes/Notes/org/anki.org" "/home/rayes/Notes/org/astro.org" "/home/rayes/Notes/org/media-list.org" "/home/rayes/Notes/org/programs.org" "/home/rayes/Notes/org/tea.org" "/home/rayes/Notes/org/todo.org"))
+   '("~/Notes/org/today.org" "/home/rayes/Notes/org/Exercise.org" "/home/rayes/Notes/org/Insights.org" "/home/rayes/Notes/org/Meta.org" "/home/rayes/Notes/org/Programming.org" "/home/rayes/Notes/org/anki.org" "/home/rayes/Notes/org/astro.org" "/home/rayes/Notes/org/media-list.org" "/home/rayes/Notes/org/programs.org" "/home/rayes/Notes/org/recipes.org" "/home/rayes/Notes/org/tea.org" "/home/rayes/Notes/org/todo.org"))
  '(package-selected-packages
-   '(mastodon-alt mastodon unicode-fonts geiser-chicken org-upcoming-modeline org-ql ov org-super-agenda ts navigel libmpdel libmpdee guix geiser-guile edit-indirect magit-popup bui geiser ess chess emacs-calfw ankiorg sqlite3 anki-editor mini-modeline ement dired-du mio transmission mentor taxy-magit-section code-review forge magit magit-section bash-completion dired-rsync org-anki nyan-mode emms torrent-info bencoding nnshimbun w3m nnchan lexic md4rd hierarchy emojify uuidgen htmlize a nnhackernews json-rpc lua-mode plz slime macrostep rustic taxy chika promise arbtt typit mmt ox-hugo csv-mode arietta transient vterm flycheck company biblio avy auctex org-appear math-delimiters sx yaml ghub treepy closql emacsql-sqlite emacsql rust-mode beacon iscroll tsc realgud test-simple loc-changes load-relative yascroll org-mime org-contrib semi flim apel pdf-tools valign tree-mode virtualenvwrapper cmus ein polymode deferred anaphora websocket smtpmail-multi lv ht spray git-commit with-editor avy-menu writeroom-mode writegood-mode which-key unicode-math-input speed-type rainbow-delimiters quelpa pyvenv pytest powerthesaurus persistent-scratch org-fragtog org-download org-bullets nov mediawiki math-symbols ligature langtool-ignore-fonts highlight-indent-guides haskell-mode gnuplot flyspell-correct flycheck-vale flycheck-languagetool fic-mode eshell-vterm elpher el-easydraw eglot company-quickhelp cdlatex bibtex-completion all-the-icons-ibuffer all-the-icons-completion aggressive-indent))
+   '(rainbow-mode ytdious mingus libmpdee rcirc-styles quelpa rcirc-menu znc leetcode log4e aio graphql codeium mastodon-alt mastodon unicode-fonts geiser-chicken org-upcoming-modeline org-ql ov ts navigel guix geiser-guile edit-indirect magit-popup bui geiser ess chess emacs-calfw ankiorg sqlite3 anki-editor mini-modeline ement dired-du mio transmission mentor taxy-magit-section code-review forge magit magit-section bash-completion dired-rsync org-anki nyan-mode emms torrent-info bencoding nnshimbun w3m nnchan lexic md4rd hierarchy emojify uuidgen htmlize a nnhackernews json-rpc lua-mode plz slime macrostep rustic taxy chika promise arbtt typit mmt ox-hugo csv-mode arietta transient vterm flycheck company biblio avy auctex org-appear math-delimiters sx yaml ghub treepy closql emacsql-sqlite emacsql rust-mode beacon iscroll tsc realgud test-simple loc-changes load-relative yascroll org-mime org-contrib semi flim apel pdf-tools valign tree-mode virtualenvwrapper cmus ein polymode deferred anaphora websocket smtpmail-multi lv ht spray git-commit with-editor avy-menu writeroom-mode writegood-mode which-key unicode-math-input speed-type rainbow-delimiters pyvenv pytest powerthesaurus persistent-scratch org-fragtog org-download org-bullets nov mediawiki math-symbols ligature langtool-ignore-fonts highlight-indent-guides haskell-mode gnuplot flyspell-correct flycheck-vale flycheck-languagetool fic-mode eshell-vterm elpher el-easydraw company-quickhelp cdlatex bibtex-completion all-the-icons-ibuffer all-the-icons-completion aggressive-indent))
  '(pdf-view-resize-factor 1.01)
  '(safe-local-variable-values
-   '((org-use-property-inheritance . t)
+   '((geiser-default-implementation quote chicken)
+     (geiser-scheme-implementation quote chicken)
+     (org-use-property-inheritance . t)
      (vc-prepare-patches-separately)
      (ankiorg-media-directory . "./anki-media/")
      (ankiorg-media-directory . "./anki-media")
@@ -156,22 +238,17 @@
   "set some things for chicken scheme"
   (interactive)
   (require 'scheme)
-  (setq scheme-program-name "csi -:c"))
+  (setq scheme-program-name "csi -:c"
+        geiser-default-implementation 'chicken))
 
 (setq org-format-latex-options
       '(:foreground default
-        :background "Transparent"
-        :scale 0.8
-        :html-foreground "Black"
-        :html-background "Transparent"
-        :html-scale 1.0
-        :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
-
-(defun setup-chicken()
-  "set some things for chicken scheme"
-  (interactive)
-  (require 'scheme)
-  (setq scheme-program-name "csi -:c"))
+                    :background "Transparent"
+                    :scale 0.8
+                    :html-foreground "Black"
+                    :html-background "Transparent"
+                    :html-scale 1.0
+                    :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
 
 (add-hook 'eshell-mode-hook 'eshell-vterm-mode)
 (with-eval-after-load 'em-term.el
@@ -255,7 +332,9 @@
 
 ;; eglot
 (with-eval-after-load 'eglot
-  (add-hook 'eglot--managed-mode-hook (lambda () (flymake-mode -1)))
+  (add-hook 'eglot-managed-mode-hook (lambda ()
+                                       (flymake-mode -1)
+                                       (flycheck-mode -1)))
   (define-key eglot-mode-map (kbd "C-c r") 'eglot-rename)
   (define-key eglot-mode-map (kbd "C-c o") 'eglot-code-action-organize-imports)
   (define-key eglot-mode-map (kbd "C-c h") 'eldoc)
@@ -287,11 +366,11 @@
                                              :type bz-rpc))))
 
 ;; highlight indent guides
-(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-(highlight-indent-guides-auto-set-faces)
-(setq highlight-indent-guides-method 'character
-      highlight-indent-guides-responsive nil
-      highlight-indent-guides-delay 0)
+;; (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+;; (highlight-indent-guides-auto-set-faces)
+;; (setq highlight-indent-guides-method 'character
+;; highlight-indent-guides-responsive nil
+;; highlight-indent-guides-delay 0)
 
 ;; aggressive indent
 (aggressive-indent-global-mode 1)
@@ -306,7 +385,7 @@
 ;; company
 (require 'company)
 (global-company-mode 1)
-(setq company-global-modes '(not org-mode))
+(setq company-global-modes '(not org-mode rcirc-mode))
 (company-quickhelp-mode 1)
 (setq company-quickhelp-delay nil
       company-quickhelp-color-background "#dad3d0")
@@ -736,7 +815,8 @@
                             (mode . dirvish-mode)))
                ("chat" (or (mode . ement-room-list-mode)
                            (mode . ement-room-mode)
-                           (mode . erc-mode)))
+                           (mode . erc-mode)
+                           (mode . rcirc-mode)))
                ("help" (or (name . "\*Help\*")
                            (name . "\*Apropos\*")
                            (name . "\*info\*")
@@ -751,27 +831,34 @@
 (setq diary-file "~/Notes/diary")
 
 ;; unicode fonts
-(unicode-fonts-setup)
+;; (unicode-fonts-setup)
 (set-fontset-font "fontset-default" 'han (font-spec :size 12 :name "Noto Serif CJK JP") nil 'prepend)
 (set-fontset-font "fontset-default" 'kana (font-spec :size 12 :name "Noto Serif CJK JP") nil 'prepend)
 (set-fontset-font "fontset-default" 'cjk-misc (font-spec :size 12 :name "Noto Serif CJK JP") nil 'prepend)
 
-;; ;; mini-modeline
+;; mini-modeline
 (require 'mini-modeline)
 (set-face 'mini-modeline-mode-line 'mode-line :background "#938680" :height 0.1 :box nil)
 (set-face 'mini-modeline-mode-line-inactive 'mode-line-inactive :height 0.1 :box nil)
 ;; (set-face 'mode-line 'mini-modeline-mode-line)
 ;; (set-face 'mode-line-inactive 'mini-modeline-mode-line-inactive)
 
-(setq mini-modeline-enhance-visual nil
+;; (set-face-attribute 'mode-line nil :background (face-background 'default))
+
+(setq mini-modeline-enhance-visual t
       mini-modeline-display-gui-line t
-      mini-modeline-update-interval 1.0)
+      mini-modeline-update-interval 0.3
+      mini-modeline-echo-duration 1
+      mini-modeline-right-padding 1
+      mini-modeline-face-attr `(:background ,(face-background 'default)))
 (mini-modeline-mode 1)
-(let ((space-xs (propertize "-" 'display '(space :width (8))))
+(let (
+      ;; (space-xs (propertize "-" 'display '(space :width (8))))
       (space-s (propertize "-" 'display '(space :width (12))))
       (space (propertize "-" 'display '(space :width (24)))))
-  (setq mini-modeline-l-format `("%I"
-                                 ,space-s
+  (setq mini-modeline-l-format `(
+                                 ;; "%I"
+                                 ;; ,space-s
                                  mode-line-position
                                  ;; (:eval (nyan-create))
                                  mode-line-misc-info
@@ -843,22 +930,24 @@
 (require 'ement)
 ;; (require 'ement-room-list)
 ;; (global-set-key (kbd "m-g m-l") 'ement-taxy-room-list)
-(add-hook 'ibuffer-mode-hook (lambda () (local-unset-key (kbd "m-g"))))
+;; (add-hook 'ibuffer-mode-hook (lambda () (local-unset-key (kbd "m-g"))))
 (add-hook 'ement-room-mode-hook (lambda ()
                                   (face-remap-add-relative 'shr-text
                                                            :family "cantarell"
                                                            :inherit 'ement-room-message-text)
                                   (face-remap-add-relative 'header-line
+                                                           :family "cantarell")
+                                  (face-remap-add-relative 'font-lock-comment-face
                                                            :family "cantarell")))
 (setq ement-room-retro-messages-number 120
       ement-save-sessions t
       ement-room-send-typing nil
       ement-room-send-read-receipts nil
-      ement-room-prism t
-      ement-room-prism-minimum-contrast 0
-      ement-room-prism-message-lightening 100
-      ement-room-prism-message-desaturation 30
-      ;; ement-room-prism-color-adjustment 0
+      ement-room-prism nil
+      ;; ement-room-prism-minimum-contrast 0
+      ;; ement-room-prism-message-lightening -10
+      ;; ement-room-prism-message-desaturation 40
+      ;; ement-room-prism-color-adjustment 10
       ;; ement-room-send-message-filter 'ement-room-send-org-filter
       ement-room-mark-rooms-read nil
       ;; ement-room-message-format-spec "%b%r%r%t"
@@ -895,8 +984,7 @@
 
 (add-hook 'ement-room-mode-hook (lambda () (setq-local mode-line-format nil)))
 (set-face 'ement-room-message-text 'variable-pitch
-          :family "Cantarell"
-          :height 120)
+          :family "Cantarell")
 (set-face-attribute 'ement-room-fully-read-marker nil
                     :inherit 'face-block)
 (set-face-attribute 'ement-room-user nil
@@ -923,6 +1011,7 @@
 (set-face-attribute 'ement-room-reactions-key nil
                     :height 1.1)
 (set-face-attribute 'ement-room-wrap-prefix nil
+                    :family "Cantarell"
                     :background (face-foreground 'face-faded))
 
 ;; (defun run-pantalaimon ()
@@ -1210,7 +1299,7 @@
 (require 'flycheck)
 (global-flycheck-mode 1)
 (setq flycheck-emacs-lisp-load-path 'inherit
-      flycheck-global-modes '(not org-mode org-agenda-mode erc-mode latex-mode))
+      flycheck-global-modes '(not org-mode org-agenda-mode erc-mode latex-mode rcirc-mode))
 (set-face-attribute 'flycheck-info nil
                     :underline nil)
 (set-face-attribute 'flycheck-warning nil
@@ -1283,6 +1372,24 @@
 ;;                   ement-room-mode))
 ;;     (add-to-list 'beacon-dont-blink-major-modes mode)))
 ;; (beacon-mode 1)
+
+;; rcirc menu
+(with-eval-after-load 'rcirc
+  (require 'rcirc-menu)
+  (define-key rcirc-mode-map (kbd "M-g M-l") (lambda ()
+                                               (interactive)
+                                               (if (get-buffer "*Rcirc Menu*")
+                                                   (pop-to-buffer (get-buffer "*Rcirc Menu*"))
+                                                 (rcirc-menu))))
+  (define-key rcirc-menu-mode-map (kbd "C-o") (lambda ()
+                                                (interactive)
+                                                (Buffer-menu-switch-other-window)
+                                                (goto-char (point-min))))
+  (define-key rcirc-mode-map (kbd "C-o") (lambda ()
+                                           (interactive)
+                                           (if (get-buffer "*Rcirc Menu*")
+                                               (pop-to-buffer (get-buffer "*Rcirc Menu*"))
+                                             (rcirc-menu)))))
 
 ;; ein
 (with-eval-after-load 'ein

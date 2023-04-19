@@ -6,16 +6,6 @@
 (require 'org-habit)
 (require 'general)
 (require 'tex-mode)
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-
-(setq org-format-latex-options '(:foreground
-                                 default
-                                 :background "Transparent"
-                                 :scale 0.8
-                                 :html-foreground "Black"
-                                 :html-background "Transparent"
-                                 :html-scale 1.0
-                                 :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
 
 (add-hook 'org-mode-hook (lambda ()
                            (visual-line-mode t)
@@ -35,6 +25,18 @@
                                                     :height 1.1
                                                     :weight 'normal
                                                     :slant 'normal)))
+
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+
+(setq org-format-latex-options '(:foreground
+                                 default
+                                 :background "Transparent"
+                                 :scale 0.8
+                                 :html-foreground "Black"
+                                 :html-background "Transparent"
+                                 :html-scale 1.0
+                                 :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
+      org-export-allow-bind-keywords t)
 
 ;; (defun my/org-number-at-point ()
 ;;   "Add numbering at point."
@@ -129,7 +131,7 @@
   (set-face 'org-headline-done 'face-faded)
   (set-face 'org-latex-and-related '(face-salient fixed-pitch)
             :background (face-background 'default))
-  (set-face 'org-link 'face-salient)
+  (set-face 'org-link 'face-salient :underline t)
   (set-face 'org-list-dt 'face-light :slant 'italic)
   (set-face 'org-macro 'face-salient-yellow)
   (set-face 'org-meta-line '(face-faded fixed-pitch) :weight 'normal)
@@ -170,10 +172,10 @@
   (set-face 'org-level-7 'face-strong)
   (set-face 'org-level-8 'face-strong)
 
-  (set-face 'org-block '(face-block fixed-pitch))
+  (set-face 'org-block '(face-block fixed-pitch) :extend t)
   ;; (set-face-attribute 'tex-math nil :inherit 'face-salient)
-  (set-face 'org-block-begin-line '(face-faded face-block fixed-pitch))
-  (set-face 'org-block-end-line '(face-faded face-block fixed-pitch))
+  (set-face 'org-block-begin-line '(face-faded face-block fixed-pitch) :extend t)
+  (set-face 'org-block-end-line '(face-faded face-block fixed-pitch) :extend t)
   ;; (set-face-attribute 'org-table            nil :inherit 'fixed-pitch)
 
   (set-face 'org-checkbox '(face-salient fixed-pitch) :weight 'bold)
@@ -262,6 +264,12 @@
 
 ;; org-agenda
 (global-set-key "\C-ca" 'org-agenda)
+
+;; set org agenda as initial buffer
+(setq initial-buffer-choice (lambda ()
+                              (let ((org-agenda-window-setup 'only-window))
+                                (org-agenda-list)
+                                org-agenda-buffer)))
 (with-eval-after-load 'org-agenda
   (set-face 'org-agenda-calendar-event 'default)
   (set-face 'org-agenda-calendar-sexp 'face-faded)
@@ -334,14 +342,31 @@
                                                                :image-converter ("gm convert -density %D -trim -antialias -quality 100 -transparent white %f %O")))
 (setq org-preview-latex-default-process 'graphicsmagick)
 
-(require 'tex)
-(set-face 'font-latex-warning-face 'face-popout)
-(add-to-list 'TeX-view-program-list '("zathura"
-                                      ("zathura %o"
-                                       (mode-io-correlate
-                                        " --synctex-forward %n:0:%b -x \"emacsclient +%{line} %{input}\""))
-                                      "zathura"))
-(setcdr (assq 'output-pdf TeX-view-program-selection) '("zathura"))
-(setq TeX-engine 'xetex)
+(with-eval-after-load 'font-latex
+  (set-face 'font-latex-warning-face 'face-popout)
+  (set-face 'font-latex-math-face 'face-salient)
+  (set-face 'font-latex-script-char-face 'face-salient-green)
+  (set-face 'font-latex-sedate-face 'face-salient-yellow)
+  (set-face-attribute 'font-latex-bold-face nil :foreground 'unspecified :weight 'bold))
+
+(with-eval-after-load 'tex
+  (add-to-list 'TeX-view-program-list '("zathura"
+                                        ("zathura %o"
+                                         (mode-io-correlate
+                                          " --synctex-forward %n:0:%b -x \"emacsclient +%{line} %{input}\""))
+                                        "zathura"))
+  (setcdr (assq 'output-pdf TeX-view-program-selection) '("zathura"))
+  (setq TeX-engine 'xetex))
+
+;; lilypond
+(with-eval-after-load 'lilypond-mode
+  (setq LilyPond-pdf-command "zathura"))
+
+(with-eval-after-load 'org-clock
+  (setq org-clock-persist 'history
+        org-clock-idle-time 90
+        org-clock-auto-clockout-timer (* 60 60 5))
+  (org-clock-persistence-insinuate)
+  (org-clock-auto-clockout-insinuate))
 
 (provide 'init-org)

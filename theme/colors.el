@@ -94,8 +94,11 @@
   (set-background-color "#ede6e3")
   (set-foreground-color "#6c605a")
   (set-face-attribute 'default nil
-                      :foreground (face-foreground 'default)
-                      :background (face-background 'default))
+                      :foreground "#6c605a"
+                      ;; (face-foreground 'default)
+                      :background "#ede6e3"
+                      ;; (face-background 'default)
+                      )
   (set-face-attribute 'face-critical nil :foreground "#6c605a" :background "#fccec1")
   (set-face-attribute 'face-popout nil :foreground "#9e552f")
   (set-face-attribute 'face-strong nil :foreground "#574b45")
@@ -227,5 +230,8 @@
   (if (eq frame-background-mode 'light)
 			(sayo)
 		(blossom)))
+
+;; default theme
+(blossom)
 
 (provide 'colors)

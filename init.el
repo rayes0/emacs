@@ -13,48 +13,51 @@
                          ("nongnu" . "https://elpa.nongnu.org/nongnu")
                          ("gnu" . "https://elpa.gnu.org/packages/")))
 
-(defun my/require-all ()
-  (require 'colors)
-  ;; (sayo)
-  (blossom)
-  (require 'general)
-  (require 'interface)
-  (require 'init-text)
-  (require 'init-system))
+;; (defun my/require-all ()
+;;   (require 'colors)
+;;   ;; (sayo)
+;;   (blossom)
+;;   (require 'general)
+;;   (require 'interface)
+;;   (require 'init-text)
+;;   (require 'init-system))
 
-(load-file (expand-file-name "./data/splash.el" user-emacs-directory))
-(show-splash)
+(defun my/load-all ()
+  (load-file (expand-file-name "./theme/colors.el" user-emacs-directory))
+  (load-file (expand-file-name "./theme/general.el" user-emacs-directory))
+  (load-file (expand-file-name "./lisp/interface.el" user-emacs-directory))
+  (load-file (expand-file-name "./lisp/init-text.el" user-emacs-directory))
+  (load-file (expand-file-name "./lisp/init-system.el" user-emacs-directory))
+  (load-file (expand-file-name "./lisp/init-org.el" user-emacs-directory))
 
-;; ;; (defun my/get-window-system ()
-;; ;;   (cond ((window-system) 'pgtk)
-;; ;;     ))
-;; (if (daemonp)
-;;   (if (display-graphic-p)
-;;     (let ((frame (make-frame '((window-system . pgtk)))))
-;;       (select-frame frame)
-;;       (my/require-all))
-;;     (run-with-timer 0.5 nil #'my/require-all))
-;;   (my/require-all))
-;; (blossom)
-
-(defun my/post-load ()
   (let ((custom-user-file (expand-file-name "./lisp/custom-ops.el"
                                             user-emacs-directory)))
     (load-file custom-user-file)
     (setq custom-file custom-user-file))
-  (load-file (expand-file-name "./lisp/init-org.el" user-emacs-directory)))
 
-(defvar my/everything-is-loaded nil)
-(if (daemonp)
-    (add-hook 'after-make-frame-functions
-              (lambda (frame)
-                (with-selected-frame frame
-                  (unless my/everything-is-loaded
-                    (my/require-all)
-                    (my/post-load)
-                    (setq my/everything-is-loaded t)))))
-  (my/require-all)
-  (my/post-load))
+  ;; set org agenda as initial buffer
+  (with-eval-after-load 'org
+    (setq initial-buffer-choice (lambda ()
+                                  (let ((org-agenda-window-setup 'only-window))
+                                    (org-agenda-list)
+                                    org-agenda-buffer)))))
+
+(load-file (expand-file-name "./data/splash.el" user-emacs-directory))
+(show-splash)
+
+;; (defun daemon-make-frame (_)
+;;   (unless rayes/everything-loaded?
+;;     (setq-default rayes/everything-loaded? t)
+;;     ;; (with-selected-frame frame
+;;     (my/require-all)
+;;     (my/post-load)))
+;; )
+
+;; (defvar rayes/everything-loaded? nil)
+;; (if (daemonp)
+;; (add-hook 'server-after-make-frame-hook #'daemon-make-frame)
+;; (my/require-all)
+;; (my/post-load))
 
 (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
       backup-directory-alist '(("." . "~/.emacs_backups"))

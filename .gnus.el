@@ -329,4 +329,3 @@
                                           )))
 
 (autoload 'gnus-group-make-shimbun-group "nnshimbun" nil t)
-

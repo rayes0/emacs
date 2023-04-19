@@ -79,12 +79,6 @@
 (setq doc-view-resolution 300)
 (setq doc-view-continuous t)
 
-;; set org agenda as initial buffer
-(setq initial-buffer-choice (lambda ()
-                              (let ((org-agenda-window-setup 'only-window))
-                                (org-agenda-list)
-                                org-agenda-buffer)))
-
 ;; ibuffer
 (require 'ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
@@ -184,19 +178,19 @@
   (setq eshell-highlight-prompt nil
         eshell-prompt-function
         (lambda nil
-          (propertize (concat
-                       (if (string= (eshell/pwd) (getenv "HOME"))
-                           (propertize "~" 'face '(:inherit face-faded :weight light))
-                         (replace-regexp-in-string
-                          (getenv "HOME")
-                          (propertize "~" 'face '(:inherit face-faded :weight light))
-                          (propertize (eshell/pwd) 'face '(:inherit face-faded :weight light))))
-                       ;; (propertize "  λ" 'face '(:inherit face-faded :weight light))
-                       (propertize "  *" 'face '(:inherit face-faded :weight light))
-                       (propertize "  " 'face nil))
-                      'front-sticky '(font-lock-face read-only)
-                      'rear-nonsticky '(font-lock-face read-only)
-                      'read-only t)))
+          (concat (propertize (concat
+                               (if (string= (eshell/pwd) (getenv "HOME"))
+                                   (propertize "~" 'face '(:inherit face-faded :weight light))
+                                 (replace-regexp-in-string
+                                  (getenv "HOME")
+                                  (propertize "~" 'face '(:inherit face-faded :weight light))
+                                  (propertize (eshell/pwd) 'face '(:inherit face-faded :weight light))))
+                               ;; (propertize "  λ" 'face '(:inherit face-faded :weight light))
+                               (propertize "  *" 'face '(:inherit face-faded :weight light)))
+                              'front-sticky '(font-lock-face)
+                              'rear-nonsticky '(font-lock-face)
+                              'read-only t)
+                  (propertize "  " 'face nil))))
   (setq eshell-banner-message ""
         eshell-prompt-regexp "^.*  .  "
         eshell-hist-ignoredups 'erase
@@ -403,10 +397,208 @@
 
 
 ;; holidays
-;; holidays
 (with-eval-after-load 'holidays
   (setq holiday-bahai-holidays nil
         holiday-islamic-holidays nil
         holiday-hebrew-holidays nil))
+
+;; rcirc
+(add-hook 'rcirc-mode-hook (lambda ()
+                             (my/sans-serif-font)
+                             (rcirc-track-minor-mode 1)
+                             (rcirc-omit-mode 1)
+                             (flyspell-mode 1)
+                             (visual-line-mode 1)
+                             (setq-local line-spacing 0.25
+                                         wrap-prefix (propertize "-" 'display '(space :width (24))))))
+
+(with-eval-after-load 'rcirc
+  (setq rcirc-fill-column most-positive-fixnum
+        rcirc-omit-unless-requested '("TOPIC" "NAMES")
+        rcirc-omit-threshold most-positive-fixnum
+        rcirc-prompt "  > "
+        rcirc-always-use-server-buffer-flag t
+        rcirc-time-format "%l:%M%p "
+        rcirc-track-ignore-server-buffer-flag t
+        rcirc-url-max-length 30)
+  ;; (rcirc-update-prompt)
+
+  (setq rcirc-response-formats `(("PRIVMSG" . ,(concat
+                                                "%N"
+                                                (propertize "-" 'display '(space :width (1)))
+                                                (propertize "> " 'face 'face-faded)
+                                                (propertize "-" 'display '(space :width (8)))
+                                                "%m"))
+                                 ("NOTICE" . "-%N- %m")
+                                 ("ACTION" . "%N: %m")
+                                 ("COMMAND" . "%m")
+                                 ("ERROR" . "%fw!!! %m")
+                                 ("FAIL" . "(%fwFAIL%f-) %m")
+                                 ("WARN" . "(%fwWARN%f-) %m")
+                                 ("NOTE" . "(%fwNOTE%f-) %m")
+                                 (t . "%fp*** %fs%n %r %m")))
+
+
+  (set-face 'rcirc-timestamp 'face-faded
+            :family "SF Mono"
+            :height 0.9)
+  (set-face 'rcirc-other-nick 'face-identifier
+            :weight 'light)
+  (set-face 'rcirc-my-nick 'face-identifier :weight 'normal)
+  (set-face 'rcirc-server 'face-salient-yellow
+            :family "Cascadia Code"
+            :weight 'light)
+  (set-face 'rcirc-prompt 'face-faded
+            :family "Cascadia Code")
+  (set-face 'rcirc-bright-nick 'face-salient :weight 'light)
+  (set-face 'rcirc-nick-in-message 'face-identifier)
+  (set-face-attribute 'rcirc-nick-in-message-full-line nil
+                      :weight 'bold
+                      ;; :background (face-background 'face-block)
+                      :inherit 'unspecified)
+  (set-face 'rcirc-url 'face-faded :weight 'bold)
+
+  (defun rcirc-handler-321 (process sender args text)
+    (with-current-buffer (get-buffer-create (concat "*rcirc-list-"
+                                                    (process-name process)
+                                                    "*"))
+      (erase-buffer)
+      (make-vtable
+       :columns '("name" "desc" "num")
+       :objects '((t t t)))
+      (vtable-remove-object (vtable-current-table) '(t t t))
+      (pop-to-buffer (current-buffer))))
+  
+  (defun rcirc-handler-322 (process sender args text)
+    (save-match-data
+      (when (string-match "$.* 322 .* \\(#.*\\) \\([0-9]*\\) \\(.*\\)" text)
+        (with-current-buffer (get-buffer-create (concat "*rcirc-list-"
+                                                        (process-name process)
+                                                        "*"))
+          (vtable-insert-object (vtable-current-table)
+                                (list (match-string 1)
+                                      (match-string 2)
+                                      (match-string 3)))))))
+
+  ;; (defun rcirc-handler-323 (process sender args text))
+
+  (defun rayes/rcirc-replace-1 (reg replace &optional pass)
+    (save-excursion
+      (while (re-search-forward reg nil t)
+        (replace-match (if pass
+                           (funcall replace (match-string 0))
+                         (funcall replace))))))
+
+  (defun rayes/rcirc-replace (_sender _response)
+    (goto-char (point-min))
+    (rayes/rcirc-replace-1 "^\\(.*\\)IN_REPLY_TO: \\(.*\\)> \\(.*\\)$"
+                           (lambda () (concat
+                                  ;; (propertize
+                                  ;; (cl-loop repeat
+                                  ;;          (string-pixel-width (match-string 1))
+                                  ;;          ;; (with-temp-buffer
+                                  ;;          ;;   (insert (debug (match-string 1)))
+                                  ;;          ;;   (car (window-text-pixel-size (selected-window) (point-min) (point-max))))
+                                  ;;          concat " ")
+                                  ;; 'face '(:family "Cascadia Code"))
+                                  
+                                  ;; (propertize "-" 'display `(space :width (,(- (string-pixel-width (match-string 1)) 10))))
+                                  (match-string 1)
+                                  (propertize "╭─ " 'face 'rcirc-timestamp)
+                                  (propertize (match-string 2) 'face '(:height 0.8 :inherit rcirc-bright-nick))
+                                  " "
+                                  (propertize (match-string 3) 'face '(:height 0.8 :inherit face-faded)))))
+    (rayes/rcirc-replace-1 "EDIT: " (lambda () (propertize "(edited) " 'face 'face-faded)))
+    (rayes/rcirc-replace-1 "\\*\\*\\(.*\\)\\*\\*" (lambda () (propertize (match-string 1) 'face 'bold)))
+    (rayes/rcirc-replace-1 "\\*\\(.*\\)\\*" (lambda () (propertize (match-string 1) 'face 'face-faded)))
+    (rayes/rcirc-replace-1 "~~\\(.*\\)~~" (lambda () (propertize (match-string 1) 'face 'shr-strike-through)))
+    (rayes/rcirc-replace-1 "__\\(.*\\)__" (lambda () (propertize (match-string 1) 'face 'underline)))
+    (rayes/rcirc-replace-1 "||\\(.*\\)||" (lambda ()
+                                            ;; (buttonize (propertize (match-string 1)
+                                            ;;                        'hidden t
+                                            ;;                        'face `(:foreground
+                                            ;;                                ,(face-background 'face-block)
+                                            ;;                                :inherit face-block))
+                                            ;;            (lambda (d)
+                                            ;;              (if (cadr (member 'hidden (text-properties-at (car d))))
+                                            ;;                  (add-text-properties (car d) (cadr d) `(hidden nil face `(:foreground ,(face-foreground 'face-faded))))
+                                            ;;                (add-text-properties (car d) (cadr d) `(hidden t face `(:foreground ,(face-background 'face-faded))))))
+                                            ;;            (list (match-beginning 1)
+                                            ;;                  (match-end 1))
+                                            ;;            "reveal spoiler")
+                                            (propertize (match-string 1) 'face `(face-block (:foreground ,(face-background 'face-block)))
+                                                        'mouse-face `(face-block (:foreground ,(face-foreground 'face-block)))
+                                                        ;; 'keymap (let ((map (make-sparse-keymap)))
+                                                        ;;           (define-key map [mouse-1]
+                                                        ;;                       (lambda ()
+                                                        ;;                         (interactive)
+                                                        ;;                         (if (debug (text-properties-at (car d)))
+                                                        ;;                             ;; (add-text-properties beg end ')
+                                                        ;;                             (add-text-properties beg end '()))))
+                                                        ;; map))
+                                                        )))
+    ;; (rayes/rcirc-replace-1 "^.*\\(https?://.*\\.\\)\\(png\\|\\jpg\\).*$"
+    ;;                        (lambda (rep)
+    ;;                          ;; (insert (match-string 1))
+    ;;                          ;; (with-current-buffer "testing"
+    ;;                          ;;   (insert (match-string 1 rep) "\n"))
+    ;;                          (url-retrieve (match-string 1)
+    ;;                                        #'rayes/rcirc-image-callback
+    ;;                                        (list (current-buffer)
+    ;;                                              (point))
+    ;;                                        t t)
+    ;;                          (concat (match-string 0)
+    ;;                                  "\n"
+    ;;                                  wrap-prefix
+    
+    ;;                                  "url" (match-string 1)
+    ;;                                  (match-string 2))))
+    )
+  ;; (defun rayes/rcirc-image-callback ()
+  ;; )
+
+  (add-hook 'rcirc-markup-text-functions #'rayes/rcirc-replace)
+
+  (defun rcirc-update-activity-string ()
+    "Update mode-line string."
+    (run-hooks 'rcirc-update-activity-string-hook))
+
+  ;; (defun rcirc-f)
+
+  ;; (defun rcirc-reconnect-all ()
+  ;;   "reconnect all networks"
+  ;;   (interactive)
+  ;;   (let ((rcirc-kill-channel-buffers t))
+  ;;     (rcirc-cmd-quit)))
+  )
+
+;; mpc
+(with-eval-after-load 'mpc
+  (setq mpc-browser-tags '(Album Artist|Composer Playlist)
+        ;; mpc-frame-alist
+        ;; mpc-songs-format
+        )
+  (define-key mpc-tagbrowser-mode-map (kbd "C-<return>") #'mpc-playlist-add)
+  (defun mpc-random-line ()
+    "Goto a random line."
+    (interactive)
+    (goto-char (point-min))
+    (forward-line (random (count-lines (point-min) (point-max))))
+    (mpc-select)
+    (let ((recenter-positions '(middle)))
+      (recenter-top-bottom)))
+  (define-key mpc-tagbrowser-mode-map (kbd "r") #'mpc-random-line)
+  (define-key mpc-tagbrowser-mode-map (kbd "n") #'next-line)
+  (define-key mpc-tagbrowser-mode-map (kbd "p") #'previous-line)
+  (define-key mpc-tagbrowser-mode-map (kbd "P") #'mpc-toggle-play)
+  (define-key mpc-tagbrowser-mode-map (kbd "s") #'mpc-pause)
+  
+  (define-key mpc-songs-mode-map (kbd "r") #'mpc-random-line)
+  (define-key mpc-songs-mode-map (kbd "n") #'next-line)
+  (define-key mpc-songs-mode-map (kbd "p") #'previous-line)  
+  (define-key mpc-songs-mode-map (kbd "P") #'mpc-toggle-play)
+  (define-key mpc-songs-mode-map (kbd "s") #'mpc-pause)
+
+  (add-hook 'mpc-mode-hook (lambda () (hl-line-mode 1))))
 
 (provide 'init-system)
